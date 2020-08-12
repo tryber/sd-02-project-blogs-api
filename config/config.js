@@ -4,7 +4,7 @@ module.exports = {
   development: {
     username: process.env.USERNAME,
     password: process.env.PASSWORD,
-    database: 'blogs-api',
+    database: 'trybe-api-blogs',
     host: 'localhost',
     dialect: 'mysql',
   },
