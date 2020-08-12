@@ -21,17 +21,18 @@ const displayName = Joi.string()
   });
 
 const password = Joi.string()
-  .pattern(new RegExp('^[a-zA-Z0-9]{6,}$'));
+  .pattern(new RegExp('^[a-zA-Z0-9]{6,}$'))
+  .required();
 
 const userSchema = Joi.object({
   email,
   displayName,
   password,
-}).unknown(false);
+});
 
 const validate = async (schema, body) => {
   try {
-    const { error } = schema.validate(body, {
+    const { error } = await schema.validate(body, {
       abortEarly: false,
     });
     return { error };
