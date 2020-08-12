@@ -3,18 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "express": "^4.17.1"
+    "@hapi/joi": "^17.1.1",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-rescue": "^1.1.30",
+    "mysql2": "^2.1.0",
+    "nodemon": "^2.0.4",
+    "sequelize": "^6.3.4"
   },
   "scripts": {
     "start": "node index.js",
+    "debug": "nodemon index.js",
     "test": "jest",
     "lint": "eslint ."
   },
   "devDependencies": {
-    "jest": "^26.0.1",
-    "supertest": "^4.0.2",
+    "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.21.2",
-    "eslint": "^7.6.0"
+    "jest": "^26.0.1",
+    "sequelize-cli": "^6.2.0",
+    "supertest": "^4.0.2"
   }
 }
