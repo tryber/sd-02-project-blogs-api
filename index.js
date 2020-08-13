@@ -9,8 +9,8 @@ const authMiddleware = require('./middlewares/auth');
 app.use(express.json());
 
 app.post('/user', user.postUser);
+app.get('/user/:id', authMiddleware, user.getUser);
 app.get('/user', authMiddleware, user.getUsers);
-
 
 app.use(errorMid);
 

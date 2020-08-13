@@ -1,6 +1,6 @@
+const jwt = require('jsonwebtoken');
 const userController = require('./user');
 const { Users } = require('../models');
-const jwt = require('jsonwebtoken');
 
 describe('test user Controller post User', () => {
   describe('success cases', () => {
@@ -9,7 +9,7 @@ describe('test user Controller post User', () => {
         displayName: 'douglas henrique',
         email: 'dougaa@email.com',
         password: 123456,
-        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
       const getUser = jest
@@ -49,7 +49,7 @@ describe('test user Controller post User', () => {
         displayName: 'douglas',
         email: 'dougaa@email.com',
         password: 123456,
-        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
       const mockJson = jest.fn();
@@ -66,7 +66,7 @@ describe('test user Controller post User', () => {
         displayName: 'douglas henrique',
         email: 'emailerrado@email.coma',
         password: 123456,
-        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
       const mockJson = jest.fn();
@@ -83,7 +83,7 @@ describe('test user Controller post User', () => {
         displayName: 'douglas henrique',
         email: 'dougaa@email.com',
         password: 12345,
-        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
       const mockJson = jest.fn();
@@ -93,14 +93,17 @@ describe('test user Controller post User', () => {
 
       await userController.postUser(mockReq, mockRes, next);
 
-      expect(next).toBeCalledWith({ code: 'invalid_data', message: "\"password\" with value \"12345\" fails to match the required pattern: /^[a-zA-Z0-9]{6,}$/" });
+      expect(next).toBeCalledWith({
+        code: 'invalid_data',
+        message: '\"password\" with value \"12345\" fails to match the required pattern: /^[a-zA-Z0-9]{6,}$/',
+      });
     });
     it('test usuario already return', async () => {
       const mockData = {
         displayName: 'douglas henrique',
         email: 'dougaa@email.com',
         password: 123456,
-        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
       const getUser = jest
@@ -126,7 +129,7 @@ describe('test user Controller post User', () => {
       expect(createUser).toBeCalledTimes(0);
       expect(createToken).toBeCalledTimes(0);
 
-      expect(next).toBeCalledWith({ code: 'conflict', message: 'Usuário já existe' })
+      expect(next).toBeCalledWith({ code: 'conflict', message: 'Usuário já existe' });
 
       getUser.mockRestore();
       createUser.mockRestore();
@@ -134,4 +137,3 @@ describe('test user Controller post User', () => {
     });
   });
 });
-

@@ -9,14 +9,14 @@ describe('test user Controller getUsers', () => {
           displayName: 'douglas henrique',
           email: 'dougaa@email.com',
           image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
-        }
+        },
       }, {
         dataValues:
         {
           displayName: 'douglas não henrique',
           email: 'dougas@email.com',
           image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
-        }
+        },
       }];
 
       const getUser = jest
@@ -77,6 +77,4 @@ describe('test user Controller getUsers', () => {
       getUser.mockRestore();
     });
   });
-
 });
-
