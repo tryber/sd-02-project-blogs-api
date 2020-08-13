@@ -4,10 +4,13 @@ const app = express();
 
 const { user } = require('./controller');
 const errorMid = require('./middlewares/errorMid');
+const authMiddleware = require('./middlewares/auth');
 
 app.use(express.json());
 
-app.post('/user', user.postUser)
+app.post('/user', user.postUser);
+app.get('/user', authMiddleware, user.getUsers);
+
 
 app.use(errorMid);
 

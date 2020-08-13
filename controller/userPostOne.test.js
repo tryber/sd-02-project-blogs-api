@@ -2,7 +2,7 @@ const userController = require('./user');
 const { Users } = require('../models');
 const jwt = require('jsonwebtoken');
 
-describe('test user Controller', () => {
+describe('test user Controller post User', () => {
   describe('success cases', () => {
     it('test correct return', async () => {
       const mockData = {
@@ -18,7 +18,7 @@ describe('test user Controller', () => {
 
       const createUser = jest
         .spyOn(Users, 'create')
-        .mockReturnValueOnce(null);
+        .mockReturnValueOnce({ dataValues: { id: 1 } });
 
       const createToken = jest
         .spyOn(jwt, 'sign')
