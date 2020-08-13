@@ -1,11 +1,13 @@
 const Joi = require('@hapi/joi');
 
-const email = Joi.string().email().required().messages({
-  'any.required': 'Email is required',
-  'string.base': 'Email must be a type of string',
-  'string.email': 'Email must be in a format <name>@<domain>',
-  'string.empty': 'Email is not allowed to be empty',
-});
+const email = Joi.string().email()
+  .regex(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+  .messages({
+    'any.required': 'Email is required',
+    'string.base': 'Email must be a type of string',
+    'string.email': 'Email must be in a format <name>@<domain>',
+    'string.empty': 'Email is not allowed to be empty',
+  });
 
 const displayName = Joi.string()
   .regex(/^[^\s][a-zA-Z\s]*[a-zA-z]$/)
