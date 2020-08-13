@@ -1,4 +1,4 @@
-const { validate, userSchema } = require('../validate');
+const { validate, userSchema } = require('../utils/validate');
 const userService = require('../service/userService');
 
 const objectError = {
@@ -8,11 +8,11 @@ const objectError = {
 
 const postUser = async (req, res, next) => {
   const { password, email, image, displayName } = req.body;
-  const { error } = await validate(userSchema, { email, displayName, password: JSON.stringify(password) });
+  const { error } = await validate(userSchema, { email, displayName, password: JSON.stringify(password) })|| false;
   if (error) next(objectError.invalid(error));
-  const { token } = await userService.postUser({ password: JSON.stringify(password), email, image, displayName });
+  const { token } = await userService.postUser({ password: JSON.stringify(password), email, image, displayName }) || false;
   if (!token) next(objectError.conflict());
-  res.status(201).json({ token });
+  return res.status(201).json({ token });
 };
 
 module.exports = { postUser };

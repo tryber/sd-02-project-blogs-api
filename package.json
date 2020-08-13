@@ -10,6 +10,7 @@
     "sequelize": "^6.3.4"
   },
   "scripts": {
+    "watch": "jest --watchAll",
     "start": "node index.js",
     "test": "jest",
     "lint": "eslint .",
