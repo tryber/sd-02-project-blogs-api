@@ -5,7 +5,7 @@ module.exports = {
       displayName: { allowNull: false, type: Sequelize.STRING },
       email: { unique: true, allowNull: false, type: Sequelize.STRING },
       password: { allowNull: false, type: Sequelize.STRING },
-      image: { allowNull: false, type: Sequelize.STRING },
+      image: { allowNull: true, type: Sequelize.STRING },
     });
   },
 

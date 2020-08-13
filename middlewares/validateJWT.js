@@ -4,7 +4,7 @@ const { User } = require('../models');
 
 const { jwtSecret } = process.env;
 
-const validateJWT = rescue(async (req, res, next) => {
+const validateJWT = rescue(async (req, _res, next) => {
   const token = req.headers.authorization;
   if (!token) {
     next({ error: true, message: 'Token não encontrado', code: 'unauthorized' });
@@ -15,8 +15,9 @@ const validateJWT = rescue(async (req, res, next) => {
     if (!userExists) {
       return next({ error: true, message: 'Usuário não encontrado', code: 'unauthorized' });
     }
-    const { password, ...userWithoutPass } = userExists;
-    req.user = userWithoutPass;
+    const { dataValues: { password: _, ...userWithoutPassword } } = userExists;
+
+    req.user = userWithoutPassword;
     next();
   } catch (fail) {
     next({ error: true, message: 'Token expirado ou inválido', code: 'unauthorized' });

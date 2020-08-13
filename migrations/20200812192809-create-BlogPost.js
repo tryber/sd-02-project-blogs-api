@@ -8,6 +8,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: { model: 'Users', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       published: { type: Sequelize.DATE },
       updated: { type: Sequelize.DATE },
