@@ -10,9 +10,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.post('/login', controllers.loginUser);
+app.post('/user', controllers.createUser);
 
 app.get('/user', middlewares.validateJWT, controllers.getAllUsers);
 app.get('/user/:id', middlewares.validateJWT, controllers.getUserById);
+app.delete('/user/me', middlewares.validateJWT, controllers.deleteUserById);
 
 app.use(middlewares.promiseErrors);
 
