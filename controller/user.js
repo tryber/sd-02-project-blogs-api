@@ -9,7 +9,6 @@ const objectError = {
 const postUser = async (req, res, next) => {
   const { password, email, image, displayName } = req.body;
   const { error } = await validate(userSchema, { email, displayName, password: JSON.stringify(password) })|| {};
-  console.log(error)
   if (error) return next(objectError.invalid(error));
   const { token } = await userService.postUser({ password: JSON.stringify(password), email, image, displayName }) || false;
   if (!token) return next(objectError.conflict());
