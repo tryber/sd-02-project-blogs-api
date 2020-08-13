@@ -8,9 +8,7 @@ const secret = process.env.SECRET || 'lipexzx';
 
 const loginJwt = async (req, _res, next) => {
   const { authorization: token } = req.headers;
-  if (!token) {
-    const err = { error: { message: 'Token not found', code: 'Invalid_data' } };
-    next(err);
+  if (!
   }
   try {
     const validToken = jwt.verify(token, secret);

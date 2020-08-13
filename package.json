@@ -10,6 +10,7 @@
     "sequelize": "^6.3.4"
   },
   "scripts": {
+    "debug": "nodemon index.js",
     "start": "node index.js",
     "test": "jest",
     "lint": "eslint ."
@@ -20,6 +21,7 @@
     "eslint-plugin-import": "^2.21.2",
     "jest": "^26.0.1",
     "sequelize-cli": "^6.2.0",
+    "nodemon": "^2.0.4",
     "supertest": "^4.0.2"
   }
 }
