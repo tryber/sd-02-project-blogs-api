@@ -21,10 +21,11 @@ const getOneUser = async (id) => findBy({ id }, ['password']);
 const deleteOneUser = async (id) => Users.destroy({ where: { id } });
 
 const login = async ({ email: emailReceived, password }) => {
-  const user = findBy({ email: emailReceived }, []);
-  if (user.password === password) {
+  const user = await findBy({ email: emailReceived }, []);
+  if (!user) return false;
+  if (user.dataValues.password === password) {
     const { displayName, email, id } = user;
-    return { token: createToken({ displayName, email, id }) };
+    return createToken({ displayName, email, id });
   }
 };
 

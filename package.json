@@ -14,7 +14,8 @@
     "start": "node index.js",
     "test": "jest",
     "lint": "eslint .",
-    "debug": "nodemon index.js"
+    "debug": "nodemon index.js",
+    "test-coverage": "jest --coverage --watchAll=false"
   },
   "devDependencies": {
     "eslint": "^7.6.0",

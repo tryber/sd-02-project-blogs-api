@@ -1,8 +1,10 @@
+/* eslint-disable lines-around-directive */
+/* eslint-disable strict */
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert(
+  up: async (queryInterface, _Sequelize) =>
+    queryInterface.bulkInsert(
       'BlogPosts',
       [
         {
@@ -11,14 +13,11 @@ module.exports = {
           updated: new Date('2011-08-01T19:58:51.947Z'),
           title: 'Latest updates, August 1st',
           content: 'The whole text for the blog post goes here in this key',
-          user_id: 1
-        }
+          user_id: 1,
+        },
       ],
-      {}
-    );
-  },
+      {},
+    ),
 
-  down: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('BlogPosts', null, {});
-  },
+  down: async (queryInterface, _Sequelize) => queryInterface.bulkDelete('BlogPosts', null, {}),
 };

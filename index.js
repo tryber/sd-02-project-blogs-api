@@ -2,7 +2,7 @@ const express = require('express');
 
 const app = express();
 
-const { user } = require('./controller');
+const { user, blog } = require('./controller');
 const errorMid = require('./middlewares/errorMid');
 const authMiddleware = require('./middlewares/auth');
 
@@ -13,6 +13,9 @@ app.get('/user/:id', authMiddleware, user.getUser);
 app.delete('/user/me', authMiddleware, user.deleteUser);
 app.get('/user', authMiddleware, user.getUsers);
 app.post('/login', user.login);
+app.post('/post', authMiddleware, blog.createPost);
+app.get('/post', blog.getPost);
+
 app.use(errorMid);
 
 app.listen(3000, () => console.log('ouvindo porta 3000!'));

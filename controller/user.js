@@ -3,14 +3,14 @@ const userService = require('../service/userService');
 
 const objectError = {
   conflict: () => ({ message: 'Usuário já existe', code: 'conflict' }),
-  invalid: (error) => ({ message: error.details[0].message || 'Campos inválidos', code: 'invalid_data' }),
+  invalid: (error) => ({ message: error ? error.details[0].message : 'Campos inválidos', code: 'invalid_data' }),
   internal: () => ({ message: 'Internal error', code: 'internal_error' }),
 };
 
 const postUser = async (req, res, next) => {
   const { password, email, image, displayName } = req.body;
   const { error } = await validate(userSchema, {
-    email, displayName, password: JSON.stringify(password)
+    email, displayName, password,
   }) || {};
   if (error) return next(objectError.invalid(error));
   const { token } = await userService.postUser({
@@ -32,12 +32,12 @@ const getUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   await userService.deleteOneUser(req.user.id);
-  res.status(200).json();
+  res.status(204).json();
 };
 
 const login = async (req, res, next) => {
-  const { token } = userService.login(req.body);
-  if (!token) return next(objectError.invalid(null));
+  const token = await userService.login(req.body);
+  if (!token) return next(objectError.invalid(false));
   return res.status(200).json({ token });
 };
 

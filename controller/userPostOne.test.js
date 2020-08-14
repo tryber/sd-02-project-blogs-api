@@ -8,7 +8,7 @@ describe('test user Controller post User', () => {
       const mockData = {
         displayName: 'douglas henrique',
         email: 'dougaa@email.com',
-        password: 123456,
+        password: '123456',
         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
@@ -48,7 +48,7 @@ describe('test user Controller post User', () => {
       const mockData = {
         displayName: 'douglas',
         email: 'dougaa@email.com',
-        password: 123456,
+        password: '123456',
         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
@@ -65,7 +65,7 @@ describe('test user Controller post User', () => {
       const mockData = {
         displayName: 'douglas henrique',
         email: 'emailerrado@email.coma',
-        password: 123456,
+        password: '123456',
         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
@@ -82,7 +82,7 @@ describe('test user Controller post User', () => {
       const mockData = {
         displayName: 'douglas henrique',
         email: 'dougaa@email.com',
-        password: 12345,
+        password: '12345',
         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
@@ -95,14 +95,14 @@ describe('test user Controller post User', () => {
 
       expect(next).toBeCalledWith({
         code: 'invalid_data',
-        message: '\"password\" with value \"12345\" fails to match the required pattern: /^[a-zA-Z0-9]{6,}$/',
+        message: '"password" with value "12345" fails to match the required pattern: /^[a-zA-Z0-9]{6,}$/',
       });
     });
     it('test usuario already return', async () => {
       const mockData = {
         displayName: 'douglas henrique',
         email: 'dougaa@email.com',
-        password: 123456,
+        password: '123456',
         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       };
 
