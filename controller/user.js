@@ -3,7 +3,7 @@ const userService = require('../service/userService');
 
 const objectError = {
   conflict: () => ({ message: 'Usuário já existe', code: 'conflict' }),
-  invalid: (error) => ({ message: error.details[0].message || 'Campos Incorretos', code: 'invalid_data' }),
+  invalid: (error) => ({ message: error.details[0].message || 'Campos inválidos', code: 'invalid_data' }),
   internal: () => ({ message: 'Internal error', code: 'internal_error' }),
 };
 
@@ -30,4 +30,15 @@ const getUser = async (req, res) => {
   res.status(200).json(user);
 };
 
-module.exports = { postUser, getUsers, getUser };
+const deleteUser = async (req, res) => {
+  await userService.deleteOneUser(req.user.id);
+  res.status(200).json();
+};
+
+const login = async (req, res, next) => {
+  const { token } = userService.login(req.body);
+  if (!token) return next(objectError.invalid(null));
+  return res.status(200).json({ token });
+};
+
+module.exports = { postUser, getUsers, getUser, deleteUser, login };

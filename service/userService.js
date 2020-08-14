@@ -18,9 +18,21 @@ const getAllUsers = async () => Users.findAll({ attributes: { exclude: ['passwor
 
 const getOneUser = async (id) => findBy({ id }, ['password']);
 
+const deleteOneUser = async (id) => Users.destroy({ where: { id } });
+
+const login = async ({ email: emailReceived, password }) => {
+  const user = findBy({ email: emailReceived }, []);
+  if (user.password === password) {
+    const { displayName, email, id } = user;
+    return { token: createToken({ displayName, email, id }) };
+  }
+};
+
 module.exports = {
   postUser,
   getAllUsers,
   findBy,
   getOneUser,
+  deleteOneUser,
+  login,
 };
