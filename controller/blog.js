@@ -13,9 +13,9 @@ const createPost = async (req, res, next) => {
   return res.status(201).json(newPost);
 };
 
-const getPost = async (_req, res) => {
-  const data = await blog.getAllPosts();
+const getAllPosts = async (_req, res) => {
+  const data = await blog.getAllPosts() || [];
   res.status(200).json(data.map(({ dataValues }) => dataValues));
 };
 
-module.exports = { createPost, getPost };
+module.exports = { createPost, getAllPosts };

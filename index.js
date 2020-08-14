@@ -14,7 +14,7 @@ app.delete('/user/me', authMiddleware, user.deleteUser);
 app.get('/user', authMiddleware, user.getUsers);
 app.post('/login', user.login);
 app.post('/post', authMiddleware, blog.createPost);
-app.get('/post', blog.getPost);
+app.get('/post', blog.getAllPosts);
 
 app.use(errorMid);
 
