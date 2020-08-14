@@ -3,7 +3,7 @@ const createPostModel = (sequelize, DataTypes) => {
     content: DataTypes.STRING,
     title: DataTypes.STRING,
     user_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       references: {
         model: 'Users',
         key: 'id',
