@@ -12,14 +12,14 @@ const loginUser = rescue(async (req, res, next) => {
   const serviceAnswer = await userService.loginUser(email, password);
   if (serviceAnswer.error) return next(serviceAnswer);
 
-  res.status(200).json({ token: serviceAnswer });
+  res.status(200).json(serviceAnswer);
 });
 
 const createUser = rescue(async (req, res, next) => {
   const isValid = await validateJoi(schemasJoi.createUser, req.body);
   if (isValid.error) return next(isValid);
 
-  const userInfo = req.body;
+  const userInfo = { ...req.body };
 
   const serviceCreateAnswer = await userService.createUser(userInfo);
   if (serviceCreateAnswer.error) return next(serviceCreateAnswer);
@@ -27,9 +27,8 @@ const createUser = rescue(async (req, res, next) => {
   const { email, password } = serviceCreateAnswer;
 
   const serviceLoginAnswer = await userService.loginUser(email, password);
-  if (serviceLoginAnswer.error) return next(serviceLoginAnswer);
 
-  return res.status(201).json({ token: serviceLoginAnswer });
+  return res.status(201).json(serviceLoginAnswer);
 });
 
 const getAllUsers = rescue(async (_req, res) => {
@@ -45,11 +44,11 @@ const getUserById = rescue(async (req, res, next) => {
   return res.status(200).json(serviceAnswer);
 });
 
-const deleteUserById = rescue(async (req, res, next) => {
+const deleteUserById = rescue(async (req, res) => {
   const { id } = req.user;
 
-  const serviceAnswer = await userService.deleteUserById(id);
-  if (serviceAnswer.error) return next(serviceAnswer);
+  await userService.deleteUserById(id);
+
   return res.status(204).end();
 });
 
