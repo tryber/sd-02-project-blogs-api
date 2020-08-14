@@ -4,4 +4,4 @@ const post = require('./post');
 module.exports = {
   user,
   post,
-}
+};

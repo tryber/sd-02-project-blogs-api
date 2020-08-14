@@ -12,7 +12,7 @@ const insert = async (req, res) => {
     return res.status(400).json({ message: 'title, content devem ser passados' });
   }
 
-  await Joi.blog_post.validateAsync({ content, title });
+  await Joi.blogPost.validateAsync({ content, title });
 
   const post = await Blog_post.create({ title, content, userId });
 
@@ -34,7 +34,7 @@ const updateById = async (req, res) => {
     return res.status(400).json({ message: 'title, content devem ser passados' });
   }
 
-  await Joi.blog_post.validateAsync({ content, title });
+  await Joi.blogPost.validateAsync({ content, title });
 
   const user = await Blog_post.findOne({ where: { id } });
 

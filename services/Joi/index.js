@@ -1,7 +1,7 @@
 const user = require('./user');
-const blog_post = require('./blog_post');
+const blogPost = require('./blogPost');
 
 module.exports = {
   user,
-  blog_post,
+  blogPost,
 };
