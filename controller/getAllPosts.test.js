@@ -57,4 +57,22 @@ describe('test user Controller getAllblogPosts', () => {
       getPosts.mockRestore();
     });
   });
+  it('test return null value', async () => {
+    const getPosts = jest
+      .spyOn(BlogPosts, 'findAll')
+      .mockReturnValueOnce(null);
+
+    const mockJson = jest.fn();
+    const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+    const mockReq = {};
+    const next = jest.fn();
+
+    await blogController.getAllPosts(mockReq, mockRes, next);
+
+    expect(getPosts).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJson).toBeCalledWith([]);
+
+    getPosts.mockRestore();
+  });
 });

@@ -4,14 +4,13 @@ const userService = require('../service/userService');
 const objectError = {
   conflict: () => ({ message: 'Usuário já existe', code: 'conflict' }),
   invalid: (error) => ({ message: error ? error.details[0].message : 'Campos inválidos', code: 'invalid_data' }),
-  internal: () => ({ message: 'Internal error', code: 'internal_error' }),
 };
 
 const postUser = async (req, res, next) => {
   const { password, email, image, displayName } = req.body;
   const { error } = await validate(userSchema, {
     email, displayName, password,
-  }) || {};
+  });
   if (error) return next(objectError.invalid(error));
   const { token } = await userService.postUser({
     password: JSON.stringify(password), email, image, displayName,

@@ -1,14 +1,13 @@
 const blog = require('../service/blogService');
 
 const objectError = {
-  conflict: () => ({ message: 'Usuário já existe', code: 'conflict' }),
-  invalid: (error) => ({ message: error ? error.details[0].message : 'Campos inválidos', code: 'invalid_data' }),
-  internal: () => ({ message: 'Internal error', code: 'internal_error' }),
+  // conflict: () => ({ message: 'Usuário já existe', code: 'conflict' }),
+  invalid: () => ({ message: 'Campos inválidos', code: 'invalid_data' }),
 };
 
 const createPost = async (req, res, next) => {
   const { title, content } = req.body;
-  if (!title || !content) return next(objectError.invalid(null));
+  if (!title || !content) return next(objectError.invalid());
   const newPost = await blog.postInBlog(req.user, { title, content });
   return res.status(201).json(newPost);
 };
