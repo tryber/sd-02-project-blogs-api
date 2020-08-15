@@ -88,4 +88,32 @@ describe('usersController test', () => {
       findingUserSpy.mockRestore();
     });
   });
+
+  describe('Deleting user', () => {
+    test('Deleted user succesfully', async () => {
+      const deleteUserSpy = createSpy(User, 'destroy');
+
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await usersController.deleteUser({ user: [{ dataValues: 'valores' }] }, mockRes, mockNext);
+
+      expect(deleteUserSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockRes.json).toBeCalledWith({ message: 'User deleted' });
+
+      deleteUserSpy.mockRestore();
+    });
+    test('Try and catch error', async () => {
+      const deleteUserSpy = createSpyError(User, 'destroy');
+
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await usersController.deleteUser({ user: [{ dataValues: 'valores' }] }, mockRes, mockNext);
+
+      expect(deleteUserSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'something_wrong', message: 'Something went wrong' });
+
+      deleteUserSpy.mockRestore();
+    });
+  });
 });

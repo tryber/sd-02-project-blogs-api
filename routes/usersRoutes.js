@@ -9,6 +9,10 @@ router
   .get(authenticatorController.authUser, userController.getUsers);
 
 router
+  .route('/me')
+  .delete(authenticatorController.authUser, userController.deleteUser);
+
+router
   .route('/:id')
   .get(authenticatorController.authUser, userController.getUser);
 

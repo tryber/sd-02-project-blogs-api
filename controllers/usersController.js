@@ -24,7 +24,20 @@ const getUser = async (req, res, next) => {
   }
 };
 
+const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.user[0].dataValues;
+    await User.destroy({ where: { id } });
+    res.status(200);
+    res.json({ message: 'User deleted' });
+    return res;
+  } catch (error) {
+    next({ code: 'something_wrong', message: 'Something went wrong' });
+  }
+};
+
 module.exports = {
   getUsers,
   getUser,
+  deleteUser,
 };
