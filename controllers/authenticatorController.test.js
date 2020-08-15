@@ -122,11 +122,11 @@ describe('authController tests', () => {
 
       await authenticatorController.authUser(mockreq, mockRes, mockNext);
 
-      expect(mockNext).toBeCalledWith({ code: 'unauthorized', message: 'Missing JWT' });
+      expect(mockNext).toBeCalledWith({ code: 'missing_JWT', message: 'Missing JWT' });
     });
 
     test('No user found', async () => {
-      const ReturUserFromTokenSpy = createSpy(jwt, 'verify', 'user');
+      const ReturUserFromTokenSpy = createSpy(jwt, 'verify', { dataValues: { email: 'fake' } });
       const findingUserSpy = createSpy(User, 'findAll', []);
 
       const mockRes = { status: jest.fn(), json: jest.fn() };
@@ -157,7 +157,7 @@ describe('authController tests', () => {
     });
 
     test('Succesfull auth', async () => {
-      const ReturUserFromTokenSpy = createSpy(jwt, 'verify', 'user');
+      const ReturUserFromTokenSpy = createSpy(jwt, 'verify', { dataValues: { email: 'Right Email' } });
       const findingUserSpy = createSpy(User, 'findAll', mockUser);
 
       const mockRes = { status: jest.fn(), json: jest.fn() };

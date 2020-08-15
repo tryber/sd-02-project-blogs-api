@@ -31,11 +31,10 @@ const login = async (req, res, next) => {
 
 const authUser = async (req, res, next) => {
   const token = req.headers.authorization;
-  if (!token) return next({ code: 'unauthorized', message: 'Missing JWT' });
+  if (!token) return next({ code: 'missing_JWT', message: 'Missing JWT' });
   try {
     const payload = jwt.verify(token, 'segredo');
-
-    const user = await User.findAll({ where: { email: payload.email } });
+    const user = await User.findAll({ where: { email: payload.dataValues.email } });
 
     if (!user[0]) return next({ code: 'not_found', message: 'User not found' });
 
