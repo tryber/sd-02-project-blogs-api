@@ -9,6 +9,10 @@ router
   .get(authenticatorController.authUser, userController.getUsers);
 
 router
+  .route('/')
+  .post(userController.postNewUser, authenticatorController.login);
+
+router
   .route('/me')
   .delete(authenticatorController.authUser, userController.deleteUser);
 

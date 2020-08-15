@@ -26,6 +26,15 @@ const allUsersMock = [
   },
 ];
 
+const mockReckCreateUser = {
+  body: {
+    displayName: 'pedro henrique',
+    email: 'pedro@email.com',
+    password: '123456',
+    image: 'image',
+  },
+};
+
 describe('usersController test', () => {
   describe('Get all users', () => {
     test('Sucesfull request', async () => {
@@ -114,6 +123,44 @@ describe('usersController test', () => {
       expect(mockNext).toBeCalledWith({ code: 'something_wrong', message: 'Something went wrong' });
 
       deleteUserSpy.mockRestore();
+    });
+  });
+
+  describe('Creating a new user', () => {
+    test('Missing fields error', async () => {
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+
+      await usersController.postNewUser({ body: {} }, mockRes, mockNext);
+      expect(mockNext).toBeCalledWith({ code: 'invalid_data', message: 'Missing fields' });
+    });
+
+    test('Email already exists', async () => {
+      const createUserSpy = createSpy(User, 'findOrCreate', ['user', false]);
+
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+
+      await usersController.postNewUser(mockReckCreateUser, mockRes, mockNext);
+
+      expect(createUserSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'invalid_data', message: 'Usuário já existe' });
+
+      createUserSpy.mockRestore();
+    });
+
+    test('Created User', async () => {
+      const createUserSpy = createSpy(User, 'findOrCreate', ['user', true]);
+
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+
+      await usersController.postNewUser(mockReckCreateUser, mockRes, mockNext);
+
+      expect(createUserSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith();
+
+      createUserSpy.mockRestore();
     });
   });
 });

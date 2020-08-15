@@ -1,4 +1,5 @@
 const { User } = require('../models');
+const { checkName, checkPassword, checkEmail } = require('./utils/checkFields');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -36,8 +37,30 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+const postNewUser = async (req, res, next) => {
+  const { displayName, email, password, image } = req.body;
+  if (!displayName || !email || !password || !image) {
+    return next({ code: 'invalid_data', message: 'Missing fields' });
+  }
+  if (!checkEmail(email) || !checkPassword(password) || !checkName(displayName)) {
+    return next({ code: 'invalid_data', message: 'Validation error' });
+  }
+  try {
+    const [, created] = await User.findOrCreate({
+      where: { email },
+      defaults: { displayName, password, image },
+    });
+    if (!created) return next({ code: 'invalid_data', message: 'Usuário já existe' });
+
+    next();
+  } catch (error) {
+    next({ code: 'something_wrong', message: 'Something went wrong' });
+  }
+};
+
 module.exports = {
   getUsers,
   getUser,
   deleteUser,
+  postNewUser,
 };
