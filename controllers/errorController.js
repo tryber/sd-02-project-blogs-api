@@ -7,10 +7,11 @@ const codes = {
   conflict: 409,
 };
 
-const errorController = async (err, req, res, _next) => res.status(codes[err.code])
-  .json({
-    message: err.message,
-  });
+const errorController = async (err, req, res, _next) => {
+  res.status(codes[err.code]);
+  res.json({ message: err.message });
+  return res;
+};
 
 module.exports = {
   errorController,
