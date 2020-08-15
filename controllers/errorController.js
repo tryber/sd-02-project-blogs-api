@@ -3,6 +3,7 @@ const codes = {
   not_found: 404,
   something_wrong: 500,
   unauthorized: 400,
+  missing_JWT: 401,
   access_denied: 403,
   conflict: 409,
 };
