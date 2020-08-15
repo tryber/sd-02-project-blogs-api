@@ -1,16 +1,22 @@
 const express = require('express');
 const rescue = require('express-rescue');
-const { User } = require('../models');
+const validateJoi = require('../middlewares/validateJoi');
+const { schemaNewUser } = require('../middlewares/schemasJoi');
+
+const UserService = require('../services/UserService');
 
 const user = express.Router();
 
 user.get('/', rescue(async (req, res) => {
-  User.findAll()
-    .then((users) => res.status(200).json(users))
-    .catch((e) => {
-      const error = { error: { message: e.message, code: 'internal_error' } };
-      throw error;
-    });
+  const serviceAnswer = await UserService.getAllUsers();
+  res.status(200).json(serviceAnswer);
+}));
+
+user.post('/', rescue(async (req, res) => {
+  await validateJoi(schemaNewUser, req.body);
+  const { displayName, email, password, image = '' } = req.body;
+  const serviceAnswer = await UserService.newUser({ displayName, email, password, image });
+  res.status(201).json({ token: serviceAnswer });
 }));
 
 module.exports = user;
