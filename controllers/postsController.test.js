@@ -35,7 +35,7 @@ const mockPosts = [
       id: 1,
       displayName: 'Brett Wiltshire',
       email: 'brett@email.com',
-      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
     },
   },
   {
@@ -49,7 +49,7 @@ const mockPosts = [
       id: 2,
       displayName: 'Pedro Henrique',
       email: 'pedro@gmail.com',
-      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/pedro.png'
+      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/pedro.png',
     },
   },
 ];
@@ -218,7 +218,7 @@ describe('Post Controller test', () => {
       findAllPostSpy.mockRestore();
     });
 
-    test('Try and catch error', async () => {
+    test('gett all posts correctly', async () => {
       const findAllPostSpy = createSpy(Post, 'findAll', mockPosts);
 
       const mockReq = {};
@@ -230,6 +230,48 @@ describe('Post Controller test', () => {
       expect(mockRes.status).toBeCalledWith(200);
       expect(mockRes.json).toBeCalledWith(mockPosts);
       findAllPostSpy.mockRestore();
+    });
+  });
+
+  describe('Find one post', () => {
+    test('Try and catch error', async () => {
+      const findPostSpy = createSpyError(Post, 'findByPk');
+
+      const mockReq = { params: { id: 1 } };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.getPost(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'something_wrong', message: 'Something went wrong' });
+      findPostSpy.mockRestore();
+    });
+
+    test('No post found', async () => {
+      const findPostSpy = createSpy(Post, 'findByPk', null);
+
+      const mockReq = { params: { id: 1 } };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.getPost(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'not_found', message: 'Post not found' });
+      findPostSpy.mockRestore();
+    });
+
+    test('Post found', async () => {
+      const findPostSpy = createSpy(Post, 'findByPk', mockPosts[0]);
+
+      const mockReq = { params: { id: 2 } };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.getPost(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockRes.json).toBeCalledWith(mockPosts[0]);
+      findPostSpy.mockRestore();
     });
   });
 });

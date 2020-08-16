@@ -14,6 +14,10 @@ router
 
 router
   .route('/:id')
+  .get(postsController.getPost);
+
+router
+  .route('/:id')
   .put(authenticatorController.authUser, postsController.updatePost);
 
 router

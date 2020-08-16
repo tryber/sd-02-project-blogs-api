@@ -72,9 +72,30 @@ const getAllPosts = async (_req, res, next) => {
   }
 };
 
+const getPost = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const post = await Post.findByPk(id, {
+      include: {
+        model: User,
+        as: 'user',
+        attributes: {
+          exclude: ['password'],
+        },
+      },
+    });
+    if (!post) return next({ code: 'not_found', message: 'Post not found' });
+    res.status(200);
+    res.json(post);
+  } catch (error) {
+    next({ code: 'something_wrong', message: 'Something went wrong' });
+  }
+};
+
 module.exports = {
   postPost,
   updatePost,
   deletePost,
   getAllPosts,
+  getPost,
 };
