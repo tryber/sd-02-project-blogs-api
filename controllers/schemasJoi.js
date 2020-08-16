@@ -12,7 +12,13 @@ const createUser = Joi.object({
   image: Joi.string(),
 });
 
+const createPost = Joi.object({
+  title: Joi.string().required(),
+  content: Joi.string().required(),
+});
+
 module.exports = {
   loginUser,
   createUser,
+  createPost,
 };

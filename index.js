@@ -16,6 +16,9 @@ app.get('/user', middlewares.validateJWT, controllers.getAllUsers);
 app.get('/user/:id', middlewares.validateJWT, controllers.getUserById);
 app.delete('/user/me', middlewares.validateJWT, controllers.deleteUserById);
 
+app.post('/post', middlewares.validateJWT, controllers.createPost);
+app.get('/post', middlewares.validateJWT, controllers.getAllPosts);
+
 app.use(middlewares.promiseErrors);
 
 app.all('*', middlewares.endpointNotFound);
