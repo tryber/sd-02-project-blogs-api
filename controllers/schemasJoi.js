@@ -12,7 +12,7 @@ const createUser = Joi.object({
   image: Joi.string(),
 });
 
-const createPost = Joi.object({
+const createOrUpdatePost = Joi.object({
   title: Joi.string().required(),
   content: Joi.string().required(),
 });
@@ -20,5 +20,5 @@ const createPost = Joi.object({
 module.exports = {
   loginUser,
   createUser,
-  createPost,
+  createOrUpdatePost,
 };

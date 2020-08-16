@@ -99,44 +99,143 @@ describe('userController tests', () => {
     });
   });
 
-  describe.skip('Get User By Id', () => {
+  describe('Update Post By Id', () => {
+    test('If pass invalid requisition, return a Joi message and status 400', async () => {
+      const mockBodyData = { content: 'Blog post text here' };
+      const userData = {
+        id: 1, displayName: 'Johnatas Henrique', email: 'johnatas.henrique@gmail.com', image: null,
+      };
+      const mockReq = { body: mockBodyData, user: userData };
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const mockNext = jest.fn();
+      const mockJoiAnswer = { code: 'bad_request', error: true, message: '"title" is required' };
+
+      await postController.updatePostById(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toBeCalledWith(mockJoiAnswer);
+      expect(mockNext).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).not.toHaveBeenCalled();
+      expect(mockJson).not.toHaveBeenCalled();
+    });
+
+    test('If pass valid info but is not author, return message and status 403', async () => {
+      const mockBodyData = { title: 'Latest updates, August 14th', content: 'Blog post text here' };
+      const userData = {
+        id: 1, displayName: 'Johnatas Henrique', email: 'johnatas.henrique@gmail.com', image: null,
+      };
+      const mockReq = { body: mockBodyData, user: userData, params: { id: 4 } };
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const mockNext = jest.fn();
+      const mockSequelize = null;
+      const updatePostByIdSpy = jest.spyOn(Post, 'findOne').mockReturnValueOnce(mockSequelize);
+      const mockServiceAnswer = { error: true, message: 'Usuário não autorizado', code: 'unauthorized' };
+
+      await postController.updatePostById(mockReq, mockRes, mockNext);
+
+      expect(updatePostByIdSpy).toBeCalledTimes(1);
+      expect(updatePostByIdSpy).toBeCalledWith({ where: { id: 4, userId: 1 } });
+      expect(mockNext).toBeCalledWith(mockServiceAnswer);
+      expect(mockNext).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).not.toHaveBeenCalled();
+      expect(mockJson).not.toHaveBeenCalled();
+
+      updatePostByIdSpy.mockRestore();
+    });
+
+    test('If pass valid credentials, return response and status 201', async () => {
+      const mockBodyData = { title: 'Latest updates', content: 'Blog post' };
+      const userData = {
+        id: 1,
+        displayName: 'Johnatas Henrique',
+        email: 'johnatas.henrique@gmail.com',
+        image: null,
+      };
+      const mockReq = { body: mockBodyData, user: userData, params: { id: 2 } };
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const mockNext = jest.fn();
+      const mockSequelize = {
+        content: 'Blog post',
+        title: 'Latest updates',
+        userId: 1,
+      };
+      const mockUpdateSequelize = {
+        content: 'Blog post',
+        title: 'Latest updates',
+      };
+      const findPostByIdSpy = jest.spyOn(Post, 'findOne')
+        .mockReturnValueOnce(mockSequelize);
+      const updatePostByIdSpy = jest.spyOn(Post, 'update')
+        .mockReturnValueOnce(mockUpdateSequelize);
+
+      await postController.updatePostById(mockReq, mockRes, mockNext);
+
+      expect(findPostByIdSpy).toBeCalledTimes(1);
+      expect(findPostByIdSpy).toBeCalledWith({ where: { id: 2, userId: 1 } });
+      expect(updatePostByIdSpy).toBeCalledTimes(1);
+      expect(updatePostByIdSpy).toBeCalledWith(
+        mockUpdateSequelize,
+        { where: { id: 2 } },
+      );
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJson).toBeCalledWith(mockSequelize);
+
+      findPostByIdSpy.mockRestore();
+      updatePostByIdSpy.mockRestore();
+    });
+  });
+
+  describe('Get Post By Id', () => {
     test('If service does not find any info, return a message', async () => {
       const mockReq = { params: { id: 100 } };
       const mockJson = jest.fn();
       const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
       const mockNext = jest.fn();
-      const serviceAnswer = { code: 'not_found', error: true, message: 'Usuário não existe' };
-      const getUserByIdSpy = jest.spyOn(User, 'findByPk').mockReturnValueOnce(null);
+      const serviceAnswer = { error: true, message: 'Post não existe', code: 'not_found' };
+      const getPostByIdSpy = jest.spyOn(Post, 'findOne').mockReturnValueOnce(null);
 
-      await userController.getUserById(mockReq, mockRes, mockNext);
+      await postController.getPostById(mockReq, mockRes, mockNext);
 
       expect(mockNext).toBeCalledWith(serviceAnswer);
       expect(mockNext).toHaveBeenCalledTimes(1);
       expect(mockRes.status).not.toHaveBeenCalled();
       expect(mockJson).not.toHaveBeenCalled();
 
-      getUserByIdSpy.mockRestore();
+      getPostByIdSpy.mockRestore();
     });
 
-    test('If req.params.id is a valid user, return user info and status 200', async () => {
-      const mockReq = { params: { id: 2 } };
+    test('If req.params.id is a valid post, return post info and status 200', async () => {
+      const mockReq = { params: { id: 3 } };
       const mockJson = jest.fn();
       const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
       const mockNext = jest.fn();
-      const userData = {
-        id: 2, displayName: 'Johnatas Henrique', email: 'johnatas.henrique@gmail.com', image: null,
+      const postData = {
+        id: 3,
+        title: '16 de Agosto',
+        content: 'GET TEST #001',
+        published: '2020-08-16T20:14:42.000Z',
+        updated: '2020-08-16T21:11:08.000Z',
+        user: {
+          id: 2,
+          displayName: 'Johnatas Henrique',
+          email: 'johnatas.henrique@gmail.com',
+          password: '524288',
+          image: null,
+        },
       };
-      const mockSequelize = { dataValues: userData };
-      const getUserByIdSpy = jest.spyOn(User, 'findByPk').mockReturnValueOnce(mockSequelize);
+      const mockSequelize = { dataValues: postData };
+      const getPostByIdSpy = jest.spyOn(Post, 'findOne').mockReturnValueOnce(mockSequelize);
 
-      await userController.getUserById(mockReq, mockRes, mockNext);
+      await postController.getPostById(mockReq, mockRes, mockNext);
 
-      expect(getUserByIdSpy).toBeCalledTimes(1);
+      expect(getPostByIdSpy).toBeCalledTimes(1);
       expect(mockRes.status).toBeCalledWith(200);
       expect(mockJson).toBeCalledWith(mockSequelize);
       expect(mockNext).not.toHaveBeenCalled();
 
-      getUserByIdSpy.mockRestore();
+      getPostByIdSpy.mockRestore();
     });
   });
 
