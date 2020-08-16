@@ -1,30 +1,6 @@
 const { User } = require('../models');
 const usersController = require('./usersController');
-
-const createSpy = (func, method, value) => jest
-  .spyOn(func, method)
-  .mockReturnValueOnce(value);
-
-const createSpyError = (func, method) => jest
-  .spyOn(func, method)
-  .mockImplementation(() => {
-    throw new Error();
-  });
-
-const allUsersMock = [
-  {
-    id: 1,
-    displayName: 'Brett Wiltshire',
-    email: 'brett@email.com',
-    image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
-  },
-  {
-    id: 2,
-    displayName: 'Pedro Henrique',
-    email: 'pedro@gmail.com',
-    image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/pedro.png',
-  },
-];
+const { createSpy, createSpyError, allUsersMock } = require('./utils/mockData');
 
 const mockReckCreateUser = {
   body: {

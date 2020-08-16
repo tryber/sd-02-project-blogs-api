@@ -1,4 +1,4 @@
-const { checkFields } = require('./checkFields');
+const checkFields = require('./checkFields');
 
 describe('Testing checkFields', () => {
   test('Test checkName', () => {

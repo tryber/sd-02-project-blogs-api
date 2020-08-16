@@ -1,18 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const authenticatorController = require('./authenticatorController');
-
-const mockUser = [{
-  id: 1,
-  password: '123456',
-  displayName: 'Brett Wiltshire',
-  email: 'brett@email.com',
-  image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
-}];
-
-const createSpy = (func, method, value) => jest
-  .spyOn(func, method)
-  .mockReturnValueOnce(value);
+const { mockUser, createSpy } = require('./utils/mockData');
 
 const mockRightReq = {
   body: {
