@@ -111,4 +111,66 @@ describe('Post Controller test', () => {
       updatePostSpy.mockRestore();
     });
   });
+
+  describe('Deleting a post', () => {
+    test('Wrong post Id', async () => {
+      const findPostSpy = createSpy(Post, 'findByPk', undefined);
+
+      const mockReq = { params: { id: 1 }, user: [{ id: 2 }] };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.deletePost(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'not_found', message: 'Post not found' });
+
+      findPostSpy.mockRestore();
+    });
+
+    test('Not alloewd user', async () => {
+      const findPostSpy = createSpy(Post, 'findByPk', { user_id: 1 });
+
+      const mockReq = { params: { id: 1 }, user: [{ id: 2 }] };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.deletePost(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'access_denied', message: 'User not allowed' });
+
+      findPostSpy.mockRestore();
+    });
+
+    test('Try catch error', async () => {
+      const findPostSpy = createSpyError(Post, 'findByPk', { user_id: 1 });
+
+      const mockReq = { params: { id: 1 }, user: [{ id: 2 }] };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.deletePost(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'something_wrong', message: 'Something went wrong' });
+
+      findPostSpy.mockRestore();
+    });
+
+    test('Post deleted', async () => {
+      const findPostSpy = createSpy(Post, 'findByPk', { user_id: 3 });
+      const deletePostSpy = createSpy(Post, 'destroy');
+
+      const mockReq = { params: { id: 1 }, user: [{ id: 3 }] };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.deletePost(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(deletePostSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockRes.json).toBeCalledWith({ message: 'Post deleted' });
+
+      findPostSpy.mockRestore();
+      deletePostSpy.mockRestore();
+    });
+  });
 });

@@ -12,4 +12,8 @@ router
   .route('/:id')
   .put(authenticatorController.authUser, postsController.updatePost);
 
+router
+  .route('/:id')
+  .delete(authenticatorController.authUser, postsController.deletePost);
+
 module.exports = router;

@@ -37,7 +37,25 @@ const updatePost = async (req, res, next) => {
   }
 };
 
+const deletePost = async (req, res, next) => {
+  const { id } = req.params;
+  const { id: userReqId } = req.user[0];
+  try {
+    const post = await Post.findByPk(id);
+    if (!post) return next({ code: 'not_found', message: 'Post not found' });
+    const { user_id: userId } = post;
+    if (userId !== userReqId) return next({ code: 'access_denied', message: 'User not allowed' });
+    await Post.destroy({ where: { id } });
+    res.status(200);
+    res.json({ message: 'Post deleted' });
+    return res;
+  } catch (error) {
+    next({ code: 'something_wrong', message: 'Something went wrong' });
+  }
+};
+
 module.exports = {
   postPost,
   updatePost,
+  deletePost,
 };
