@@ -7,7 +7,7 @@ const { jwtSecret } = process.env;
 const validateJWT = rescue(async (req, _res, next) => {
   const token = req.headers.authorization;
   if (!token) {
-    next({ error: true, message: 'Token não encontrado', code: 'unauthorized' });
+    return next({ error: true, message: 'Token não encontrado', code: 'unauthorized' });
   }
   try {
     const decoded = jwt.verify(token, jwtSecret);
