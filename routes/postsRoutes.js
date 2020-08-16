@@ -13,6 +13,10 @@ router
   .get(postsController.getAllPosts);
 
 router
+  .route('/search?:q')
+  .get(postsController.getByText);
+
+router
   .route('/:id')
   .get(postsController.getPost);
 

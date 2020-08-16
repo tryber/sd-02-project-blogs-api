@@ -274,4 +274,47 @@ describe('Post Controller test', () => {
       findPostSpy.mockRestore();
     });
   });
+
+  describe('Search text', () => {
+    test('try and catch error', async () => {
+      const findPostSpy = createSpyError(Post, 'findAll');
+
+      const mockReq = { query: { q: 'Hello World' } };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.getByText(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'something_wrong', message: 'Something went wrong' });
+      findPostSpy.mockRestore();
+    });
+
+    test('No post found', async () => {
+      const findPostSpy = createSpy(Post, 'findAll', []);
+
+      const mockReq = { query: { q: 'Hello World' } };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.getByText(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockRes.json).toBeCalledWith([]);
+      findPostSpy.mockRestore();
+    });
+
+    test('Post result query', async () => {
+      const findPostSpy = createSpy(Post, 'findAll', mockPosts);
+
+      const mockReq = { query: { q: 'Hello World' } };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.getByText(mockReq, mockRes, mockNext);
+
+      expect(findPostSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockRes.json).toBeCalledWith(mockPosts);
+      findPostSpy.mockRestore();
+    });
+  });
 });

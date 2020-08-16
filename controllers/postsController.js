@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Post, User } = require('../models');
 
 const postPost = async (req, res, next) => {
@@ -92,10 +93,36 @@ const getPost = async (req, res, next) => {
   }
 };
 
+const getByText = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    const posts = await Post.findAll({
+      where: {
+        [Op.or]: [
+          { title: { [Op.like]: `%${q}%` } },
+          { content: { [Op.like]: `%${q}%` } },
+        ],
+      },
+      include: {
+        model: User,
+        as: 'user',
+        attributes: {
+          exclude: ['password'],
+        },
+      },
+    });
+    res.status(200);
+    res.json(posts);
+  } catch (error) {
+    next({ code: 'something_wrong', message: 'Something went wrong' });
+  }
+};
+
 module.exports = {
   postPost,
   updatePost,
   deletePost,
   getAllPosts,
   getPost,
+  getByText,
 };
