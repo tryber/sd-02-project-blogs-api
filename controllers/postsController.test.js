@@ -23,6 +23,37 @@ const mockRightReq = {
   user: [{ id: 1 }],
 };
 
+const mockPosts = [
+  {
+    id: 2,
+    content: 'The whole text for the blog post goes here in this key',
+    title: 'Latest updates, August 1st',
+    published: '2015-01-01T10:10:10.000Z',
+    updated: '2015-01-01T10:10:10.000Z',
+    user_id: 1,
+    user: {
+      id: 1,
+      displayName: 'Brett Wiltshire',
+      email: 'brett@email.com',
+      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+    },
+  },
+  {
+    id: 3,
+    content: 'The whole text for the blog post goes here in this key',
+    title: 'Latest updates, August 2st',
+    published: '2020-08-15T23:47:55.000Z',
+    updated: '2020-08-16T02:08:19.000Z',
+    user_id: 2,
+    user: {
+      id: 2,
+      displayName: 'Pedro Henrique',
+      email: 'pedro@gmail.com',
+      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/pedro.png'
+    },
+  },
+];
+
 describe('Post Controller test', () => {
   describe('Post a post', () => {
     test('Missing fields', async () => {
@@ -171,6 +202,34 @@ describe('Post Controller test', () => {
 
       findPostSpy.mockRestore();
       deletePostSpy.mockRestore();
+    });
+  });
+
+  describe('Getting all posts', () => {
+    test('Try and catch error', async () => {
+      const findAllPostSpy = createSpyError(Post, 'findAll');
+
+      const mockReq = {};
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.getAllPosts(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toBeCalledWith({ code: 'something_wrong', message: 'Something went wrong' });
+      findAllPostSpy.mockRestore();
+    });
+
+    test('Try and catch error', async () => {
+      const findAllPostSpy = createSpy(Post, 'findAll', mockPosts);
+
+      const mockReq = {};
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.getAllPosts(mockReq, mockRes, mockNext);
+
+      expect(findAllPostSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockRes.json).toBeCalledWith(mockPosts);
+      findAllPostSpy.mockRestore();
     });
   });
 });

@@ -9,6 +9,10 @@ router
   .post(authenticatorController.authUser, postsController.postPost);
 
 router
+  .route('/')
+  .get(postsController.getAllPosts);
+
+router
   .route('/:id')
   .put(authenticatorController.authUser, postsController.updatePost);
 

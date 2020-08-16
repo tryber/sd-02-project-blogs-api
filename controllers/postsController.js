@@ -1,4 +1,4 @@
-const { Post } = require('../models');
+const { Post, User } = require('../models');
 
 const postPost = async (req, res, next) => {
   const { title, content } = req.body;
@@ -54,8 +54,27 @@ const deletePost = async (req, res, next) => {
   }
 };
 
+const getAllPosts = async (_req, res, next) => {
+  try {
+    const posts = await Post.findAll({
+      include: {
+        model: User,
+        as: 'user',
+        attributes: {
+          exclude: ['password'],
+        },
+      },
+    });
+    res.status(200);
+    res.json(posts);
+  } catch (error) {
+    next({ code: 'something_wrong', message: 'Something went wrong' });
+  }
+};
+
 module.exports = {
   postPost,
   updatePost,
   deletePost,
+  getAllPosts,
 };
