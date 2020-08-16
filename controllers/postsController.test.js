@@ -18,6 +18,7 @@ const body = {
 
 const mockRightReq = {
   body,
+  params: { id: 1 },
   headers: { authorization: 'token' },
   user: [{ id: 1 }],
 };
@@ -58,6 +59,56 @@ describe('Post Controller test', () => {
       expect(mockNext).toBeCalledWith({ code: 'something_wrong', message: 'Something went wrong' });
 
       createPostSpy.mockRestore();
+    });
+  });
+
+  describe('update a post', () => {
+    test('Missing fields', async () => {
+      const mockReq = { body: {}, params: {} };
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.updatePost(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toBeCalledWith({ code: 'unauthorized', message: 'Missing fields' });
+    });
+
+    test('Try and catch error', async () => {
+      const updatePostSpy = createSpyError(Post, 'update');
+
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.updatePost(mockRightReq, mockRes, mockNext);
+
+      expect(updatePostSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'something_wrong', message: 'Something went wrong' });
+
+      updatePostSpy.mockRestore();
+    });
+
+    test('Update not succefull', async () => {
+      const updatePostSpy = createSpy(Post, 'update', [false]);
+
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.updatePost(mockRightReq, mockRes, mockNext);
+
+      expect(updatePostSpy).toBeCalledTimes(1);
+      expect(mockNext).toBeCalledWith({ code: 'access_denied', message: 'Not allowed' });
+
+      updatePostSpy.mockRestore();
+    });
+
+    test('Update succefull', async () => {
+      const updatePostSpy = createSpy(Post, 'update', [true]);
+
+      const mockRes = { status: jest.fn(), json: jest.fn() };
+      const mockNext = jest.fn();
+      await postsController.updatePost(mockRightReq, mockRes, mockNext);
+
+      expect(updatePostSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockRes.json).toBeCalledWith({ message: 'Post updated' });
+      updatePostSpy.mockRestore();
     });
   });
 });
