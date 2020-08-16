@@ -1,14 +1,17 @@
-const checkName = (name) => (name.length > 7);
+const nameOk = (name) => (name.length > 7);
 
-const checkPassword = (numb) => numb.length === 6;
+const passOk = (numb) => numb.length === 6;
 
-const checkEmail = (email) => {
+const emailOk = (email) => {
   const regex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.?$/;
   return regex.test(email);
 };
 
+const checkFields = (email, pass, name) => passOk(pass) && nameOk(name) && emailOk(email);
+
 module.exports = {
-  checkName,
-  checkPassword,
-  checkEmail,
+  checkFields,
+  nameOk,
+  passOk,
+  emailOk,
 };

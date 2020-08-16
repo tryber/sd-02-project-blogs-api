@@ -1,5 +1,5 @@
 const { User } = require('../models');
-const { checkName, checkPassword, checkEmail } = require('./utils/checkFields');
+const { checkFields } = require('./utils/checkFields');
 
 const getUsers = async (req, res, next) => {
   try {
@@ -42,7 +42,7 @@ const postNewUser = async (req, res, next) => {
   if (!displayName || !email || !password || !image) {
     return next({ code: 'invalid_data', message: 'Missing fields' });
   }
-  if (!checkEmail(email) || !checkPassword(password) || !checkName(displayName)) {
+  if (!checkFields(email, password, displayName)) {
     return next({ code: 'invalid_data', message: 'Validation error' });
   }
   try {

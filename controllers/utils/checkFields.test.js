@@ -1,4 +1,4 @@
-const checkFields = require('./checkFields');
+const { checkFields } = require('./checkFields');
 
 describe('Testing checkFields', () => {
   test('Test checkName', () => {
@@ -6,9 +6,9 @@ describe('Testing checkFields', () => {
     const nameEight = 'Pedro123';
     const nameMoreEight = 'Pedro1234';
 
-    expect(checkFields.checkName(nameLessEight)).toBeFalsy();
-    expect(checkFields.checkName(nameEight)).toBeTruthy();
-    expect(checkFields.checkName(nameMoreEight)).toBeTruthy();
+    expect(checkFields.nameOk(nameLessEight)).toBeFalsy();
+    expect(checkFields.nameOk(nameEight)).toBeTruthy();
+    expect(checkFields.nameOk(nameMoreEight)).toBeTruthy();
   });
 
   test('Test checkName', () => {
@@ -16,9 +16,9 @@ describe('Testing checkFields', () => {
     const passSix = '123456';
     const passMoreSix = '1234567';
 
-    expect(checkFields.checkPassword(passLessSix)).toBeFalsy();
-    expect(checkFields.checkPassword(passSix)).toBeTruthy();
-    expect(checkFields.checkPassword(passMoreSix)).toBeFalsy();
+    expect(checkFields.passOk(passLessSix)).toBeFalsy();
+    expect(checkFields.passOk(passSix)).toBeTruthy();
+    expect(checkFields.passOk(passMoreSix)).toBeFalsy();
   });
 
   test('Test email', () => {
@@ -26,8 +26,8 @@ describe('Testing checkFields', () => {
     const withoutName = '@gmail';
     const complete = 'pedro@gmail.com';
 
-    expect(checkFields.checkEmail(withoutDomain)).toBeFalsy();
-    expect(checkFields.checkEmail(withoutName)).toBeFalsy();
-    expect(checkFields.checkEmail(complete)).toBeTruthy();
+    expect(checkFields.emailOk(withoutDomain)).toBeFalsy();
+    expect(checkFields.emailOk(withoutName)).toBeFalsy();
+    expect(checkFields.emailOk(complete)).toBeTruthy();
   });
 });
