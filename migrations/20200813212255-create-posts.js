@@ -5,10 +5,10 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const PostsTable = queryInterface.createTable("Posts", {
+    const PostsTable = queryInterface.createTable('Posts', {
       id: { allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER },
-      content: { allowNull: false, type: Sequelize.STRING, },
-      title: { allowNull: false, type: Sequelize.STRING, },
+      content: { allowNull: false, type: Sequelize.STRING },
+      title: { allowNull: false, type: Sequelize.STRING },
       user_id: {
         type: Sequelize.INTEGER,
         references: {
@@ -23,5 +23,5 @@ module.exports = {
     });
     return PostsTable;
   },
-  down: async (queryInterface) => queryInterface.dropTable("Users"),
+  down: async (queryInterface) => queryInterface.dropTable('Users'),
 };

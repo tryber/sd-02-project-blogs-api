@@ -1,8 +1,11 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+
 'use strict';
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const UsersTable = queryInterface.createTable("Users", {
+    const UsersTable = queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -28,9 +31,8 @@ module.exports = {
     });
 
     return UsersTable;
-
   },
 
-  down: async (queryInterface) => queryInterface.dropTable("Users"),
+  down: async (queryInterface) => queryInterface.dropTable('Users'),
 
 };
