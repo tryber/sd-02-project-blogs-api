@@ -41,11 +41,20 @@ const getPostById = rescue(async (req, res, next) => {
   return res.status(200).json(serviceAnswer);
 });
 
-const getPostByQuery = rescue(async (req, res, next) => {
+const getPostByQuery = rescue(async (req, res, _next) => {
   const { q: queryParam } = req.query;
   const serviceAnswer = await postService.getPostByQuery(queryParam);
-  if (serviceAnswer.error) return next(serviceAnswer);
+  // if (serviceAnswer.error) return next(serviceAnswer);
   return res.status(200).json(serviceAnswer);
+});
+
+const deletePostById = rescue(async (req, res, next) => {
+  const { id: postId } = req.params;
+  const { id: userId } = req.user;
+
+  const serviceAnswer = await postService.deletePostById(postId, userId);
+  if (serviceAnswer.error) return next(serviceAnswer);
+  return res.status(204).end();
 });
 
 module.exports = {
@@ -54,4 +63,5 @@ module.exports = {
   updatePostById,
   getPostById,
   getPostByQuery,
+  deletePostById,
 };

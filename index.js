@@ -21,6 +21,7 @@ app.get('/post', middlewares.validateJWT, controllers.getAllPosts);
 app.put('/post/:id', middlewares.validateJWT, controllers.updatePostById);
 app.get('/post/search', middlewares.validateJWT, controllers.getPostByQuery);
 app.get('/post/:id', middlewares.validateJWT, controllers.getPostById);
+app.delete('/post/:id', middlewares.validateJWT, controllers.deletePostById);
 
 app.use(middlewares.promiseErrors);
 

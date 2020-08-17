@@ -43,12 +43,20 @@ const getPostByQuery = async (query) => {
     attributes: { exclude: ['userId'] },
     include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
   });
-  if (!result) {
-    return {
-      error: true, message: 'Nenhum post foi encontrado', code: 'not_found',
-    };
-  }
+  if (!result) return [];
   return result;
+};
+
+const deletePostById = async (postId, userId) => {
+  const postExists = await Post.findOne({ where: { id: postId } });
+  if (!postExists) {
+    return { error: true, message: 'Post não existe', code: 'not_found' };
+  }
+  if (postExists.dataValues.userId !== userId) {
+    return { error: true, message: 'Usuário não autorizado', code: 'unauthorized' };
+  }
+  await Post.destroy({ where: { id: postId } });
+  return { postId, userId };
 };
 
 module.exports = {
@@ -57,4 +65,5 @@ module.exports = {
   updatePostById,
   getPostById,
   getPostByQuery,
+  deletePostById,
 };
