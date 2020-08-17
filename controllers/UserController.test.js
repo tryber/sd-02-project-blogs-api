@@ -161,4 +161,55 @@ describe('Testing User Controller', () => {
       UserServiceSpy.mockRestore();
     });
   });
+
+  describe('Testing GetUserById in GET METHOD', () => {
+    test('User doens\'t exist', async () => {
+      // Arrange
+      const errorMock = { error: { message: 'Usuário não encontrado', code: 'Not_found' } };
+      const mockJson = jest.fn();
+      const nextMock = jest.fn();
+      const mockReq = { params: '50' };
+      const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
+
+      const UserServiceSpy = jest
+        .spyOn(UserService, 'getUserById')
+        .mockImplementation(() => {
+          throw errorMock;
+        });
+      // Act
+      await errorController(errorMock, null, mockRes, nextMock);
+      await UserController.getUserById(mockReq, mockRes, nextMock);
+      // Assert
+      expect(UserServiceSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(404);
+      expect(nextMock).toBeCalledWith(errorMock);
+
+      UserServiceSpy.mockRestore();
+    });
+
+    test('User return', async () => {
+      // Arrange
+      const dataValuesMock = {
+        id: '2',
+        displayName: 'Felipe Lima',
+        email: 'lipe@lipe.com',
+        image: '',
+      };
+      const mockReq = { params: '2' };
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
+
+      const UserServiceSpy = jest
+        .spyOn(UserService, 'getUserById')
+        .mockImplementation(() => dataValuesMock);
+      // Act
+      await UserController.getUserById(mockReq, mockRes);
+      // Assert
+      expect(UserServiceSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJson).toBeCalledWith(dataValuesMock);
+
+      UserServiceSpy.mockRestore();
+    });
+  });
 });

@@ -1,5 +1,6 @@
 const endPointError = async (req, res) => {
-  res.status(404).json({ error: { message: 'Endpoint not found', code: 'Not_found' } });
+  const error = { error: { message: 'Endpoint not found', code: 'Not_found' } };
+  res.status(404).json(error);
 };
 
 module.exports = endPointError;

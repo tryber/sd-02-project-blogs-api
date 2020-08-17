@@ -19,18 +19,18 @@ const generateToken = (userInfo) => {
 const loginJwt = async (req, _res, next) => {
   const { authorization: token } = req.headers;
   if (!token) {
-    const err = { error: { message: 'Token not found', code: 'Invalid_data' } };
+    const err = { error: { message: 'Token não encontrado', code: 'Unauthorized' } };
     next(err);
   }
   try {
     const validToken = jwt.verify(token, secret);
-    const { data: { _id } } = validToken;
-    const userExist = await User.findById(_id);
-    if (!userExist) {
-      const err = { error: { message: 'User does not exist', code: 'Invalid_data' } };
-      next(err);
+    const { data: { id: idUser, password } } = validToken;
+    const userExist = await User.findOne({ where: { id: idUser } });
+    if (!userExist || userExist.dataValues.password !== password) {
+      const err = { error: { message: 'Usuário não existe', code: 'Unauthorized' } };
+      return next(err);
     }
-    const { password, ...noPass } = userExist;
+    const { password: _, ...noPass } = userExist;
     req.user = noPass;
     return next();
   } catch (err) {

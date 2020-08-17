@@ -26,7 +26,18 @@ const getAllUsers = async () => {
   return modelAnswer;
 };
 
+const getUserById = async (id) => {
+  const modelAnswer = await User
+    .findOne({ where: { id }, attributes: { exclude: ['password'] } });
+  if (!modelAnswer) {
+    const error = { error: { message: 'Usuário não encontrado', code: 'Not_found' } };
+    throw error;
+  }
+  return modelAnswer;
+};
+
 module.exports = {
   newUser,
   getAllUsers,
+  getUserById,
 };
