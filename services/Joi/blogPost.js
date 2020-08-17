@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi');
 
-const blog_post = Joi.object({
+const blogPost = Joi.object({
   title: Joi.string().messages({
     'string.base': 'Title must be a type of string',
     'string.empty': 'Title is not allowed to be empty',
@@ -11,4 +11,4 @@ const blog_post = Joi.object({
   }),
 });
 
-module.exports = blog_post;
+module.exports = blogPost;
