@@ -1,8 +1,6 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
 
-'use strict';
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const UsersTable = queryInterface.createTable('Users', {
