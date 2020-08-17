@@ -41,9 +41,17 @@ const getPostById = rescue(async (req, res, next) => {
   return res.status(200).json(serviceAnswer);
 });
 
+const getPostByQuery = rescue(async (req, res, next) => {
+  const { q: queryParam } = req.query;
+  const serviceAnswer = await postService.getPostByQuery(queryParam);
+  if (serviceAnswer.error) return next(serviceAnswer);
+  return res.status(200).json(serviceAnswer);
+});
+
 module.exports = {
   createPost,
   getAllPosts,
   updatePostById,
   getPostById,
+  getPostByQuery,
 };

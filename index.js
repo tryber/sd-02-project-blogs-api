@@ -19,6 +19,7 @@ app.delete('/user/me', middlewares.validateJWT, controllers.deleteUserById);
 app.post('/post', middlewares.validateJWT, controllers.createPost);
 app.get('/post', middlewares.validateJWT, controllers.getAllPosts);
 app.put('/post/:id', middlewares.validateJWT, controllers.updatePostById);
+app.get('/post/search', middlewares.validateJWT, controllers.getPostByQuery);
 app.get('/post/:id', middlewares.validateJWT, controllers.getPostById);
 
 app.use(middlewares.promiseErrors);

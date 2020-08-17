@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Post, User } = require('../models');
 
 const createPost = async ({ title, content }, userId) => {
@@ -5,9 +6,10 @@ const createPost = async ({ title, content }, userId) => {
   return { title, content, userId };
 };
 
-const getAllPosts = async () => Post.findAll(
-  { attributes: { exclude: ['userId'] }, include: [{ model: User, as: 'user' }] },
-);
+const getAllPosts = async () => Post.findAll({
+  attributes: { exclude: ['userId'] },
+  include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
+});
 
 const updatePostById = async ({ title, content }, postId, userId) => {
   const isAuthor = await Post.findOne({ where: { id: postId, userId } });
@@ -25,9 +27,27 @@ const getPostById = async (id) => {
   const result = await Post.findOne({
     where: { id },
     attributes: { exclude: ['userId'] },
-    include: [{ model: User, as: 'user' }],
+    include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
   });
   if (!result) return { error: true, message: 'Post não existe', code: 'not_found' };
+  return result;
+};
+
+const getPostByQuery = async (query) => {
+  const result = await Post.findAll({
+    where: {
+      [Op.or]: [
+        { title: { [Op.like]: `%${query}%` } }, { content: { [Op.like]: `%${query}%` } },
+      ],
+    },
+    attributes: { exclude: ['userId'] },
+    include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
+  });
+  if (!result) {
+    return {
+      error: true, message: 'Nenhum post foi encontrado', code: 'not_found',
+    };
+  }
   return result;
 };
 
@@ -36,4 +56,5 @@ module.exports = {
   getAllPosts,
   updatePostById,
   getPostById,
+  getPostByQuery,
 };

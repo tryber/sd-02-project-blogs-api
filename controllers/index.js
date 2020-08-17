@@ -11,6 +11,7 @@ const {
   getAllPosts,
   updatePostById,
   getPostById,
+  getPostByQuery,
 } = require('./postController');
 
 module.exports = {
@@ -23,4 +24,5 @@ module.exports = {
   getAllPosts,
   updatePostById,
   getPostById,
+  getPostByQuery,
 };

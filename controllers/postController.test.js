@@ -61,7 +61,7 @@ describe('userController tests', () => {
           published: '2011-08-01T19:58:00.000Z',
           updated: '2011-08-01T19:58:51.000Z',
           user: {
-            id: 1, displayName: 'Brett Wiltshire', email: 'brett@email.com', password: '123456', image: null,
+            id: 1, displayName: 'Brett Wiltshire', email: 'brett@email.com', image: null,
           },
         },
         {
@@ -71,7 +71,7 @@ describe('userController tests', () => {
           published: '2020-08-15T05:36:59.000Z',
           updated: '2020-08-15T05:36:59.000Z',
           user: {
-            id: 1, displayName: 'Brett Wiltshire', email: 'brett@email.com', password: '123456', image: null,
+            id: 1, displayName: 'Brett Wiltshire', email: 'brett@email.com', image: null,
           },
         },
         {
@@ -81,7 +81,7 @@ describe('userController tests', () => {
           published: '2020-08-15T05:45:51.000Z',
           updated: '2020-08-15T05:45:51.000Z',
           user: {
-            id: 1, displayName: 'Brett Wiltshire', email: 'brett@email.com', password: '123456', image: null,
+            id: 1, displayName: 'Brett Wiltshire', email: 'brett@email.com', image: null,
           },
         },
       ];
@@ -147,38 +147,23 @@ describe('userController tests', () => {
     test('If pass valid credentials, return response and status 201', async () => {
       const mockBodyData = { title: 'Latest updates', content: 'Blog post' };
       const userData = {
-        id: 1,
-        displayName: 'Johnatas Henrique',
-        email: 'johnatas.henrique@gmail.com',
-        image: null,
+        id: 1, displayName: 'Johnatas Henrique', email: 'johnatas.henrique@gmail.com', image: null,
       };
       const mockReq = { body: mockBodyData, user: userData, params: { id: 2 } };
       const mockJson = jest.fn();
       const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
       const mockNext = jest.fn();
-      const mockSequelize = {
-        content: 'Blog post',
-        title: 'Latest updates',
-        userId: 1,
-      };
-      const mockUpdateSequelize = {
-        content: 'Blog post',
-        title: 'Latest updates',
-      };
-      const findPostByIdSpy = jest.spyOn(Post, 'findOne')
-        .mockReturnValueOnce(mockSequelize);
-      const updatePostByIdSpy = jest.spyOn(Post, 'update')
-        .mockReturnValueOnce(mockUpdateSequelize);
+      const mockSequelize = { content: 'Blog post', title: 'Latest updates', userId: 1 };
+      const mockUpdateSequelize = { content: 'Blog post', title: 'Latest updates' };
+      const findPostByIdSpy = jest.spyOn(Post, 'findOne').mockReturnValueOnce(mockSequelize);
+      const updatePostByIdSpy = jest.spyOn(Post, 'update').mockReturnValueOnce(mockUpdateSequelize);
 
       await postController.updatePostById(mockReq, mockRes, mockNext);
 
       expect(findPostByIdSpy).toBeCalledTimes(1);
       expect(findPostByIdSpy).toBeCalledWith({ where: { id: 2, userId: 1 } });
       expect(updatePostByIdSpy).toBeCalledTimes(1);
-      expect(updatePostByIdSpy).toBeCalledWith(
-        mockUpdateSequelize,
-        { where: { id: 2 } },
-      );
+      expect(updatePostByIdSpy).toBeCalledWith(mockUpdateSequelize, { where: { id: 2 } });
       expect(mockRes.status).toBeCalledWith(200);
       expect(mockJson).toBeCalledWith(mockSequelize);
 
@@ -218,11 +203,7 @@ describe('userController tests', () => {
         published: '2020-08-16T20:14:42.000Z',
         updated: '2020-08-16T21:11:08.000Z',
         user: {
-          id: 2,
-          displayName: 'Johnatas Henrique',
-          email: 'johnatas.henrique@gmail.com',
-          password: '524288',
-          image: null,
+          id: 2, displayName: 'Johnatas Henrique', email: 'johnatas.henrique@gmail.com', image: null,
         },
       };
       const mockSequelize = { dataValues: postData };
@@ -236,6 +217,66 @@ describe('userController tests', () => {
       expect(mockNext).not.toHaveBeenCalled();
 
       getPostByIdSpy.mockRestore();
+    });
+  });
+
+  describe('Get Post By Query', () => {
+    test('If service does not find any info, return a message', async () => {
+      const mockReq = { query: { q: 'something_that_could_not_be_found_in_the_database' } };
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const mockNext = jest.fn();
+      const serviceAnswer = { error: true, message: 'Nenhum post foi encontrado', code: 'not_found' };
+      const getPostByQuery = jest.spyOn(Post, 'findAll').mockReturnValueOnce(null);
+
+      await postController.getPostByQuery(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toBeCalledWith(serviceAnswer);
+      expect(mockNext).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).not.toHaveBeenCalled();
+      expect(mockJson).not.toHaveBeenCalled();
+
+      getPostByQuery.mockRestore();
+    });
+
+    test('If req.params.id is a valid post, return post info and status 200', async () => {
+      const mockReq = { query: { q: 'test' } };
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const mockNext = jest.fn();
+      const postData = [
+        {
+          id: 1,
+          title: 'Latest updates',
+          content: 'blog text',
+          published: '2011-08-01T19:58:00.000Z',
+          updated: '2011-08-01T19:58:51.000Z',
+          user: {
+            id: 2, displayName: 'Johnatas Henrique', email: 'johnatas.henrique@gmail.com', image: null,
+          },
+        },
+        {
+          id: 1,
+          title: 'Último update, 16 de Agosto em PT-BR',
+          content: 'PUT TEST #002',
+          published: '2020-08-16T20:14:42.000Z',
+          updated: '2020-08-16T21:11:08.000Z',
+          user: {
+            id: 2, displayName: 'Johnatas Henrique', email: 'johnatas.henrique@gmail.com', image: null,
+          },
+        },
+      ];
+      const mockSequelize = { dataValues: postData };
+      const getPostByQuerySpy = jest.spyOn(Post, 'findAll').mockReturnValueOnce(mockSequelize);
+
+      await postController.getPostByQuery(mockReq, mockRes, mockNext);
+
+      expect(getPostByQuerySpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJson).toBeCalledWith(mockSequelize);
+      expect(mockNext).not.toHaveBeenCalled();
+
+      getPostByQuerySpy.mockRestore();
     });
   });
 
