@@ -12,6 +12,7 @@
     "sequelize": "^6.3.4"
   },
   "scripts": {
+    "test-coverage": "jest --collectCoverage",
     "debug": "nodemon index.js",
     "start": "node index.js",
     "test": "jest",

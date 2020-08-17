@@ -1,28 +1,37 @@
 const userController = require('./UserController');
-const userService = require('../services/UserService');
+const errorController = require('./errorController');
 
 describe('Testing User Controller', () => {
-  describe('Testing New User in POST Method.', async () => {
-    test('Verify if invalid body catch\'s error.', async () => {
+  describe('Testing New User in POST Method.', () => {
+    test('Verify if rescue catch\'s invalid body with JoI.', async () => {
       // Arrange
       const errorMock = {
         error: {
-          message: 'Dados inválidos',
+          message: '\"displayName\" length must be at least 8 characters long',
           code: 'Invalid_data',
         },
       };
 
       const mockReq = {
-        name: 'Felipe',
-        email: 'lipe@.lipe.com',
-        password: '123456',
+        body: {
+          displayName: 'Felipe',
+          email: 'lipe@lipe.com',
+          password: '123456789',
+        },
       };
 
-      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: jest.fn() })};
+      const nextMock = jest.fn();
+      const mockJson = jest.fn();
+
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
 
       // Act
-      await userController.
+      await errorController(errorMock, null, mockRes);
+      await userController.newUser(mockReq, mockRes, nextMock);
+
       // Assert
+      expect(nextMock).toBeCalledWith(errorMock);
+      expect(mockRes.status).toBeCalledWith(422);
     });
   });
 });

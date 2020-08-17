@@ -6,7 +6,7 @@ const statusByCode = {
   'entity.parse.failed': 400,
 };
 
-const errorController = async (err, req, res, _next) => {
+const errorController = async (err, _req, res, _next) => {
   if (err.error) return res.status(statusByCode[err.error.code] || 500).json(err);
   if (err.type && statusByCode[err.type]) {
     return res.status(err.statusCode)
