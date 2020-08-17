@@ -33,5 +33,7 @@ describe('Testing User Controller', () => {
       expect(nextMock).toBeCalledWith(errorMock);
       expect(mockRes.status).toBeCalledWith(422);
     });
+
+    test();
   });
 });
