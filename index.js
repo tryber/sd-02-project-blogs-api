@@ -2,6 +2,7 @@ const express = require('express');
 
 const app = express();
 
+const confirmUser = require('./middlewares/confirmUser');
 const { user, blog } = require('./controller');
 const errorMid = require('./middlewares/errorMid');
 const authMiddleware = require('./middlewares/auth');
@@ -15,10 +16,12 @@ app.get('/user', authMiddleware, user.getUsers);
 
 app.post('/login', user.login);
 
+app.get('/post/search', blog.getForText);
 app.get('/post/:id', blog.getOnePost);
-app.put('/post/:id', authMiddleware, blog.putPost);
+app.put('/post/:id', authMiddleware, confirmUser, blog.putPost);
 app.post('/post', authMiddleware, blog.createPost);
 app.get('/post', blog.getAllPosts);
+app.delete('/post/:id', authMiddleware, confirmUser, blog.deletePost);
 
 app.use(errorMid);
 

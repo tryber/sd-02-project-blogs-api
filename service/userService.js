@@ -1,8 +1,8 @@
 const { Users } = require('../models');
 const { createToken } = require('../utils/jwt');
 
-const findBy = async (param, camps) => Users
-  .findOne({ where: { ...param }, attributes: { exclude: [...camps] } });
+const findBy = async (param, camps) =>
+  Users.findOne({ where: { ...param }, attributes: { exclude: [...camps] } });
 
 const postUser = async ({ displayName, email, password, image }) => {
   const data = await findBy({ email }, []);
