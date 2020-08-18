@@ -12,7 +12,11 @@ app.post('/user', user.postUser);
 app.get('/user/:id', authMiddleware, user.getUser);
 app.delete('/user/me', authMiddleware, user.deleteUser);
 app.get('/user', authMiddleware, user.getUsers);
+
 app.post('/login', user.login);
+
+app.get('/post/:id', blog.getOnePost);
+app.put('/post/:id', authMiddleware, blog.putPost);
 app.post('/post', authMiddleware, blog.createPost);
 app.get('/post', blog.getAllPosts);
 
