@@ -1,7 +1,7 @@
 const blogController = require('./blog');
 const { BlogPosts } = require('../models');
 
-describe('test user Controller getAllblogPosts', () => {
+describe('test blog Controller getAllblogPosts', () => {
   describe('success cases', () => {
     it('test correct return', async () => {
       const mockData = [
@@ -17,9 +17,10 @@ describe('test user Controller getAllblogPosts', () => {
               id: 1,
               displayName: 'Brett Wiltshire',
               email: 'brett@email.com',
-              image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+              image:
+                'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
             },
-          }
+          },
         },
         {
           dataValues: {
@@ -33,15 +34,14 @@ describe('test user Controller getAllblogPosts', () => {
               id: 1,
               displayName: 'Brett Wiltshire',
               email: 'brett@email.com',
-              image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+              image:
+                'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
             },
           },
         },
       ];
 
-      const getPosts = jest
-        .spyOn(BlogPosts, 'findAll')
-        .mockReturnValueOnce(mockData);
+      const getPosts = jest.spyOn(BlogPosts, 'findAll').mockReturnValueOnce(mockData);
 
       const mockJson = jest.fn();
       const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
@@ -58,9 +58,7 @@ describe('test user Controller getAllblogPosts', () => {
     });
   });
   it('test return null value', async () => {
-    const getPosts = jest
-      .spyOn(BlogPosts, 'findAll')
-      .mockReturnValueOnce(null);
+    const getPosts = jest.spyOn(BlogPosts, 'findAll').mockReturnValueOnce(null);
 
     const mockJson = jest.fn();
     const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };

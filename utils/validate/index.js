@@ -1,7 +1,10 @@
 const Joi = require('@hapi/joi');
 
-const email = Joi.string().email()
-  .regex(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+const email = Joi.string()
+  .email()
+  .regex(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  )
   .messages({
     'any.required': 'Email is required',
     'string.base': 'Email must be a type of string',
@@ -22,9 +25,7 @@ const displayName = Joi.string()
       'Name must not contain any numbers, special characters or space in the start or in the end',
   });
 
-const password = Joi.string()
-  .pattern(new RegExp('^[a-zA-Z0-9]{6,}$'))
-  .required();
+const password = Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,}$')).required();
 
 const userSchema = Joi.object({
   email,
@@ -33,14 +34,10 @@ const userSchema = Joi.object({
 });
 
 const validate = async (schema, body) => {
-  try {
-    const { error } = await schema.validate(body, {
-      abortEarly: false,
-    });
-    return { error };
-  } catch (err) {
-    return { error: err };
-  }
+  const { error } = await schema.validate(body, {
+    abortEarly: false,
+  });
+  return { error };
 };
 
 module.exports = { userSchema, validate };
