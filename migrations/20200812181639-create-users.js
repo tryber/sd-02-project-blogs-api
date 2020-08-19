@@ -1,4 +1,5 @@
-'use strict';
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -7,28 +8,28 @@ module.exports = {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
       },
       displayName: {
         type: Sequelize.STRING,
-        allowNull: false  
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       image: {
         type: Sequelize.STRING,
-        allowNull: false
-      }
+        allowNull: false,
+      },
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface, _Sequelize) => {
     queryInterface.dropTable('Users');
-  }
+  },
 };
