@@ -13,8 +13,9 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "jest",
     "start:watch": "nodemon index.js",
+    "test": "jest",
+    "test-coverage": "jest --coverage --watchAll=false",
     "lint": "eslint ."
   },
   "devDependencies": {
