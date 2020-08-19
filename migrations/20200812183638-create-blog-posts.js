@@ -1,34 +1,14 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     queryInterface.createTable('BlogPosts', {
-      id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-      },
-      published: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      updated: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      content: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
+      id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, allowNull: false },
+      published: { type: Sequelize.DATE, allowNull: false },
+      updated: { type: Sequelize.DATE, allowNull: false },
+      title: { type: Sequelize.STRING, allowNull: false },
+      content: { type: Sequelize.STRING, allowNull: false },
       user_id: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Users',
-          key: 'id',
-        },
+        references: { model: 'Users', key: 'id' },
         allowNull: true,
         defaultValue: null,
         onUpdate: 'CASCADE',
@@ -36,7 +16,6 @@ module.exports = {
       },
     });
   },
-
   down: async (queryInterface, _Sequelize) => {
     queryInterface.dropTable('BlogPosts');
   },
