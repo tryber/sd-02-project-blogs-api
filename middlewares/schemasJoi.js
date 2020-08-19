@@ -22,19 +22,17 @@ const schemaLogin = Joi.object({
     .required(),
 });
 
-// const schemaNewRecipe = Joi.object({
-//   name: Joi.string()
-//     .min(3)
-//     .required(),
-//   ingredients: Joi.string()
-//     .min(5)
-//     .required(),
-//   preparation: Joi.string()
-//     .min(5)
-//     .required(),
-// });
+const schemaNewPost = Joi.object({
+  title: Joi.string()
+    .min(3)
+    .required(),
+  content: Joi.string()
+    .min(5)
+    .required(),
+});
 
 module.exports = {
   schemaNewUser,
   schemaLogin,
+  schemaNewPost,
 };

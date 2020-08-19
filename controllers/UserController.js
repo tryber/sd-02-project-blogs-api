@@ -1,9 +1,8 @@
 const rescue = require('express-rescue');
 const validateJoi = require('../middlewares/validateJoi');
 const JwT = require('../middlewares/JwT');
-const { schemaNewUser, schemaLogin } = require('../middlewares/schemasJoi');
-
 const UserService = require('../services/UserService');
+const { schemaNewUser, schemaLogin } = require('../middlewares/schemasJoi');
 
 const newUser = rescue(async (req, res) => {
   await validateJoi(schemaNewUser, req.body);
