@@ -10,7 +10,7 @@ const authMiddleware = rescue(async (req, _res, next) => {
   try {
     req.user = verifyToken(token);
     const userExist = await findBy({ email: req.user.email }, ['password']);
-    if (Object.values(req.user).length === 0 || !userExist) {
+    if (!userExist) {
       return next({ message: 'User not found', code: 'unauthorized' });
     }
     return next();
