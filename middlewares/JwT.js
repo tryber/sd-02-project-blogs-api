@@ -24,13 +24,13 @@ const loginJwt = async (req, _res, next) => {
   }
   try {
     const validToken = jwt.verify(token, secret);
-    const { data: { id: idUser, password } } = validToken;
+    const { data: { id: idUser } } = validToken;
     const userExist = await User.findOne({ where: { id: idUser } });
-    if (!userExist || userExist.dataValues.password !== password) {
+    if (!userExist || userExist.dataValues.id !== idUser) {
       const err = { error: { message: 'Usuário não existe', code: 'Unauthorized' } };
       return next(err);
     }
-    const { password: _, ...noPass } = userExist;
+    const { password: _, ...noPass } = userExist.dataValues;
     req.user = noPass;
     return next();
   } catch (err) {
@@ -38,43 +38,6 @@ const loginJwt = async (req, _res, next) => {
     next(error);
   }
 };
-
-// const loginUser = async (user) => {
-//   const { email, password: keyPass } = user;
-//   const existUser = await usersModel.findByEmail(email);
-//   if (!existUser) {
-//     const err = { error: { message: 'E-mail does not exist', code: 'Invalid_data' } };
-//     throw err;
-//   }
-//   if (keyPass !== existUser.password) {
-//     const err = { error: { message: 'Password does not match', code: 'Invalid_data' } };
-//     throw err;
-//   }
-//   const { password, ...noPass } = existUser;
-//   const token = jwt.sign({ data: noPass }, secret, jwtConfig);
-//   return token;
-// };
-
-// const loginAdmin = async (req, _res, next) => {
-//   const { authorization: token } = req.headers;
-//   if (!token) {
-//     const err = { error: { message: 'Token not found', code: 'Invalid_data' } };
-//     next(err);
-//   }
-//   try {
-//     const validToken = jwt.verify(token, secret);
-//     const { data: { _id } } = validToken;
-//     const userLogged = await usersModel.findById(_id);
-//     if (userLogged.role !== 'admin') {
-//       const err = { error: { message: 'You not have permission', code: 'Unauthorized' } };
-//       return next(err);
-//     }
-//     next();
-//   } catch (err) {
-//     const error = { error: { message: err.message, code: 'Unauthorized' } };
-//     next(error);
-//   }
-// };
 
 module.exports = {
   loginJwt,

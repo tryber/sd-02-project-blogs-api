@@ -8,8 +8,8 @@ describe('Testing User Controller', () => {
       // Arrange
       const errorMock = {
         error: {
-          message: '\"displayName\" length must be at least 8 characters long',
-          code: 'Invalid_data',
+          message: 'Campos inválidos',
+          code: 'Invalid_fields',
         },
       };
 
@@ -29,7 +29,7 @@ describe('Testing User Controller', () => {
       await UserController.newUser(mockReq, mockRes, nextMock);
       // Assert
       expect(nextMock).toBeCalledWith(errorMock);
-      expect(mockRes.status).toBeCalledWith(422);
+      expect(mockRes.status).toBeCalledWith(400);
     });
 
     test('Verify if email of newUser already exists', async () => {
@@ -210,6 +210,100 @@ describe('Testing User Controller', () => {
       expect(mockJson).toBeCalledWith(dataValuesMock);
 
       UserServiceSpy.mockRestore();
+    });
+  });
+
+  describe('Testing deleteUserById in DELETE Method', () => {
+    test('Deleting User', async () => {
+      // Arrange
+      const mockReq = { user: { id: 1 } };
+      const mockEnd = jest.fn();
+      const mockNext = jest.fn();
+      const deleteByIdSpy = jest
+        .spyOn(UserService, 'deleteById')
+        .mockReturnValueOnce();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ end: mockEnd }) };
+      // Act
+      await UserController.deleteUserById(mockReq, mockRes, mockNext);
+      // Assert
+      expect(deleteByIdSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(204);
+      expect(mockEnd).toBeCalled();
+
+      deleteByIdSpy.mockRestore();
+    });
+  });
+
+  describe('Testing loginUser in POST Method', () => {
+    test('Invalid body throw error', async () => {
+      // Arrange
+      const errorMock = { error: { message: 'Campos inválidos', code: 'Invalid_fields' } };
+
+      const mockReq = { body: { password: '123456789' } };
+
+      const nextMock = jest.fn();
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      // Act
+      await errorController(errorMock, null, mockRes);
+      await UserController.loginUser(mockReq, mockRes, nextMock);
+      // Assert
+      expect(nextMock).toBeCalledWith(errorMock);
+      expect(mockRes.status).toBeCalledWith(400);
+    });
+    test('Invalid password throw error', async () => {
+      // Arrange
+      const errorMock = { error: { message: 'Usuário não encontrado', code: 'Not_found' } };
+
+      const mockReq = {
+        body: {
+          email: 'lipe@lipe.com',
+          password: '12356789',
+        },
+      };
+
+      const nextMock = jest.fn();
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const getUserLoginSpy = jest
+        .spyOn(UserService, 'getUserLogin')
+        .mockImplementation(() => {
+          throw errorMock;
+        });
+      // Act
+      await errorController(errorMock, null, mockRes);
+      await UserController.loginUser(mockReq, mockRes, nextMock);
+      // Assert
+      expect(getUserLoginSpy).toBeCalledTimes(1);
+      expect(nextMock).toBeCalledWith(errorMock);
+      expect(mockRes.status).toBeCalledWith(404);
+
+      getUserLoginSpy.mockRestore();
+    });
+    test('Login user', async () => {
+      // Arrange
+      const mockReq = { body: { email: 'lipe@lipe.com', password: '12356789' } };
+      const dataValuesMock = {
+        id: 1,
+        displayName: 'Felipe Lima',
+        email: 'lipe@lipe.com',
+        image: '',
+      };
+
+      const nextMock = jest.fn();
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const getUserLoginSpy = jest
+        .spyOn(UserService, 'getUserLogin')
+        .mockImplementation(() => dataValuesMock);
+      // Act
+      await UserController.loginUser(mockReq, mockRes, nextMock);
+      // Assert
+      expect(getUserLoginSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJson.mock.calls[0][0]).toHaveProperty('token');
+
+      getUserLoginSpy.mockRestore();
     });
   });
 });

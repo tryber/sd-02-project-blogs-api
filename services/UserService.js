@@ -36,8 +36,23 @@ const getUserById = async (id) => {
   return modelAnswer;
 };
 
+const getUserLogin = async (email, password) => {
+  const modelAnswer = await User
+    .findOne({ where: { email } });
+  if (!modelAnswer || modelAnswer.dataValues.password !== password) {
+    const error = { error: { message: 'Usuário não encontrado', code: 'Not_found' } };
+    throw error;
+  }
+  const { password: _, ...noPass } = modelAnswer.dataValues;
+  return noPass;
+};
+
+const deleteById = async (idUser) => User.destroy({ where: { id: idUser } });
+
 module.exports = {
   newUser,
   getAllUsers,
   getUserById,
+  getUserLogin,
+  deleteById,
 };

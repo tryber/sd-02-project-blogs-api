@@ -2,6 +2,7 @@ const statusByCode = {
   Not_found: 404,
   Already_exists: 409,
   Invalid_data: 422,
+  Invalid_fields: 400,
   Unauthorized: 401,
   'entity.parse.failed': 400,
 };

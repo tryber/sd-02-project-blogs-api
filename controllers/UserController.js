@@ -1,6 +1,7 @@
 const rescue = require('express-rescue');
 const validateJoi = require('../middlewares/validateJoi');
-const { schemaNewUser } = require('../middlewares/schemasJoi');
+const JwT = require('../middlewares/JwT');
+const { schemaNewUser, schemaLogin } = require('../middlewares/schemasJoi');
 
 const UserService = require('../services/UserService');
 
@@ -22,8 +23,24 @@ const getUserById = rescue(async (req, res) => {
   res.status(200).json(serviceAnswer);
 });
 
+const deleteUserById = rescue(async (req, res) => {
+  const { id } = req.user;
+  await UserService.deleteById(id);
+  res.status(204).end();
+});
+
+const loginUser = rescue(async (req, res) => {
+  await validateJoi(schemaLogin, req.body);
+  const { email, password } = req.body;
+  const serviceAnswer = await UserService.getUserLogin(email, password);
+  const newToken = JwT.generateToken(serviceAnswer);
+  res.status(200).json({ token: newToken });
+});
+
 module.exports = {
   newUser,
   getAllUsers,
   getUserById,
+  deleteUserById,
+  loginUser,
 };
