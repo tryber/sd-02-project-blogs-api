@@ -45,80 +45,114 @@ describe('Testing Post Controller', () => {
 
       PostServiceSpy.mockRestore();
     });
+    test('Creating Post', async () => {
+      // Arrange
+      const postMock = {
+        id: 4,
+        title: 'lalalalala',
+        content: 'lalalala',
+        userId: 1,
+        updated: '2020-08-19T20:33:03.527Z',
+        published: '2020-08-19T20:33:03.527Z',
+      };
+      const mockReq = { user: { id: 1 }, body: { title: 'lalala', content: 'lalalala' } };
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
+      const PostServiceSpy = jest
+        .spyOn(PostService, 'newPost')
+        .mockImplementation(() => postMock);
+      // Act
+      await PostController.newPost(mockReq, mockRes);
+      // Assert
+      expect(PostServiceSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(201);
+      expect(mockJson).toBeCalledWith(postMock);
+
+      PostServiceSpy.mockRestore();
+    });
   });
 
-  // describe('Testing getAllUsers in GET Method', () => {
-  //   test('Testing if rescue catch Internal_error of findAll function', async () => {
-  //     // Arrange
-  //     const errorMock = { error: { message: 'e.message', code: 'Internal_error' } };
-  //     const nextMock = jest.fn();
-  //     const mockJson = jest.fn();
-  //     const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
+  describe('Testing getAllPosts in GET Method', () => {
+    test('Testing if rescue catch \'Dados não encontrados\' of findAll function', async () => {
+      // Arrange
+      const errorMock = { error: { message: 'Dados não encontrados', code: 'Not_found' } };
+      const nextMock = jest.fn();
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
 
-  //     const UserServiceSpy = jest
-  //       .spyOn(UserService, 'getAllUsers')
-  //       .mockImplementation(() => {
-  //         throw errorMock;
-  //       });
-  //     // Act
-  //     await errorController(errorMock, null, mockRes, nextMock);
-  //     await UserController.getAllUsers(null, mockRes, nextMock);
-  //     // Assert
-  //     expect(UserServiceSpy).toBeCalledTimes(1);
-  //     expect(mockRes.status).toBeCalledWith(500);
-  //     expect(nextMock).toBeCalledWith(errorMock);
+      const PostServiceSpy = jest
+        .spyOn(PostService, 'getAllPosts')
+        .mockImplementation(() => {
+          throw errorMock;
+        });
+      // Act
+      await errorController(errorMock, null, mockRes, nextMock);
+      await PostController.getAllPosts(null, mockRes, nextMock);
+      // Assert
+      expect(PostServiceSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(404);
+      expect(nextMock).toBeCalledWith(errorMock);
+      expect(mockJson).toBeCalledWith(errorMock);
 
-  //     UserServiceSpy.mockRestore();
-  //   });
+      PostServiceSpy.mockRestore();
+    });
 
-  //   test('Testing if rescue catch dataBase without Users', async () => {
-  //     // Arrange
-  //     const errorMock = { error: { message: 'Dados não encontrados.', code: 'Not_found' } };
-  //     const nextMock = jest.fn();
-  //     const mockJson = jest.fn();
-  //     const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
+    test('Returning all Posts', async () => {
+      // Arrange
+      const postsMock = {
+        id: 1,
+        published: '2011-08-01T19:58:00.000Z',
+        updated: '2011-08-01T19:58:51.947Z',
+        title: 'Lalala',
+        content: 'lalala astrid',
+        user: {
+          id: 1,
+          displayName: 'Felipe',
+          email: 'lipe@lipe.com',
+          image: '',
+        },
+      };
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
 
-  //     const UserServiceSpy = jest
-  //       .spyOn(UserService, 'getAllUsers')
-  //       .mockImplementation(() => {
-  //         throw errorMock;
-  //       });
-  //     // Act
-  //     await errorController(errorMock, null, mockRes, nextMock);
-  //     await UserController.getAllUsers(null, mockRes, nextMock);
-  //     // Assert
-  //     expect(UserServiceSpy).toBeCalledTimes(1);
-  //     expect(mockRes.status).toBeCalledWith(404);
-  //     expect(nextMock).toBeCalledWith(errorMock);
+      const UserServiceSpy = jest
+        .spyOn(PostService, 'getAllPosts')
+        .mockImplementation(() => postsMock);
+      // Act
+      await PostController.getAllPosts(null, mockRes);
+      // Assert
+      expect(UserServiceSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJson).toBeCalledWith(postsMock);
 
-  //     UserServiceSpy.mockRestore();
-  //   });
-  //   test('Returning allUsers', async () => {
-  //     // Arrange
-  //     const dataValuesMock = {
-  //       id: 2,
-  //       displayName: 'Felipe Lima',
-  //       email: 'lipe@lipe.com',
-  //       password: '12356789',
-  //       image: '',
-  //     };
+      UserServiceSpy.mockRestore();
+    });
+    // test('Returning allUsers', async () => {
+    //   // Arrange
+    //   const dataValuesMock = {
+    //     id: 2,
+    //     displayName: 'Felipe Lima',
+    //     email: 'lipe@lipe.com',
+    //     password: '12356789',
+    //     image: '',
+    //   };
 
-  //     const mockJson = jest.fn();
-  //     const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
+    //   const mockJson = jest.fn();
+    //   const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
 
-  //     const UserServiceSpy = jest
-  //       .spyOn(UserService, 'getAllUsers')
-  //       .mockImplementation(() => dataValuesMock);
-  //     // Act
-  //     await UserController.getAllUsers(null, mockRes);
-  //     // Assert
-  //     expect(UserServiceSpy).toBeCalledTimes(1);
-  //     expect(mockRes.status).toBeCalledWith(200);
-  //     expect(mockJson).toBeCalledWith(dataValuesMock);
+    //   const UserServiceSpy = jest
+    //     .spyOn(UserService, 'getAllUsers')
+    //     .mockImplementation(() => dataValuesMock);
+    //   // Act
+    //   await UserController.getAllUsers(null, mockRes);
+    //   // Assert
+    //   expect(UserServiceSpy).toBeCalledTimes(1);
+    //   expect(mockRes.status).toBeCalledWith(200);
+    //   expect(mockJson).toBeCalledWith(dataValuesMock);
 
-  //     UserServiceSpy.mockRestore();
-  //   });
-  // });
+    //   UserServiceSpy.mockRestore();
+    // });
+  });
 
   // describe('Testing GetUserById in GET METHOD', () => {
   //   test('User doens\'t exist', async () => {
