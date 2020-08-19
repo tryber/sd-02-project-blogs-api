@@ -1,4 +1,4 @@
-const user = require('./checkCreateFields');
+const user = require('./userChecks');
 
 module.exports = {
   user,
