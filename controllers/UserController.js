@@ -56,7 +56,10 @@ async function login(req, res) {
   if (!email || !password) return res.status(400).json({ message: 'campos inválidos' });
 
   return UserService.login({ email, password })
-    .then((token) => res.status(200).json(token))
+    .then((response) => {
+      if (response.error) return res.status(response.code).json({ message: response.message });
+      res.status(200).json(response);
+    })
     .catch((e) => {
       console.error(e);
       res.status(500).json({ message: 'erro na conexão com base de dados' });

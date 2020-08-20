@@ -59,7 +59,7 @@ async function login({ email, password }) {
   });
 
   if (!user[0] || user[0].password !== password) {
-    return false;
+    return { error: true, code: 400, message: 'Senha ou usuário incorretos, tente novamente' };
   }
 
   const { password: _, id, ...userData } = user[0].dataValues;

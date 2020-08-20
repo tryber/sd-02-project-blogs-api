@@ -26,7 +26,7 @@ async function authUser(req, res, next) {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-    const { id, displayName, email, image } = payload.data;
+    const { id, displayName, email, image } = payload;
 
     const user = {
       id,
