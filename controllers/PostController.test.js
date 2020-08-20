@@ -370,4 +370,69 @@ describe('Testing Post Controller', () => {
       searchPostSpy.mockRestore();
     });
   });
+  describe('Testing deleteById in DELETE Method', () => {
+    test('Return error post not found', async () => {
+      // Arrange
+      const errorMock = { error: { message: 'Post não encontrado', code: 'Not_found' } };
+      const mockReq = { params: { id: 10 }, user: { id: 1 } };
+      const mockJson = jest.fn();
+      const mockNext = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const deleteByIdSpy = jest
+        .spyOn(PostService, 'deleteById')
+        .mockImplementation(() => {
+          throw errorMock;
+        });
+      // Act
+      await errorController(errorMock, null, mockRes);
+      await PostController.deleteById(mockReq, mockRes, mockNext);
+      // Assert
+      expect(deleteByIdSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(404);
+      expect(mockJson).toBeCalledWith(errorMock);
+
+      deleteByIdSpy.mockRestore();
+    });
+
+    test('Return error with userId acess denied', async () => {
+      // Arrange
+      const errorMock = { error: { message: 'Acesso negado', code: 'Forbidden' } };
+      const mockReq = { params: { id: 10 }, user: { id: 2 } };
+      const mockJson = jest.fn();
+      const mockNext = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+      const deleteByIdSpy = jest
+        .spyOn(PostService, 'deleteById')
+        .mockImplementation(() => {
+          throw errorMock;
+        });
+      // Act
+      await errorController(errorMock, null, mockRes);
+      await PostController.deleteById(mockReq, mockRes, mockNext);
+      // Assert
+      expect(deleteByIdSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(403);
+      expect(mockJson).toBeCalledWith(errorMock);
+
+      deleteByIdSpy.mockRestore();
+    });
+
+    test('Return end if delete sucess', async () => {
+      // Arrange
+      const mockReq = { params: { id: 10 }, user: { id: 2 } };
+      const mockEnd = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValueOnce({ end: mockEnd }) };
+      const deleteByIdSpy = jest
+        .spyOn(PostService, 'deleteById')
+        .mockImplementation();
+      // Act
+      await PostController.deleteById(mockReq, mockRes);
+      // Assert
+      expect(deleteByIdSpy).toBeCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(204);
+      expect(mockEnd).toBeCalled();
+
+      deleteByIdSpy.mockRestore();
+    });
+  });
 });

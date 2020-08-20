@@ -36,10 +36,17 @@ const searchPost = rescue(async (req, res) => {
   res.status(200).json(serviceAnswer);
 });
 
+const deleteById = rescue(async (req, res) => {
+  const { params: { id: postId }, user: { id: userId } } = req;
+  await PostService.deleteById(postId, userId);
+  res.status(204).end();
+});
+
 module.exports = {
   newPost,
   getAllPosts,
   updateById,
   getPostById,
   searchPost,
+  deleteById,
 };

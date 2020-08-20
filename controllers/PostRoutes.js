@@ -9,5 +9,6 @@ postRoute.get('/', PostController.getAllPosts);
 postRoute.get('/search', PostController.searchPost);
 postRoute.put('/:id', JwT.loginJwt, PostController.updateById);
 postRoute.get('/:id', PostController.getPostById);
+postRoute.delete('/:id', JwT.loginJwt, PostController.deleteById);
 
 module.exports = postRoute;

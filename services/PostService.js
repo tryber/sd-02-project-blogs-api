@@ -78,10 +78,25 @@ const searchPost = async (searchTerm) => {
   return modelAnswer;
 };
 
+const deleteById = async (postId, userId) => {
+  const post = await BlogPosts.findByPk(postId);
+  if (!post) {
+    const error = { error: { message: 'Post não encontrado', code: 'Not_found' } };
+    throw error;
+  }
+
+  if (post.dataValues.userId !== userId) {
+    const error = { error: { message: 'Acesso negado', code: 'Forbidden' } };
+    throw error;
+  }
+  await BlogPosts.destroy({ where: { id: postId } });
+};
+
 module.exports = {
   newPost,
   getAllPosts,
   updateById,
   getPostById,
   searchPost,
+  deleteById,
 };
