@@ -17,7 +17,29 @@ const getAllPosts = rescue(async (req, res) => {
   res.status(200).json(serviceAnswer);
 });
 
+const updateById = rescue(async (req, res) => {
+  await validateJoi(schemaNewPost, req.body);
+  const { user: { id: userId }, params: { id: postId }, body: { title, content } } = req;
+  const serviceAnswer = await PostService.updateById(userId, postId, title, content);
+  res.status(200).json(serviceAnswer);
+});
+
+const getPostById = rescue(async (req, res) => {
+  const { id } = req.params;
+  const serviceAnswer = await PostService.getPostById(id);
+  res.status(200).json(serviceAnswer);
+});
+
+const searchPost = rescue(async (req, res) => {
+  const { q: searchTerm } = req.query;
+  const serviceAnswer = await PostService.searchPost(searchTerm);
+  res.status(200).json(serviceAnswer);
+});
+
 module.exports = {
   newPost,
   getAllPosts,
+  updateById,
+  getPostById,
+  searchPost,
 };

@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { User, BlogPosts } = require('../models');
 
 const newPost = async (id, title, content) => {
@@ -28,7 +29,59 @@ const getAllPosts = async () => {
   return posts;
 };
 
+const updateById = async (userId, postId, title, content) => {
+  const post = await BlogPosts.findByPk(postId);
+  if (!post) {
+    const error = { error: { message: 'Post não encontrado', code: 'Not_found' } };
+    throw error;
+  }
+  const user = await User.findByPk(userId);
+  if (!user) {
+    const error = { error: { message: 'Usuário não encontrado', code: 'Not_found' } };
+    throw error;
+  }
+  if (post.dataValues.userId !== user.dataValues.id) {
+    const error = { error: { message: 'Acesso negado', code: 'Forbidden' } };
+    throw error;
+  }
+  await BlogPosts.update({ title, content }, { where: { id: postId } });
+  const modelAnswer = await BlogPosts.findByPk(postId);
+  return modelAnswer;
+};
+
+const getPostById = async (id) => {
+  const post = BlogPosts.findByPk(id, {
+    attributes: { exclude: ['userId'] },
+    include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
+  });
+  if (!post) {
+    const error = { error: { message: 'Post não encontrado', code: 'Not_found' } };
+    throw error;
+  }
+  return post;
+};
+
+const searchPost = async (searchTerm) => {
+  const modelAnswer = await BlogPosts.findAll({
+    where: {
+      [Op.or]: [
+        { title: { [Op.like]: `%${searchTerm}%` } },
+        { content: { [Op.like]: `%${searchTerm}%` } },
+      ],
+    },
+    attributes: { exclude: ['userId'] },
+    include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
+  });
+  if (!modelAnswer) {
+    return [];
+  }
+  return modelAnswer;
+};
+
 module.exports = {
   newPost,
   getAllPosts,
+  updateById,
+  getPostById,
+  searchPost,
 };

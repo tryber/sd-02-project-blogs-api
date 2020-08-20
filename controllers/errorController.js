@@ -4,6 +4,7 @@ const statusByCode = {
   Invalid_data: 422,
   Invalid_fields: 400,
   Unauthorized: 401,
+  Forbidden: 403,
   'entity.parse.failed': 400,
 };
 

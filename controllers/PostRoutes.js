@@ -6,7 +6,8 @@ const postRoute = express.Router();
 
 postRoute.post('/', JwT.loginJwt, PostController.newPost);
 postRoute.get('/', PostController.getAllPosts);
-// postRoute.get('/:id', JwT.loginJwt, UserController.getUserById);
-// postRoute.delete('/me', JwT.loginJwt, UserController.deleteUserById);
+postRoute.get('/search', PostController.searchPost);
+postRoute.put('/:id', JwT.loginJwt, PostController.updateById);
+postRoute.get('/:id', PostController.getPostById);
 
 module.exports = postRoute;
