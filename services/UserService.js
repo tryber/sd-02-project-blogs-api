@@ -62,7 +62,7 @@ async function login({ email, password }) {
     return { error: true, code: 400, message: 'Senha ou usuário incorretos, tente novamente' };
   }
 
-  const { password: _, id, ...userData } = user[0].dataValues;
+  const { password: _, id, ...userData } = user[0];
 
   const token = tokenGenerator(id, userData);
 
