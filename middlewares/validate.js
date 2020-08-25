@@ -1,4 +1,4 @@
-const Boom = require("@hapi/boom");
+const Boom = require('@hapi/boom');
 
 function validate(schema) {
   return async (req, _res, next) => {
@@ -8,7 +8,7 @@ function validate(schema) {
       });
 
       if (error) {
-        throw Boom.badRequest("Invalid Data", {
+        throw Boom.badRequest('Invalid Data', {
           details: error.details.map(({ message }) => message),
         });
       }
