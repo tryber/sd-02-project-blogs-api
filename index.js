@@ -1,5 +1,17 @@
 const express = require('express');
 
+const bodyParser = require('body-parser');
+
+require('dotenv').config();
+
 const app = express();
 
-app.listen(3000, () => console.log('ouvindo porta 3000!'));
+app.use(express.json());
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
