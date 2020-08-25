@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 
 require('dotenv').config();
 
+const { error } = require('./middlewares');
+
 const app = express();
 
 app.use(express.json());
@@ -11,6 +13,8 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
+
+app.use(error);
 
 const PORT = process.env.PORT || 3001;
 
