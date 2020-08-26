@@ -1,5 +1,7 @@
 const { Op } = require('sequelize');
 
+const { getFields } = require('../service');
+
 class BlogPostRepository {
   constructor({ BlogPosts, models, data }) {
     this.BlogPosts = BlogPosts;
@@ -36,10 +38,7 @@ class BlogPostRepository {
   }
 
   async update() {
-    const fields = Object.keys(this.data)
-      .filter((key) => this.data[key])
-      .reduce((fields, key) => ({ ...fields, [key]: this.data[key] }), {});
-    return this.BlogPosts.update(fields, { where: { id: this.id } });
+    return this.BlogPosts.update(getFields(this.data), { where: { id: this.id } });
   }
 }
 

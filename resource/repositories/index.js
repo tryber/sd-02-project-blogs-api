@@ -1,5 +1,5 @@
 const blogPostMapper = require('./blogPost/blogPostMapper');
-const userMapper = require('./users/userMapper');
+const userMapper = require('./user/userMapper');
 
 module.exports = {
   blogPostModel: blogPostMapper,

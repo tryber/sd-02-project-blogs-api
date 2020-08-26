@@ -1,3 +1,5 @@
+const { getFields } = require('../service');
+
 class UserRepository {
   constructor({ Users, Models, data }) {
     this.Users = Users;
@@ -26,10 +28,7 @@ class UserRepository {
   }
 
   async update() {
-    const fields = Object.keys(this.data)
-      .filter((key) => this.data[key])
-      .reduce((fields, key) => ({ ...fields, [key]: this.data[key] }), {});
-    return this.Users.update(fields, { where: { id: this.id } });
+    return this.Users.update(getFields(this.data), { where: { id: this.id } });
   }
 }
 
