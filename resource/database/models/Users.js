@@ -16,7 +16,7 @@ function UserModel(sequelize, DataTypes) {
     Users.hasMany(models.BlogPosts, { as: 'posts', foreignKey: 'user_id' });
   };
 
-  return Albums;
+  return Users;
 }
 
 module.exports = UserModel;

@@ -6,6 +6,8 @@ require('dotenv').config();
 
 const { error } = require('./middlewares');
 
+const { blogPostModel, userModel } = require('./resource');
+
 const app = express();
 
 app.use(express.json());
