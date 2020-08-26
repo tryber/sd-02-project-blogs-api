@@ -5,7 +5,6 @@ module.exports = {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false,
       },
       title: {
         type: Sequelize.STRING,
@@ -15,12 +14,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      published: {
+      createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: new Date(),
       },
-      updated: {
+      updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: new Date(),
