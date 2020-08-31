@@ -14,7 +14,7 @@ const login = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-  
+
   const token = createToken(dataValues);
 
   res.status(200).json({ token });

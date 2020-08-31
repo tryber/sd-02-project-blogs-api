@@ -9,7 +9,7 @@ const login = async ({ email, password }) => {
   }
 
   try {
-    await Joi.user.validateAsync({ email, password }); 
+    await Joi.user.validateAsync({ email, password });
   } catch (_err) {
     return Promise.reject({ message: 'Campos inválidos', code: 400 });
   }
@@ -19,7 +19,7 @@ const login = async ({ email, password }) => {
   if (!response) { return Promise.reject({ message: 'email não existente', code: 404 }); }
 
   const { dataValues } = response;
-  
+
   return dataValues;
 };
 
