@@ -10,7 +10,7 @@ const login = async (req, res, next) => {
 
   try {
     dataValues = await validate.user.login({ email, password });
-    await validate.user.checkPassword(dataValues);
+    await validate.user.checkPassword({ dataValues, password });
   } catch (err) {
     return next(err);
   }

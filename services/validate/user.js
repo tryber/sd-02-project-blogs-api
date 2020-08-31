@@ -23,7 +23,7 @@ const login = async ({ email, password }) => {
   return dataValues;
 };
 
-const checkPassword = (dataValues) => {
+const checkPassword = async ({ dataValues, password }) => {
   const isCorrectPassword = await checkString({ string: password, hash: dataValues.password });
 
   if (!isCorrectPassword) { return Promise.reject({ message: 'password incorreto', code: 400 }); }
