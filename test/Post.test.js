@@ -1,5 +1,5 @@
 const controller = require('../controller');
-const { Blog_post } = require('../models');
+const { BlogPost } = require('../models');
 
 const mockPost = { 
   id: 1,
@@ -26,7 +26,7 @@ describe('Post Model', () => {
     };
 
     const insertSpy = jest
-      .spyOn(Blog_post, 'create')
+      .spyOn(BlogPost, 'create')
       .mockReturnValueOnce(mockPost);
       
     const mockJson = jest.fn();
@@ -44,11 +44,32 @@ describe('Post Model', () => {
     insertSpy.mockRestore();
   });
 
+  test('Insert error', async () => {
+    const mockBody = {
+      content: "The whole text for the blog post goes here in this key",
+    };
+
+    const insertSpy = jest.spyOn(BlogPost, 'create');
+
+    const mockReq = { body: { ...mockBody }, user: { dataValues: { id: 1 } } };
+    const mockRes = {};
+    const mockNext = jest.fn();
+    
+    // Act
+    await controller.post.insert(mockReq, mockRes, mockNext);
+
+    // Assert
+    expect(insertSpy).toBeCalledTimes(0);
+    expect(mockNext).toBeCalledWith({ code: 400, message: "title, content devem ser passados" });
+    
+    insertSpy.mockRestore();
+  });
+
   test('FindAll Posts', async () => {
     const mockPosts = [{ ...mockPost }];
 
     const findAllSpy = jest
-      .spyOn(Blog_post, 'findAll')
+      .spyOn(BlogPost, 'findAll')
       .mockReturnValueOnce(mockPosts);
 
     const mockJson = jest.fn();
@@ -79,11 +100,11 @@ describe('Post Model', () => {
     };
 
     const updateByIdSpy = jest
-      .spyOn(Blog_post, 'update')
+      .spyOn(BlogPost, 'update')
       .mockReturnValueOnce(mockPost);
 
     const findOneSpy = jest
-      .spyOn(Blog_post, 'findOne')
+      .spyOn(BlogPost, 'findOne')
       .mockReturnValueOnce(mockUser);
 
     const mockJson = jest.fn();
@@ -105,7 +126,7 @@ describe('Post Model', () => {
 
   test('findById Post', async () => {
     const findByIdSpy = jest
-      .spyOn(Blog_post, 'findByPk')
+      .spyOn(BlogPost, 'findByPk')
       .mockReturnValueOnce({ mockPost, user: mockUser });
 
     const mockJson = jest.fn();
@@ -125,7 +146,7 @@ describe('Post Model', () => {
 
   test('search Post', async () => {
     const searchSpy = jest
-      .spyOn(Blog_post, 'findAll')
+      .spyOn(BlogPost, 'findAll')
       .mockReturnValueOnce([{ mockPost, user: mockUser }]);
 
     const mockJson = jest.fn();
@@ -143,12 +164,13 @@ describe('Post Model', () => {
     searchSpy.mockRestore();
   });
 
-  test.skip('deletePost Post', async () => {
+  test('deletePost Post', async () => {
     const deleteSpy = jest
-      .spyOn(Blog_post, 'destroy');
+      .spyOn(BlogPost, 'destroy')
+      .mockReturnValueOnce();
 
     const findOneSpy = jest
-      .spyOn(Blog_post, 'findOne')
+      .spyOn(BlogPost, 'findOne')
       .mockReturnValueOnce({ dataValues: { userId: 1 } });
 
     const mockJson = jest.fn();
@@ -160,7 +182,9 @@ describe('Post Model', () => {
 
     // Assert
     expect(deleteSpy).toBeCalledTimes(1);
+    expect(deleteSpy).toBeCalledWith({ where: { id: 1 } });
     expect(findOneSpy).toBeCalledTimes(1);
+    expect(findOneSpy).toBeCalledWith({ where: { id: 1 } });
     expect(mockRes.status).toBeCalledWith(200);
     expect(mockJson).toBeCalledWith({ message: 'deletado com sucesso' });
 

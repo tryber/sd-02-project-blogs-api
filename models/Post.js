@@ -1,5 +1,5 @@
 const createPostModel = (sequelize, DataTypes) => {
-  const Post = sequelize.define('Blog_post', {
+  const Post = sequelize.define('BlogPost', {
     title: DataTypes.STRING,
     content: DataTypes.STRING,
   }, {

@@ -1,65 +1,56 @@
-const { Blog_post, User } = require('../models');
-const Joi = require('../services/Joi');
+const { BlogPost, User } = require('../models');
 const { Op } = require('sequelize');
-const paramExist = require('../services/paramExist');
+const validate = require('../services/validate');
 
 
-const insert = async (req, res) => {
+const insert = async (req, res, next) => {
   const { title, content } = req.body;
   const userId = req.user.dataValues.id;
 
-  if (!paramExist(title, content)) {
-    return res.status(400).json({ message: 'title, content devem ser passados' });
+  try {
+    await validate.post.insert(content, title);
+  } catch (err) {
+    return next(err);
   }
 
-  await Joi.blogPost.validateAsync({ content, title });
-
-  const post = await Blog_post.create({ title, content, userId });
+  const post = await BlogPost.create({ title, content, userId });
 
   res.status(201).json(post);
 };
 
 const findAll = async (_req, res) => {
-  const posts = await Blog_post.findAll();
+  const posts = await BlogPost.findAll({
+    attributes: { exclude: ['userId'] },
+    include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
+  });
 
   res.status(200).json(posts);
 };
 
-const updateById = async (req, res) => {
+const updateById = async (req, res, next) => {
   const { id } = req.params;
   const { content, title } = req.body;
   const userId = req.user.dataValues.id;
 
-  if (!paramExist(title, content)) {
-    return res.status(400).json({ message: 'title, content devem ser passados' });
+  try {
+    await validate.post.updateById({ content, title, id, userId });
+  } catch (err) {
+    return next(err);
   }
 
-  await Joi.blogPost.validateAsync({ content, title });
-
-  const user = await Blog_post.findOne({ where: { id } });
-
-  if (user.dataValues.userId !== userId) {
-    return res.status(403).json({ message: 'usuário sem permissão permissão' });
-  }
-
-  await Blog_post.update({ content, title }, { where: { id } });
+  await BlogPost.update({ content, title }, { where: { id } });
 
   res.status(200).json({ message: 'atualizado com sucesso' });
 };
 
-const findById = async (req, res) => {
+const findById = async (req, res, next) => {
   const { id } = req.params;
+  let post;
 
-  const post = await Blog_post.findByPk(id, {
-    include: {
-      model: User,
-      as: 'user',
-      attributes: { exclude: ['password'] },
-    },
-  });
-
-  if (!post) {
-    return res.status(404).json({ message: 'Post não encontrado' });
+  try {
+    post = await validate.post.findById(id);
+  } catch (err) {
+    return next(err);
   }
 
   res.status(200).json(post);
@@ -68,7 +59,13 @@ const findById = async (req, res) => {
 const search = async (req, res) => {
   const { q } = req.query;
 
-  const posts = await Blog_post.findAll({
+  const posts = await BlogPost.findAll({
+    attributes: { exclude: ['userId'] },
+    include: {
+      model: User,
+      as: 'user',
+      attributes: { exclude: ['password'] },
+    },
     where: {
       [Op.or]: [
         { title: { [Op.like]: `%${q}%` } },
@@ -80,17 +77,17 @@ const search = async (req, res) => {
   res.status(200).json(posts);
 };
 
-const deletePost = async (req, res) => {
+const deletePost = async (req, res, next) => {
   const { id } = req.params;
   const userId = req.user.dataValues.id;
 
-  const user = await Blog_post.findOne({ where: { id } });
-
-  if (user.dataValues.userId !== userId) {
-    return res.status(403).json({ message: 'usuário sem permissão permissão' });
+  try {
+    await validate.post.deletePost({ id, userId });
+  } catch (err) {
+    return next(err);
   }
 
-  await Blog_post.destroy({ where: { id } });
+  await BlogPost.destroy({ where: { id } });
 
   res.status(200).json({ message: 'deletado com sucesso' });
 };

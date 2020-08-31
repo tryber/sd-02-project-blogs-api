@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-
 const controller = require('../controller');
 const { User } = require('../models');
 
@@ -18,10 +16,11 @@ describe('User Model', () => {
     const findByIdSpy = jest
       .spyOn(User, 'findByPk')
       .mockReturnValueOnce(mockUser);
-      
+
     const mockJson = jest.fn();
     const mockReq = { params: { id: 1 } };
     const mockRes = { status: jest.fn().mockReturnValueOnce({ json: mockJson }) };
+
     // Act
     await controller.user.findById(mockReq, mockRes);
 
@@ -46,7 +45,7 @@ describe('User Model', () => {
 
     const createSpy = jest
       .spyOn(User, 'create')
-      .mockReturnValueOnce(mockData);
+      .mockReturnValueOnce({ dataValues: { ...mockUser } });
       
     const mockJson = jest.fn();
     const mockReq = { body: { ...mockData, password: "123456" } };
@@ -59,7 +58,7 @@ describe('User Model', () => {
     expect(findOneSpy).toBeCalledTimes(1);
     expect(createSpy).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(201);
-    expect(mockJson).toBeCalledWith(mockData);
+    expect(mockJson.mock.calls[0][0]).toHaveProperty('token');
 
     findOneSpy.mockRestore();
     createSpy.mockRestore();
@@ -120,9 +119,10 @@ describe('User Model', () => {
     findAllSpy.mockRestore();
   });
 
-  test.skip('Delete user', async () => {
+  test('Delete user', async () => {
     const deleteSpy = jest
       .spyOn(User, 'destroy')
+      .mockReturnValueOnce();
 
     const mockJson = jest.fn();
     const mockReq = { user: { dataValues: { id: 1 } } };
@@ -134,7 +134,7 @@ describe('User Model', () => {
     // Assert
     expect(deleteSpy).toBeCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
-    expect(mockJson).toBeCalledWith({ message: 'deletado com sucesso' });
+    expect(mockJson).toBeCalledWith({ message: 'usuário deletado com sucesso' });
 
     deleteSpy.mockRestore();
   });
