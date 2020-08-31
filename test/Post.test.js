@@ -1,6 +1,7 @@
 const controller = require('../controller');
 const { BlogPost } = require('../models');
 
+
 const mockPost = { 
   id: 1,
   title: "Latest updates, August 1st",

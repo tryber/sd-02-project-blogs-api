@@ -2,6 +2,7 @@ const { User } = require('../models');
 const { createHash } = require('../services/bcrypt');
 const createToken = require('../services/createToken');
 const validate = require('../services/validate');
+const { checkString } = require('../services/bcrypt');
 
 
 const login = async (req, res, next) => {
@@ -9,16 +10,19 @@ const login = async (req, res, next) => {
   let dataValues;
 
   try {
-    dataValues = await validate.user.login({ email, password } );
+    dataValues = await validate.user.login({ email, password });
   } catch (err) {
     return next(err);
   }
+
+  const isCorrectPassword = await checkString({ string: password, hash: dataValues.password });
+
+  if (!isCorrectPassword) { return Promise.reject({ message: 'password incorreto', code: 400 }); }
 
   const token = createToken(dataValues);
 
   res.status(200).json({ token });
 };
-
 
 const register = async (req, res, next) => {
   const { displayName, email, password, image } = req.body;

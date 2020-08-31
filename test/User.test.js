@@ -11,6 +11,7 @@ const mockUser = {
 
 jest.mock('jsonwebtoken');
 
+
 describe('User Model', () => {
   test('When getting a User with id 1, should return an single User', async () => {
     const findByIdSpy = jest
