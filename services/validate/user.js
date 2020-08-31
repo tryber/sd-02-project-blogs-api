@@ -1,7 +1,7 @@
 const paramExist = require('../paramExist');
 const Joi = require('../Joi');
 const { User } = require('../../models');
-
+const { checkString } = require('../bcrypt');
 
 const login = async ({ email, password }) => {
   if (!paramExist(email, password)) {
@@ -21,6 +21,12 @@ const login = async ({ email, password }) => {
   const { dataValues } = response;
   
   return dataValues;
+};
+
+const checkPassword = (dataValues) => {
+  const isCorrectPassword = await checkString({ string: password, hash: dataValues.password });
+
+  if (!isCorrectPassword) { return Promise.reject({ message: 'password incorreto', code: 400 }); }
 };
 
 const register = async ({ displayName, email, password, image }) => {
@@ -43,6 +49,7 @@ const findById = async (user) => {
 
 module.exports = {
   login,
+  checkPassword,
   register,
   findById,
 };
