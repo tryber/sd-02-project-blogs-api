@@ -5,4 +5,34 @@ class User {
     this.userModel = userModel;
     this.data = data;
   }
+
+  async create() {
+    return userService.create({ data: this.data, model: this.userModel });
+  }
+
+  async find() {
+    return userService.find({ id: this.data.id, model: this.userModel });
+  }
+
+  async list() {
+    return userService.list({ model: this.userModel });
+  }
+
+  async login() {
+    return userService.login({
+      email: this.data.email,
+      password: this.data.password,
+      model: this.userModel,
+    });
+  }
+
+  async remove() {
+    return userService.remove({ id: this.data.id, model: this.userModel });
+  }
+
+  async update() {
+    return userService.update({ id: this.data.id, model: this.userModel });
+  }
 }
+
+module.exports = User;
