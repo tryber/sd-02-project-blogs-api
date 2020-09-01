@@ -31,7 +31,7 @@ class User {
   }
 
   async update() {
-    return userService.update({ id: this.data.id, model: this.userModel });
+    return userService.update({ data: this.data, model: this.userModel });
   }
 }
 

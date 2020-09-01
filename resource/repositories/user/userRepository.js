@@ -1,4 +1,4 @@
-const { getFields } = require('../service');
+const { getFields } = require('../utils');
 
 class UserRepository {
   constructor({ Users, Models, data }) {
