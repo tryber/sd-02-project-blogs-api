@@ -1,3 +1,5 @@
+const { handleError } = require('../utils');
+
 function create({ user, userModel }) {
   return async (req, res) => {};
 }
