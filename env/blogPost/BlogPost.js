@@ -7,27 +7,27 @@ class BlogPost {
   }
 
   async create() {
-    return blogPostService.create({ data: this.data, model: this.blogPostModel });
+    return blogPostService.create({ data: this.data, Model: this.blogPostModel });
   }
 
   async find() {
-    return blogPostService.find({ id: this.data.id, model: this.blogPostModel });
+    return blogPostService.find({ id: this.data.id, Model: this.blogPostModel });
   }
 
   async list() {
-    return blogPostService.list({ model: this.blogPostModel });
+    return blogPostService.list({ Model: this.blogPostModel });
   }
 
   async remove() {
-    return blogPostService.remove({ id: this.data.id, model: this.blogPostModel });
+    return blogPostService.remove({ id: this.data.id, Model: this.blogPostModel });
   }
 
   async search(name) {
-    return blogPostService.search({ name, model: this.blogPostModel });
+    return blogPostService.search({ name, Model: this.blogPostModel });
   }
 
   async update() {
-    return blogPostService.update({ data: this.data, model: this.blogPostModel });
+    return blogPostService.update({ data: this.data, Model: this.blogPostModel });
   }
 }
 

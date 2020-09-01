@@ -1,13 +1,13 @@
 const { getFieldsFilled } = require('../utils');
 
-async function create({ data, model }) {
-  const blogPostModel = new model(data);
+async function create({ data, Model }) {
+  const blogPostModel = new Model(data);
 
   return blogPostModel.create();
 }
 
-async function find({ id, model }) {
-  const blogPostModel = new model({ id });
+async function find({ id, Model }) {
+  const blogPostModel = new Model({ id });
 
   const blogPost = await blogPostModel.find();
 
@@ -16,26 +16,26 @@ async function find({ id, model }) {
   return { data: blogPost, error: null };
 }
 
-async function list({ model }) {
-  const blogPostModel = new model();
+async function list({ Model }) {
+  const blogPostModel = new Model();
 
   return blogPostModel.list();
 }
 
-async function search({ name, model }) {
-  const blogPostModel = new model();
+async function search({ name, Model }) {
+  const blogPostModel = new Model();
 
   return blogPostModel.findBy(name);
 }
 
-async function remove({ id, model }) {
-  const blogPostModel = new model({ id });
+async function remove({ id, Model }) {
+  const blogPostModel = new Model({ id });
 
   return blogPostModel.remove();
 }
 
-async function update({ data, model }) {
-  const blogPostModel = new model({ data });
+async function update({ data, Model }) {
+  const blogPostModel = new Model(data);
 
   const blogPost = await blogPostModel.find();
 

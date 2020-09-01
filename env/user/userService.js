@@ -4,10 +4,10 @@ const {
   jsonWebToken: { signToken },
 } = require('../utils');
 
-async function create({ data, model }) {
+async function create({ data, Model }) {
   const hash = await createHash(data.password);
 
-  const userModel = new model({ ...data, password: hash });
+  const userModel = new Model({ ...data, password: hash });
 
   const userExists = await userModel.findBy('email');
 
@@ -18,8 +18,8 @@ async function create({ data, model }) {
   return { data: user, error: null };
 }
 
-async function find({ id, model }) {
-  const userModel = new model({ id });
+async function find({ id, Model }) {
+  const userModel = new Model({ id });
 
   const user = await userModel.find();
   console.log(user);
@@ -28,14 +28,14 @@ async function find({ id, model }) {
   return { data: user, error: null };
 }
 
-async function list({ model }) {
-  const userModel = new model();
+async function list({ Model }) {
+  const userModel = new Model();
 
   return userModel.list();
 }
 
-async function login({ email, password, model }) {
-  const userModel = new model({ email, password });
+async function login({ email, password, Model }) {
+  const userModel = new Model({ email, password });
 
   const user = await userModel.find('email');
 
@@ -55,14 +55,14 @@ async function login({ email, password, model }) {
   return { data: userWithoutPassword, token, error: null };
 }
 
-async function remove({ id, model }) {
-  const userModel = new model({ id });
+async function remove({ id, Model }) {
+  const userModel = new Model({ id });
 
   return userModel.remove();
 }
 
-async function update({ data, model }) {
-  const userModel = new model({ data });
+async function update({ data, Model }) {
+  const userModel = new Model(data);
 
   const user = await userModel.find();
 

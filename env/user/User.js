@@ -7,31 +7,31 @@ class User {
   }
 
   async create() {
-    return userService.create({ data: this.data, model: this.userModel });
+    return userService.create({ data: this.data, Model: this.userModel });
   }
 
   async find() {
-    return userService.find({ id: this.data.id, model: this.userModel });
+    return userService.find({ id: this.data.id, Model: this.userModel });
   }
 
   async list() {
-    return userService.list({ model: this.userModel });
+    return userService.list({ Model: this.userModel });
   }
 
   async login() {
     return userService.login({
       email: this.data.email,
       password: this.data.password,
-      model: this.userModel,
+      Model: this.userModel,
     });
   }
 
   async remove() {
-    return userService.remove({ id: this.data.id, model: this.userModel });
+    return userService.remove({ id: this.data.id, Model: this.userModel });
   }
 
   async update() {
-    return userService.update({ data: this.data, model: this.userModel });
+    return userService.update({ data: this.data, Model: this.userModel });
   }
 }
 
