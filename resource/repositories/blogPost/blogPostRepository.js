@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 
-const { getFields } = require('../service');
+const { getFields } = require('../utils');
 
 class BlogPostRepository {
   constructor({ BlogPosts, models, data }) {

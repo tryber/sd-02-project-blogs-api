@@ -20,9 +20,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
 
-app.user('/post', blogPostRouter({ blogPost, blogPostModel }));
+// app.use('/post', blogPostRouter({ blogPost, blogPostModel }));
 
-app.user('/user', userRouter({ user, userModel }));
+app.use('/user', userRouter({ user, userModel }));
 
 app.use(error);
 
