@@ -11,11 +11,15 @@ async function create({ data, Model }) {
 
   const userExists = await userModel.findBy('email');
 
-  if (userExists) return { data: null, error: 'exists' };
+  if (userExists.length !== 0) return { data: null, token: null, error: 'exists' };
 
-  const user = await userModel.create();
+  const {
+    dataValues: { password, ...userWithoutPassword },
+  } = await userModel.create();
 
-  return { data: user, error: null };
+  const token = signToken(userWithoutPassword);
+
+  return { data: userWithoutPassword, token, error: null };
 }
 
 async function find({ id, Model }) {

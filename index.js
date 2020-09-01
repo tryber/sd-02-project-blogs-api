@@ -8,7 +8,7 @@ const { error } = require('./middlewares');
 
 const { blogPostRouter, userRouter } = require('./app');
 
-const { blogPost, user } = require('./env');
+const { BlogPost, User } = require('./env');
 
 const { blogPostModel, userModel } = require('./resource');
 
@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 // app.use('/post', blogPostRouter({ blogPost, blogPostModel }));
 
-app.use('/user', userRouter({ user, userModel }));
+app.use('/user', userRouter({ User, userModel }));
 
 app.use(error);
 
