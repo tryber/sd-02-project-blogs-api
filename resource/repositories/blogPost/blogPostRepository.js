@@ -17,11 +17,7 @@ class BlogPostRepository {
     return this.BlogPosts.findByPk(this.data.id, this.includeUser);
   }
 
-  async findByField(name) {
-    return this.BlogPosts.findAll({ where: { [name]: this.data[name] } }, this.includeUser);
-  }
-
-  async findByTerm(name) {
+  async findBy(name) {
     return this.BlogPosts.findAll({
       where: {
         [Op.or]: [{ title: { [Op.substring]: name } }, { content: { [Op.substring]: name } }],

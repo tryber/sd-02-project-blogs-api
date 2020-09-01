@@ -5,10 +5,12 @@ const {
 } = require('../utils');
 
 async function create({ data, model }) {
-  const userModel = new model(data);
+  const hash = await createHash(data.password);
+
+  const userModel = new model({ ...data, password: hash });
 
   const userExists = await userModel.findBy('email');
-  console.log(userExists);
+
   if (userExists) return { data: null, error: 'exists' };
 
   const user = await userModel.create();
