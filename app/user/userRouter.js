@@ -14,7 +14,7 @@ const { auth, validate, upload } = require('../../middlewares');
 
 const router = express.Router();
 
-function userRouter({ upload, ...dependencies }) {
+function userRouter(dependencies) {
   router
     .route('/')
     .get(auth, rescue(userController.list(dependencies)))
