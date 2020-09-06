@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
 
-// app.use('/post', blogPostRouter({ blogPost, blogPostModel }));
+app.use('/post', blogPostRouter({ BlogPost, blogPostModel }));
 
 app.use('/user', userRouter({ User, userModel }));
 

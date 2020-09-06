@@ -1,7 +1,7 @@
 function getFields(data) {
-  return Object.keys(data)
-    .filter((key) => data[key])
-    .reduce((fields, key) => ({ ...fields, [key]: data[key] }), {});
+  return Object.fromEntries(Object.entries(data).filter(([key, value]) => value && key !== 'id'));
 }
 
-module.exports = { getFields };
+module.exports = {
+  getFields,
+};

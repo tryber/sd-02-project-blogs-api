@@ -1,8 +1,8 @@
 const {
   bcrypt: { checkString, createHash },
-  getFieldsFilled,
+  getFilledFields,
   jsonWebToken: { signToken },
-} = require('../utils');
+} = require('../../utils');
 
 async function create({ data, Model }) {
   const hash = await createHash(data.password);
@@ -26,26 +26,34 @@ async function find({ id, Model }) {
   const userModel = new Model({ id });
 
   const user = await userModel.find();
-  console.log(user);
+
   if (!user) return { data: null, error: 'notFound' };
 
-  return { data: user, error: null };
+  const {
+    dataValues: { password, ...userWithoutPassword },
+  } = user;
+
+  return { data: userWithoutPassword, error: null };
 }
 
 async function list({ Model }) {
   const userModel = new Model();
 
-  return userModel.list();
+  const users = await userModel.list();
+
+  return users.map(({ dataValues: { password, ...userWithoutPassword } }) => userWithoutPassword);
 }
 
 async function login({ email, password, Model }) {
   const userModel = new Model({ email, password });
 
-  const user = await userModel.find('email');
+  const user = await userModel.findBy('email');
 
-  if (!user) return { data: null, token: null, error: 'notFound' };
+  if (user.length === 0) return { data: null, token: null, error: 'notFound' };
 
-  const { password: userPassword, ...userWithoutPassword } = user;
+  const {
+    dataValues: { password: userPassword, ...userWithoutPassword },
+  } = user[0];
 
   const isCorrectPassword = await checkString({
     string: password,
@@ -66,15 +74,19 @@ async function remove({ id, Model }) {
 }
 
 async function update({ data, Model }) {
-  const userModel = new Model(data);
+  const userModel = new Model(getFilledFields(data));
 
-  const user = await userModel.find();
+  const userExists = await userModel.find();
 
-  if (!user) return { data: null, error: 'notFound' };
+  if (!userExists) return { data: null, error: 'notFound' };
 
-  const fields = getFieldsFilled(data);
+  await userModel.update();
 
-  return userModel.update(fields);
+  const {
+    dataValues: { password, ...userWithoutPassword },
+  } = await userModel.find();
+
+  return { data: userWithoutPassword, error: null };
 }
 
 module.exports = {

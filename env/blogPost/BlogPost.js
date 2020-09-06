@@ -1,7 +1,7 @@
 const blogPostService = require('./blogPostService');
 
 class BlogPost {
-  constructor({ blogPostModel, data }) {
+  constructor({ blogPostModel, ...data }) {
     this.blogPostModel = blogPostModel;
     this.data = data;
   }

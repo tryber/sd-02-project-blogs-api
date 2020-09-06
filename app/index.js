@@ -1,4 +1,4 @@
-const blogPostRouter = require('./blogPost/blogPostRouter');
+const blogPostRouter = require('./post/blogPostRouter');
 const userRouter = require('./user/userRouter');
 
 module.exports = {

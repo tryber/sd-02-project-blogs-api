@@ -28,7 +28,7 @@ class UserRepository {
   }
 
   async update() {
-    return this.Users.update(getFields(this.data), { where: { id: this.id } });
+    return this.Users.update(getFields(this.data), { where: { id: this.data.id } });
   }
 }
 

@@ -1,7 +1,5 @@
 const { Op } = require('sequelize');
 
-const { getFields } = require('../utils');
-
 class BlogPostRepository {
   constructor({ BlogPosts, models, data }) {
     this.BlogPosts = BlogPosts;
@@ -34,7 +32,8 @@ class BlogPostRepository {
   }
 
   async update() {
-    return this.BlogPosts.update(getFields(this.data), { where: { id: this.id } });
+    
+    return this.BlogPosts.update(this.data, { where: { id: this.data.id } });
   }
 }
 

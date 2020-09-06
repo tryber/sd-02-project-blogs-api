@@ -5,8 +5,10 @@ const rescue = require('express-rescue');
 const userController = require('./userController');
 
 const {
-  joiSchemas: { userSchema },
-} = require('../utils');
+  joiSchemas: {
+    userSchema: { loginSchema, registerSchema, updateSchema },
+  },
+} = require('../../utils');
 
 const { auth, validate } = require('../../middlewares');
 
@@ -15,18 +17,16 @@ const router = express.Router();
 function userRouter(dependencies) {
   router
     .route('/')
-    .get(auth(dependencies.userModel), rescue(userController.list(dependencies)))
-    .post(validate(userSchema.registerSchema), rescue(userController.create(dependencies)));
+    .get(auth, rescue(userController.list(dependencies)))
+    .post(validate(registerSchema), rescue(userController.create(dependencies)));
 
-  router
-    .route('/login')
-    .get(validate(userSchema.loginSchema), rescue(userController.login(dependencies)));
+  router.route('/login').post(validate(loginSchema), rescue(userController.login(dependencies)));
 
   router
     .route('/:id')
-    .get(auth(dependencies.userModel), rescue(userController.find(dependencies)))
-    .put(auth(dependencies.userModel), rescue(userController.update(dependencies)))
-    .delete(auth(dependencies.userModel), rescue(userController.remove(dependencies)));
+    .get(auth, rescue(userController.find(dependencies)))
+    .patch(auth, validate(updateSchema), rescue(userController.update(dependencies)))
+    .delete(auth, rescue(userController.remove(dependencies)));
 
   return router;
 }
