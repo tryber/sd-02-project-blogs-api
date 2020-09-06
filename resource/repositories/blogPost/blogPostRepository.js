@@ -1,19 +1,21 @@
 const { Op } = require('sequelize');
+const {
+  service: { getFields },
+} = require('../../../utils');
 
 class BlogPostRepository {
-  constructor({ models, data, id }) {
+  constructor({ models, data }) {
     this.BlogPosts = models.BlogPosts;
     this.includeUser = { include: { model: models.Users, as: 'user' } };
     this.data = data;
-    this.id = id;
   }
 
   async create() {
-    return this.BlogPosts.create(this.data);
+    return this.BlogPosts.create(getFields(this.data));
   }
 
   async find() {
-    return this.BlogPosts.findByPk(this.id, this.includeUser);
+    return this.BlogPosts.findByPk(this.data.id, this.includeUser);
   }
 
   async findBy(name) {
@@ -29,11 +31,11 @@ class BlogPostRepository {
   }
 
   async remove() {
-    return this.BlogPosts.destroy({ where: { id: this.id } });
+    return this.BlogPosts.destroy({ where: { id: this.data.id } });
   }
 
   async update() {
-    return this.BlogPosts.update(this.data, { where: { id: this.id } });
+    return this.BlogPosts.update(getFields(this.data), { where: { id: this.data.id } });
   }
 }
 

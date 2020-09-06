@@ -2,11 +2,10 @@ const models = require('../../database/models');
 
 const BlogPostsRepository = require('./blogPostRepository');
 
-function userMapper({ id, ...data }) {
+function userMapper(data) {
   return new BlogPostsRepository({
     models,
     data,
-    id,
   });
 }
 

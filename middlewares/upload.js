@@ -2,19 +2,32 @@ const Boom = require('@hapi/boom');
 
 const multer = require('multer');
 
+const util = require('util');
+
 function uploadMiddleware({ dest, field }) {
-  return async (req, _res, next) => {
+  return async (req, res, next) => {
     try {
+      console.log(dest, field);
       const contype = req.headers['content-type'];
 
-      if ((contype !== contype.indexOf('multipart/form-data')) !== 0)
-        throw Boom.badRequest('File not received');
+      if (!contype) throw Boom.badRequest('File not received');
 
-      const upload = multer({ dest });
+      const storage = multer.diskStorage({
+        destination: (_req, _file, callback) => {
+          callback(null, dest);
+        },
+        filename: (_req, file, callback) => {
+          callback(null, file.originalname);
+        },
+      });
 
-      upload.single(field);
+      const upload = multer({ storage });
 
-      req.body.image = `${req.url}/${req.file.originalname}`;
+      const uploadPromisse = util.promisify(upload.single(field));
+
+      await uploadPromisse(req, res);
+
+      req.body.image = `${req.protocol}://${req.get('host')}/${dest}/${req.file.originalname}`;
 
       next();
     } catch (err) {

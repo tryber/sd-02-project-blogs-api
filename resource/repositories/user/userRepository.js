@@ -1,18 +1,19 @@
-const { getFields } = require('../utils');
+const {
+  service: { getFields },
+} = require('../../../utils');
 
 class UserRepository {
-  constructor({ models, data, id }) {
+  constructor({ models, data }) {
     this.Users = models.Users;
     this.data = data;
-    this.id = id;
   }
 
   async create() {
-    return this.Users.create(this.data);
+    return this.Users.create(getFields(this.data));
   }
 
   async find() {
-    return this.Users.findByPk(this.id);
+    return this.Users.findByPk(this.data.id);
   }
 
   async findBy(field) {
@@ -24,11 +25,11 @@ class UserRepository {
   }
 
   async remove() {
-    return this.Users.destroy({ where: { id: this.id } });
+    return this.Users.destroy({ where: { id: this.data.id } });
   }
 
   async update() {
-    return this.Users.update(getFields(this.data), { where: { id: this.id } });
+    return this.Users.update(getFields(this.data), { where: { id: this.data.id } });
   }
 }
 

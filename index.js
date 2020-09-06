@@ -16,7 +16,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(express.static(__dirname + '/images'));
+app.use('/images', express.static(__dirname + '/images'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 

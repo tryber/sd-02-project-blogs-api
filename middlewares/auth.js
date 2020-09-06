@@ -10,7 +10,7 @@ async function authMiddleware(req, _res, next) {
   try {
     const token = req.headers.authorization;
 
-    if (!token) throw Boom.badRequest('Token not found');
+    if (!token) throw Boom.unauthorized('Token not found');
 
     const decoded = verifyToken(token);
 
@@ -20,7 +20,7 @@ async function authMiddleware(req, _res, next) {
 
     if (!user) throw Boom.unauthorized('Error by looking a user with this token');
 
-    req.user = user;
+    req.user = user[0].dataValues;
 
     next();
   } catch (err) {

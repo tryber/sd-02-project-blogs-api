@@ -23,17 +23,18 @@ function userRouter(dependencies) {
   router.route('/login').post(validate(loginSchema), rescue(userController.login(dependencies)));
 
   router
+    .route('/image')
+    .patch(
+      auth,
+      upload({ dest: 'images', field: 'image' }),
+      rescue(userController.update(dependencies)),
+    );
+
+  router
     .route('/:id')
     .get(auth, rescue(userController.find(dependencies)))
     .patch(auth, validate(updateSchema), rescue(userController.update(dependencies)))
     .delete(auth, rescue(userController.remove(dependencies)));
-
-  router
-    .route('/image')
-    .patch(
-      upload({ dest: 'images/', field: 'image' }),
-      rescue(userController.update(dependencies)),
-    );
 
   return router;
 }

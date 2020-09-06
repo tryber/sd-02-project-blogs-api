@@ -42,7 +42,7 @@ function find({ User, userModel }) {
 function list({ User, userModel }) {
   return async (_req, res) => {
     const users = new User({ userModel });
-
+    console.log(users);
     const data = await users.list();
 
     res.status(200).json({ users: data });
@@ -73,7 +73,7 @@ function remove({ User, userModel }) {
 
 function update({ User, userModel }) {
   return async (req, res) => {
-    const user = new User({ userModel, ...req.body, id: req.params.id });
+    const user = new User({ userModel, ...req.body, id: req.params.id || req.user.id });
 
     const { data, error } = await user.update();
 
