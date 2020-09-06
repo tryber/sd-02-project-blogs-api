@@ -1,6 +1,5 @@
 const {
   bcrypt: { checkString, createHash },
-  getFilledFields,
   jsonWebToken: { signToken },
 } = require('../../utils');
 
@@ -26,7 +25,7 @@ async function find({ id, Model }) {
   const userModel = new Model({ id });
 
   const user = await userModel.find();
-
+  conosle.log(user);
   if (!user) return { data: null, error: 'notFound' };
 
   const {
@@ -73,8 +72,8 @@ async function remove({ id, Model }) {
   return userModel.remove();
 }
 
-async function update({ data, Model }) {
-  const userModel = new Model(getFilledFields(data));
+async function update({ data, id, Model }) {
+  const userModel = new Model({ data, id });
 
   const userExists = await userModel.find();
 

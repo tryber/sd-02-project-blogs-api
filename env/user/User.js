@@ -1,9 +1,10 @@
 const userService = require('./userService');
 
 class User {
-  constructor({ userModel, ...data }) {
+  constructor({ userModel, id, ...data }) {
     this.userModel = userModel;
     this.data = data;
+    this.id = id;
   }
 
   async create() {
@@ -11,7 +12,7 @@ class User {
   }
 
   async find() {
-    return userService.find({ id: this.data.id, Model: this.userModel });
+    return userService.find({ id: this.id, Model: this.userModel });
   }
 
   async list() {
@@ -27,11 +28,11 @@ class User {
   }
 
   async remove() {
-    return userService.remove({ id: this.data.id, Model: this.userModel });
+    return userService.remove({ id: this.id, Model: this.userModel });
   }
 
   async update() {
-    return userService.update({ data: this.data, Model: this.userModel });
+    return userService.update({ data: this.data, id: this.id, Model: this.userModel });
   }
 }
 

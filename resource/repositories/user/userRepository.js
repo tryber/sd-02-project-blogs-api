@@ -1,10 +1,10 @@
 const { getFields } = require('../utils');
 
 class UserRepository {
-  constructor({ Users, Models, data }) {
-    this.Users = Users;
-    this.Models = Models;
+  constructor({ models, data, id }) {
+    this.Users = models.Users;
     this.data = data;
+    this.id = id;
   }
 
   async create() {
@@ -12,7 +12,7 @@ class UserRepository {
   }
 
   async find() {
-    return this.Users.findByPk(this.data.id);
+    return this.Users.findByPk(this.id);
   }
 
   async findBy(field) {
@@ -24,11 +24,11 @@ class UserRepository {
   }
 
   async remove() {
-    return this.Users.destroy({ where: { id: this.data.id } });
+    return this.Users.destroy({ where: { id: this.id } });
   }
 
   async update() {
-    return this.Users.update(getFields(this.data), { where: { id: this.data.id } });
+    return this.Users.update(getFields(this.data), { where: { id: this.id } });
   }
 }
 

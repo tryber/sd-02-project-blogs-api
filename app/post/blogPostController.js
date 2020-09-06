@@ -53,9 +53,9 @@ function remove({ BlogPost, blogPostModel }) {
 
 function search({ BlogPost, blogPostModel }) {
   return async (req, res) => {
-    const blogPost = new BlogPost({ blogPostModel, search: req.query.search });
+    const blogPost = new BlogPost({ blogPostModel });
 
-    const { data, error } = await blogPost.search();
+    const { data, error } = await blogPost.search(req.query.search);
 
     if (error) return handleError[error]();
 

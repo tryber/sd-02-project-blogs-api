@@ -10,11 +10,11 @@ const {
   },
 } = require('../../utils');
 
-const { auth, validate } = require('../../middlewares');
+const { auth, validate, upload } = require('../../middlewares');
 
 const router = express.Router();
 
-function userRouter(dependencies) {
+function userRouter({ upload, ...dependencies }) {
   router
     .route('/')
     .get(auth, rescue(userController.list(dependencies)))
@@ -27,6 +27,13 @@ function userRouter(dependencies) {
     .get(auth, rescue(userController.find(dependencies)))
     .patch(auth, validate(updateSchema), rescue(userController.update(dependencies)))
     .delete(auth, rescue(userController.remove(dependencies)));
+
+  router
+    .route('/image')
+    .patch(
+      upload({ dest: 'images/', field: 'image' }),
+      rescue(userController.update(dependencies)),
+    );
 
   return router;
 }

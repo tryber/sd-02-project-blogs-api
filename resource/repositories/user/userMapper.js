@@ -1,12 +1,12 @@
-const { Users } = require('../../database/models');
+const models = require('../../database/models');
 
 const UserRepository = require('./userRepository');
 
-function userMapper(data) {
+function userMapper({ id, ...data }) {
   return new UserRepository({
-    Users,
-    Models: null,
+    models,
     data,
+    id,
   });
 }
 

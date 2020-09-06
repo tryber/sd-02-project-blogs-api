@@ -6,7 +6,7 @@ const {
 
 const { userModel: Model } = require('../resource');
 
-async function auth(req, _res, next) {
+async function authMiddleware(req, _res, next) {
   try {
     const token = req.headers.authorization;
 
@@ -28,4 +28,4 @@ async function auth(req, _res, next) {
   }
 }
 
-module.exports = auth;
+module.exports = authMiddleware;

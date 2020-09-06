@@ -1,9 +1,10 @@
 const blogPostService = require('./blogPostService');
 
 class BlogPost {
-  constructor({ blogPostModel, ...data }) {
+  constructor({ blogPostModel, id, ...data }) {
     this.blogPostModel = blogPostModel;
     this.data = data;
+    this.id = id;
   }
 
   async create() {
@@ -11,7 +12,7 @@ class BlogPost {
   }
 
   async find() {
-    return blogPostService.find({ id: this.data.id, Model: this.blogPostModel });
+    return blogPostService.find({ id: this.id, Model: this.blogPostModel });
   }
 
   async list() {
@@ -19,7 +20,7 @@ class BlogPost {
   }
 
   async remove() {
-    return blogPostService.remove({ id: this.data.id, Model: this.blogPostModel });
+    return blogPostService.remove({ id: this.id, Model: this.blogPostModel });
   }
 
   async search(name) {
@@ -27,7 +28,7 @@ class BlogPost {
   }
 
   async update() {
-    return blogPostService.update({ data: this.data, Model: this.blogPostModel });
+    return blogPostService.update({ data: this.data, id: this.id, Model: this.blogPostModel });
   }
 }
 

@@ -1,8 +1,8 @@
-const express = require('express');
+require('dotenv').config();
 
 const bodyParser = require('body-parser');
 
-require('dotenv').config();
+const express = require('express');
 
 const { error } = require('./middlewares');
 
@@ -15,6 +15,8 @@ const { blogPostModel, userModel } = require('./resource');
 const app = express();
 
 app.use(express.json());
+
+app.use(express.static(__dirname + '/images'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
