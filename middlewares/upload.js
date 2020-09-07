@@ -7,7 +7,6 @@ const util = require('util');
 function uploadMiddleware({ dest, field }) {
   return async (req, res, next) => {
     try {
-      console.log(dest, field);
       const contype = req.headers['content-type'];
 
       if (!contype) throw Boom.badRequest('File not received');

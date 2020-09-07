@@ -250,9 +250,113 @@ describe('Blog Post Controller', () => {
   });
 
   describe('Search Blog Post', () => {
-    it('on success', async () => {});
+    it('on success', async () => {
+      const mockBlogPostModel = jest.fn();
 
-    it('on failure - post not found', async () => {});
+      const createBlogPost = () => ({
+        id: faker.random.number(),
+        title: faker.name.title(),
+        content: faker.lorem.text(),
+        user: {
+          id: faker.random.number(),
+          email: faker.internet.email(),
+          displayName: faker.name.findName(),
+          image: faker.internet.url(),
+        },
+        published: faker.date.past(),
+        updated: faker.date.recent(),
+      });
+
+      const mockDataBlogPostReceived = new Array(5).fill(undefined).map(createBlogPost);
+
+      const mockSearch = jest.fn().mockResolvedValue(
+        new Promise((resolve, _reject) => {
+          resolve({ data: mockDataBlogPostReceived, error: null });
+        }),
+      );
+
+      const mockBlogPost = jest.fn().mockReturnValue({
+        search: mockSearch,
+      });
+
+      const mockQ = faker.lorem.word();
+
+      const mockReq = { query: { q: mockQ } };
+
+      const mockJson = jest.fn();
+
+      const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
+
+      const act = blogPostController.search({
+        BlogPost: mockBlogPost,
+        blogPostModel: mockBlogPostModel,
+      });
+
+      await act(mockReq, mockRes);
+
+      expect(mockBlogPost).toHaveBeenCalledTimes(1);
+
+      expect(mockBlogPost).toHaveBeenCalledWith({ blogPostModel: mockBlogPostModel });
+
+      expect(mockSearch).toHaveBeenCalledWith(mockQ);
+
+      expect(mockRes.status).toHaveBeenCalledTimes(1);
+
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+
+      expect(mockJson).toHaveBeenCalledTimes(1);
+
+      expect(mockJson).toHaveBeenCalledWith({ blogPosts: mockDataBlogPostReceived });
+    });
+
+    it('on failure - post not found', async () => {
+      const mockBlogPostModel = jest.fn();
+
+      const mockSearch = jest.fn().mockResolvedValue(
+        new Promise((resolve, _reject) => {
+          resolve({ data: null, error: 'notFound' });
+        }),
+      );
+
+      const mockBlogPost = jest.fn().mockReturnValue({
+        search: mockSearch,
+      });
+
+      const mockQ = faker.lorem.word();
+
+      const mockReq = { query: { q: mockQ } };
+
+      const mockRes = jest.fn();
+
+      const act = blogPostController.search({
+        BlogPost: mockBlogPost,
+        blogPostModel: mockBlogPostModel,
+      });
+
+      try {
+        await act(mockReq, mockRes);
+      } catch (err) {
+        const {
+          output: {
+            payload: { statusCode, message },
+          },
+        } = err;
+
+        expect(statusCode).toBe(400);
+
+        expect(message).toBe('Post não encontrado');
+      } finally {
+        expect(mockBlogPost).toHaveBeenCalledTimes(1);
+
+        expect(mockBlogPost).toHaveBeenCalledWith({
+          blogPostModel: mockBlogPostModel,
+        });
+
+        expect(mockSearch).toHaveBeenCalledWith(mockQ);
+
+        expect(mockRes).toHaveBeenCalledTimes(0);
+      }
+    });
   });
 
   describe('Update User', () => {

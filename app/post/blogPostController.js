@@ -60,13 +60,13 @@ function search({ BlogPost, blogPostModel }) {
 
     if (error) return handleError[error]();
 
-    res.status(200).json({ blogPost: data });
+    res.status(200).json({ blogPosts: data });
   };
 }
 
 function update({ BlogPost, blogPostModel }) {
   return async (req, res) => {
-    const blogPost = new BlogPost({ blogPostModel, ...req.body, id: req.params.id || req.user.id });
+    const blogPost = new BlogPost({ blogPostModel, ...req.body, id: req.params.id });
 
     const { data, error } = await blogPost.update();
 

@@ -23,7 +23,7 @@ function userRouter(dependencies) {
   router.route('/login').post(validate(loginSchema), rescue(userController.login(dependencies)));
 
   router
-    .route('/image')
+    .route('/:id/image')
     .patch(
       auth,
       upload({ dest: 'images', field: 'image' }),

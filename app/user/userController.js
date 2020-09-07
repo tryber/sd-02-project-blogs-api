@@ -73,7 +73,7 @@ function remove({ User, userModel }) {
 
 function update({ User, userModel }) {
   return async (req, res) => {
-    const user = new User({ userModel, ...req.body, id: req.params.id || req.user.id });
+    const user = new User({ userModel, ...req.body, id: req.params.id });
 
     const { data, error } = await user.update();
 
