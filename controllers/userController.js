@@ -7,17 +7,21 @@ const router = express.Router();
 router.post('/', async (req, res, _next) => {
   const { displayName, email, password, image } = req.body;
 
+  let message = '';
+
   if (typeof displayName !== 'string' || displayName.length < 8) {
-    return res.status(422).json({ message: 'displayName deve ter pelo menos 8 caracteres' });
+    message = 'displayName deve ter pelo menos 8 caracteres. ';
   }
 
   if (!/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(email)) {
-    return res.status(422).json({ message: 'Insira um email válido' });
+    message = `${message}Insira um email válido. `;
   }
 
   if (typeof password !== 'string' || password.length !== 6) {
-    return res.status(422).json({ message: 'A senha deve conter 6 caracteres' });
+    message = `${message}A senha deve conter 6 caracteres.`;
   }
+
+  if (message) return res.status(422).json({ message });
 
   try {
     const [, created] = await User.findOrCreate({
