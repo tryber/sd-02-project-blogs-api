@@ -21,10 +21,8 @@ describe('Blog Post Controller', () => {
         user_id: mockUserId,
         title: mockDataBlogPostSent.title,
         content: mockDataBlogPostSent.content,
-        updatedAt: new Date(),
-        createdAt: new Date(),
-        published: new Date(),
-        updated: new Date(),
+        published: faker.date.past(),
+        updated: faker.date.recent(),
       };
 
       const mockBlogPost = jest.fn().mockReturnValue({
@@ -84,8 +82,8 @@ describe('Blog Post Controller', () => {
           displayName: faker.name.findName(),
           image: faker.internet.url(),
         },
-        published: new Date(),
-        updated: new Date(),
+        published: faker.date.past(),
+        updated: faker.date.recent(),
       };
 
       const mockBlogPost = jest.fn().mockReturnValue({
@@ -121,7 +119,7 @@ describe('Blog Post Controller', () => {
       expect(mockJson).toHaveBeenCalledWith({ blogPost: mockDataBlogPostReceived });
     });
 
-    it('on failure - user not found', async () => {
+    it('on failure - post not found', async () => {
       const mockBlogPostModel = jest.fn();
 
       const mockId = faker.random.number();
@@ -164,18 +162,25 @@ describe('Blog Post Controller', () => {
     });
   });
 
-  describe('List User', () => {
+  describe('List Blog Post', () => {
     it('on success', async () => {
       const mockBlogPostModel = jest.fn();
 
-      const createUser = () => ({
+      const createBlogPost = () => ({
         id: faker.random.number(),
-        email: faker.internet.email(),
-        displayName: faker.name.findName(),
-        image: faker.internet.url(),
+        title: faker.name.title(),
+        content: faker.lorem.text(),
+        user: {
+          id: faker.random.number(),
+          email: faker.internet.email(),
+          displayName: faker.name.findName(),
+          image: faker.internet.url(),
+        },
+        published: faker.date.past(),
+        updated: faker.date.recent(),
       });
 
-      const mockDataBlogPostReceived = new Array(10).fill(undefined).map(createUser);
+      const mockDataBlogPostReceived = new Array(10).fill(undefined).map(createBlogPost);
 
       const mockBlogPost = jest.fn().mockReturnValue({
         list: async () =>
@@ -188,7 +193,10 @@ describe('Blog Post Controller', () => {
 
       const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
 
-      const act = blogPostController.list({ User: mockBlogPost, blogPostModel: mockBlogPostModel });
+      const act = blogPostController.list({
+        BlogPost: mockBlogPost,
+        blogPostModel: mockBlogPostModel,
+      });
 
       await act(null, mockRes);
 
@@ -202,7 +210,7 @@ describe('Blog Post Controller', () => {
 
       expect(mockJson).toHaveBeenCalledTimes(1);
 
-      expect(mockJson).toHaveBeenCalledWith({ users: mockDataBlogPostReceived });
+      expect(mockJson).toHaveBeenCalledWith({ blogPosts: mockDataBlogPostReceived });
     });
   });
 
