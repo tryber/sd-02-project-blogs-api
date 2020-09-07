@@ -7,10 +7,6 @@ const router = express.Router();
 router.post('/', async (req, res, _next) => {
   const { displayName, email, password, image } = req.body;
 
-  if (!displayName || !email || !password || !image) {
-    return res.status(422).json({ message: 'Dados inválidos' });
-  }
-
   if (typeof displayName !== 'string' || displayName.length < 8) {
     return res.status(422).json({ message: 'displayName deve ter pelo menos 8 caracteres' });
   }
