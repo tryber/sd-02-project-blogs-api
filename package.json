@@ -18,9 +18,10 @@
     "sequelize": "^6.3.4"
   },
   "scripts": {
-    "start": "nodemon index.js",
-    "debug": "node index.js",
+    "start": "node index.js",
+    "debug": "nodemon index.js",
     "test": "jest",
+    "test-coverage": "jest --coverage --watchAll=false",
     "lint": "eslint ."
   },
   "devDependencies": {
