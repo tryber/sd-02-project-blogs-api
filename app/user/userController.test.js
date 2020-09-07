@@ -3,7 +3,7 @@ const faker = require('faker');
 
 describe('User Controller', () => {
   describe('Create User', () => {
-    test('with no image', async () => {
+    test('on sucess', async () => {
       const mockUserModel = jest.fn();
 
       const mockDataUser = {
@@ -35,8 +35,6 @@ describe('User Controller', () => {
 
       expect(mockUser).toHaveBeenCalledWith({ ...mockReq.body, userModel: mockUserModel });
 
-      expect(mockUser).toHaveBeenCalledWith({ ...mockReq.body, userModel: mockUserModel });
-
       expect(mockRes.status).toHaveBeenCalledTimes(1);
 
       expect(mockRes.status).toHaveBeenCalledWith(201);
@@ -45,7 +43,51 @@ describe('User Controller', () => {
 
       expect(mockJson).toHaveBeenCalledWith({ user: mockDataUser, token: mockDataToken });
     });
+
+    test('on failure - user exists', async () => {
+      const mockUserModel = jest.fn();
+
+      const mockDataUser = {
+        id: faker.random.number(),
+        email: faker.internet.email(),
+        displayName: faker.name.findName(),
+      };
+
+      const mockUser = jest.fn().mockReturnValue({
+        create: async () =>
+          new Promise((resolve, _reject) => {
+            resolve({ data: null, token: null, error: 'exists' });
+          }),
+      });
+
+      const mockReq = { body: mockDataUser };
+
+      const mockRes = jest.fn();
+
+      const act = userController.create({ User: mockUser, userModel: mockUserModel });
+
+      try {
+        await act(mockReq, mockRes);
+      } catch (err) {
+        const {
+          output: {
+            payload: { statusCode, message },
+          },
+        } = err;
+
+        expect(statusCode).toBe(400);
+
+        expect(message).toBe('Usuário já existe');
+      } finally {
+        expect(mockUser).toHaveBeenCalledTimes(1);
+
+        expect(mockUser).toHaveBeenCalledWith({ ...mockReq.body, userModel: mockUserModel });
+
+        expect(mockRes).toHaveBeenCalledTimes(0);
+      }
+    });
   });
+
   describe('Find User', () => {});
   describe('List User', () => {});
   describe('Remove User', () => {});
