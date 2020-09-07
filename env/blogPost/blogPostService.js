@@ -23,7 +23,11 @@ async function list({ Model }) {
 async function search({ name, Model }) {
   const blogPostModel = new Model();
 
-  return blogPostModel.findBy(name);
+  const blogPost = await blogPostModel.findBy(name);
+
+  if (blogPost.length === 0) return { data: null, error: 'notFound' };
+
+  return { data: blogPost, error: null };
 }
 
 async function remove({ id, Model }) {
@@ -33,15 +37,15 @@ async function remove({ id, Model }) {
 }
 
 async function update({ data, id, Model }) {
-  const blogPostModel = new Model({ data, id });
+  const blogPostModel = new Model({ id, ...data });
 
-  const blogPost = await blogPostModel.find();
+  const blogPostExists = await blogPostModel.find();
 
-  if (!blogPost) return { data: null, error: 'notFound' };
+  if (!blogPostExists) return { data: null, error: 'notFound' };
 
   await blogPostModel.update();
 
-  return blogPostModel.find();
+  return { data: await blogPostModel.find(), error: null };
 }
 
 module.exports = {

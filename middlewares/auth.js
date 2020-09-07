@@ -18,7 +18,7 @@ async function authMiddleware(req, _res, next) {
 
     const user = await userModel.findBy('email');
 
-    if (!user) throw Boom.unauthorized('Error by looking a user with this token');
+    if (user.length === 0) throw Boom.unauthorized('Error by looking a user with this token');
 
     req.user = user[0].dataValues;
 

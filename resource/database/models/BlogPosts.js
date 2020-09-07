@@ -2,18 +2,18 @@ function BlogPostsModel(sequelize, DataTypes) {
   const BlogPosts = sequelize.define('BlogPosts', {
     title: DataTypes.STRING,
     content: DataTypes.STRING,
-    createdAt: {
+    published: {
       type: DataTypes.DATE,
-      field: 'published',
+      field: 'createdAt',
     },
-    updatedAt: {
+    updated: {
       type: DataTypes.DATE,
-      field: 'updated',
+      field: 'updatedAt',
     },
   });
 
   BlogPosts.associate = (models) => {
-    BlogPosts.belongsTo(models.BlogPosts, { foreignKey: 'user_id' });
+    BlogPosts.belongsTo(models.Users, { as: 'user', foreignKey: 'user_id' });
   };
 
   return BlogPosts;

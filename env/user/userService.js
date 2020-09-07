@@ -73,7 +73,7 @@ async function remove({ id, Model }) {
 }
 
 async function update({ data, id, Model }) {
-  const userModel = new Model({ ...data, id });
+  const userModel = new Model({ id, ...data });
 
   const userExists = await userModel.find();
 

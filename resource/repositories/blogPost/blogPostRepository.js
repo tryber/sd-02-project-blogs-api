@@ -4,9 +4,12 @@ const {
 } = require('../../../utils');
 
 class BlogPostRepository {
-  constructor({ models, data }) {
-    this.BlogPosts = models.BlogPosts;
-    this.includeUser = { include: { model: models.Users, as: 'user' } };
+  constructor({ models: { BlogPosts, Users }, data }) {
+    this.BlogPosts = BlogPosts;
+    this.include = {
+      include: [{ model: Users, as: 'user', attributes: { exclude: ['password'] } }],
+      attributes: { exclude: ['user_id', 'createdAt', 'updatedAt'] },
+    };
     this.data = data;
   }
 
@@ -15,19 +18,20 @@ class BlogPostRepository {
   }
 
   async find() {
-    return this.BlogPosts.findByPk(this.data.id, this.includeUser);
+    return this.BlogPosts.findByPk(this.data.id, this.include);
   }
 
   async findBy(name) {
+    console.log(name);
     return this.BlogPosts.findAll({
       where: {
-        [Op.or]: [{ title: { [Op.substring]: name } }, { content: { [Op.substring]: name } }],
+        [Op.or]: [{ title: { [Op.like]: `%${name}%` } }, { content: { [Op.like]: `%${name}%` } }],
       },
     });
   }
 
   async list() {
-    return this.BlogPosts.findAll(this.includeUser);
+    return this.BlogPosts.findAll(this.include);
   }
 
   async remove() {

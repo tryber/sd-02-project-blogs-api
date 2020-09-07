@@ -12,10 +12,6 @@ function UserModel(sequelize, DataTypes) {
     },
   );
 
-  Users.associate = (models) => {
-    Users.hasMany(models.BlogPosts, { as: 'posts', foreignKey: 'user_id' });
-  };
-
   return Users;
 }
 

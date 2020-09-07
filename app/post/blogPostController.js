@@ -10,10 +10,11 @@ function create({ BlogPost, blogPostModel }) {
   return async (req, res) => {
     const blogPost = new BlogPost({
       ...req.body,
+      user_id: req.user.id,
       blogPostModel,
     });
 
-    const { data } = await blogPost.create();
+    const data = await blogPost.create();
 
     res.status(201).json({ blogPost: data });
   };
@@ -33,11 +34,11 @@ function find({ BlogPost, blogPostModel }) {
 
 function list({ BlogPost, blogPostModel }) {
   return async (_req, res) => {
-    const blogPost = new BlogPost({ blogPostModel });
+    const blogPosts = new BlogPost({ blogPostModel });
 
-    const data = await blogPost.list();
+    const data = await blogPosts.list();
 
-    res.status(200).json({ blogPost: data });
+    res.status(200).json({ blogPosts: data });
   };
 }
 
@@ -55,7 +56,7 @@ function search({ BlogPost, blogPostModel }) {
   return async (req, res) => {
     const blogPost = new BlogPost({ blogPostModel });
 
-    const { data, error } = await blogPost.search(req.query.search);
+    const { data, error } = await blogPost.search(req.query.q);
 
     if (error) return handleError[error]();
 
@@ -65,7 +66,7 @@ function search({ BlogPost, blogPostModel }) {
 
 function update({ BlogPost, blogPostModel }) {
   return async (req, res) => {
-    const blogPost = new BlogPost({ blogPostModel, ...req.body, id: req.params.id });
+    const blogPost = new BlogPost({ blogPostModel, ...req.body, id: req.params.id || req.user.id });
 
     const { data, error } = await blogPost.update();
 
