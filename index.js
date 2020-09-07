@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 
 const express = require('express');
 
+const path = require('path');
+
 const { error } = require('./middlewares');
 
 const { blogPostRouter, userRouter } = require('./app');
@@ -16,7 +18,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/images', express.static(__dirname + '/images'));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
