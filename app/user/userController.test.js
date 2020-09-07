@@ -443,7 +443,7 @@ describe('User Controller', () => {
       expect(mockJson).toHaveBeenCalledWith({ user: mockDataUserReceived });
     });
 
-    it('on failure - wrong password', async () => {
+    it('on failure - user not found', async () => {
       const mockUserModel = jest.fn();
 
       const mockId = faker.random.number();
