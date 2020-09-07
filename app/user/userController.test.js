@@ -92,14 +92,14 @@ describe('User Controller', () => {
     it('on success', async () => {
       const mockUserModel = jest.fn();
 
+      const mockId = faker.random.number();
+
       const mockDataUser = {
-        id: faker.random.number(),
+        id: mockId,
         email: faker.internet.email(),
         displayName: faker.name.findName(),
         image: faker.internet.url(),
       };
-
-      const mockId = faker.random.number();
 
       const mockUser = jest.fn().mockReturnValue({
         find: async () =>
@@ -303,7 +303,7 @@ describe('User Controller', () => {
       }
     });
 
-    it('on failure - wroung password', async () => {
+    it('on failure - wrong password', async () => {
       const mockUserModel = jest.fn();
 
       const mockDataUserLogin = {
@@ -346,9 +346,37 @@ describe('User Controller', () => {
     });
   });
 
-  describe('Remove User', () => {});
+  describe('Remove User', () => {
+    it('on success', async () => {
+      const mockUserModel = jest.fn();
 
-  describe('Search User', () => {});
+      const mockId = faker.random.number();
+
+      const mockUser = jest.fn().mockReturnValue({
+        remove: async () => new Promise((resolve, _reject) => resolve()),
+      });
+
+      const mockReq = { params: { id: mockId } };
+
+      const mockEnd = jest.fn();
+
+      const mockRes = { status: jest.fn().mockReturnValue({ end: mockEnd }) };
+
+      const act = userController.remove({ User: mockUser, userModel: mockUserModel });
+
+      await act(mockReq, mockRes);
+
+      expect(mockUser).toHaveBeenCalledTimes(1);
+
+      expect(mockUser).toHaveBeenCalledWith({ userModel: mockUserModel, id: mockId });
+
+      expect(mockRes.status).toHaveBeenCalledTimes(1);
+
+      expect(mockRes.status).toHaveBeenCalledWith(204);
+
+      expect(mockEnd).toHaveBeenCalledTimes(1);
+    });
+  });
 
   describe('Update User', () => {});
 });
