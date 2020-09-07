@@ -378,5 +378,104 @@ describe('User Controller', () => {
     });
   });
 
-  describe('Update User', () => {});
+  describe('Update User', () => {
+    it('on success', async () => {
+      const mockUserModel = jest.fn();
+
+      const mockId = faker.random.number();
+
+      const mockDataUpdate = {
+        displayName: faker.name.findName(),
+        image: faker.internet.url(),
+      };
+
+      const mockDataUser = {
+        id: mockId,
+        email: faker.internet.email(),
+        displayName: mockDataUpdate.displayName,
+        image: mockDataUpdate.image,
+      };
+
+      const mockUser = jest.fn().mockReturnValue({
+        update: async () =>
+          new Promise((resolve, _reject) => {
+            resolve({ data: mockDataUser, error: null });
+          }),
+      });
+
+      const mockReq = { params: { id: mockId }, body: mockDataUpdate };
+
+      const mockJson = jest.fn();
+
+      const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
+
+      const act = userController.update({ User: mockUser, userModel: mockUserModel });
+
+      await act(mockReq, mockRes);
+
+      expect(mockUser).toHaveBeenCalledTimes(1);
+
+      expect(mockUser).toHaveBeenCalledWith({
+        id: mockId,
+        userModel: mockUserModel,
+        ...mockReq.body,
+      });
+
+      expect(mockRes.status).toHaveBeenCalledTimes(1);
+
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+
+      expect(mockJson).toHaveBeenCalledTimes(1);
+
+      expect(mockJson).toHaveBeenCalledWith({ user: mockDataUser });
+    });
+
+    it('on failure - wrong password', async () => {
+      const mockUserModel = jest.fn();
+
+      const mockId = faker.random.number();
+
+      const mockDataUpdate = {
+        displayName: faker.name.findName(),
+        image: faker.internet.url(),
+      };
+
+      const mockUser = jest.fn().mockReturnValue({
+        update: async () =>
+          new Promise((resolve, _reject) => {
+            resolve({ data: null, error: 'notFound' });
+          }),
+      });
+
+      const mockReq = { params: { id: mockId }, body: mockDataUpdate };
+
+      const mockRes = jest.fn();
+
+      const act = userController.update({ User: mockUser, userModel: mockUserModel });
+
+      try {
+        await act(mockReq, mockRes);
+      } catch (err) {
+        const {
+          output: {
+            payload: { statusCode, message },
+          },
+        } = err;
+
+        expect(statusCode).toBe(400);
+
+        expect(message).toBe('Usuário não encontrado');
+      } finally {
+        expect(mockUser).toHaveBeenCalledTimes(1);
+
+        expect(mockUser).toHaveBeenCalledWith({
+          id: mockId,
+          userModel: mockUserModel,
+          ...mockReq.body,
+        });
+
+        expect(mockRes).toHaveBeenCalledTimes(0);
+      }
+    });
+  });
 });
