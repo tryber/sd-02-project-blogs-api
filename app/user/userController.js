@@ -8,7 +8,7 @@ const handleError = {
     throw Boom.badRequest('Usuário não encontrado');
   },
   wrongPassword: () => {
-    throw Boom.badRequest('Wrong Password');
+    throw Boom.badRequest('Senha incorreta');
   },
 };
 
@@ -42,7 +42,7 @@ function find({ User, userModel }) {
 function list({ User, userModel }) {
   return async (_req, res) => {
     const users = new User({ userModel });
-    console.log(users);
+
     const data = await users.list();
 
     res.status(200).json({ users: data });
