@@ -65,17 +65,27 @@ describe('Blog Post Controller', () => {
     });
   });
 
-  describe('Find User', () => {
+  describe('Find Blog Post', () => {
     it('on success', async () => {
       const mockBlogPostModel = jest.fn();
 
       const mockId = faker.random.number();
 
+      const mockUserId = faker.random.number();
+
       const mockDataBlogPostReceived = {
         id: mockId,
-        email: faker.internet.email(),
-        displayName: faker.name.findName(),
-        image: faker.internet.url(),
+        user_id: mockUserId,
+        title: faker.name.title(),
+        content: faker.lorem.text(),
+        user: {
+          id: mockUserId,
+          email: faker.internet.email(),
+          displayName: faker.name.findName(),
+          image: faker.internet.url(),
+        },
+        published: new Date(),
+        updated: new Date(),
       };
 
       const mockBlogPost = jest.fn().mockReturnValue({
@@ -91,7 +101,10 @@ describe('Blog Post Controller', () => {
 
       const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }) };
 
-      const act = blogPostController.find({ User: mockBlogPost, blogPostModel: mockBlogPostModel });
+      const act = blogPostController.find({
+        BlogPost: mockBlogPost,
+        blogPostModel: mockBlogPostModel,
+      });
 
       await act(mockReq, mockRes);
 
@@ -105,7 +118,7 @@ describe('Blog Post Controller', () => {
 
       expect(mockJson).toHaveBeenCalledTimes(1);
 
-      expect(mockJson).toHaveBeenCalledWith({ user: mockDataBlogPostReceived });
+      expect(mockJson).toHaveBeenCalledWith({ blogPost: mockDataBlogPostReceived });
     });
 
     it('on failure - user not found', async () => {
@@ -124,7 +137,10 @@ describe('Blog Post Controller', () => {
 
       const mockRes = jest.fn();
 
-      const act = blogPostController.find({ User: mockBlogPost, blogPostModel: mockBlogPostModel });
+      const act = blogPostController.find({
+        BlogPost: mockBlogPost,
+        blogPostModel: mockBlogPostModel,
+      });
 
       try {
         await act(mockReq, mockRes);
@@ -137,7 +153,7 @@ describe('Blog Post Controller', () => {
 
         expect(statusCode).toBe(400);
 
-        expect(message).toBe('Usuário não encontrado');
+        expect(message).toBe('Post não encontrado');
       } finally {
         expect(mockBlogPost).toHaveBeenCalledTimes(1);
 
