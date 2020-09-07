@@ -1,11 +1,8 @@
-const express = require('express');
 const { User } = require('../models');
 const { validateUser } = require('../services/validation');
 const { generateToken } = require('../services/authentication');
 
-const router = express.Router();
-
-router.post('/', async (req, res, _next) => {
+const register = async (req, res, _next) => {
   const { displayName, email, password, image } = req.body;
 
   const { isValid, message } = validateUser(
@@ -30,6 +27,8 @@ router.post('/', async (req, res, _next) => {
   } catch (error) {
     return res.status(500).json({ message: 'Algo deu errado' });
   }
-});
+};
 
-module.exports = router;
+module.exports = {
+  register,
+};
