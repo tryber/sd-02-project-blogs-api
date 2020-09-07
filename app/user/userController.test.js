@@ -1,4 +1,5 @@
 const userController = require('./userController');
+
 const faker = require('faker');
 
 describe('User Controller', () => {
@@ -6,22 +7,28 @@ describe('User Controller', () => {
     it('on success', async () => {
       const mockUserModel = jest.fn();
 
-      const mockDataUser = {
-        id: faker.random.number(),
+      const mockDataUserSent = {
         email: faker.internet.email(),
         displayName: faker.name.findName(),
+        password: faker.internet.password(),
       };
 
-      const mockDataToken = faker.random.hexaDecimal();
+      const mockDataUserReceived = {
+        id: faker.random.number(),
+        email: mockDataUserSent.email,
+        displayName: mockDataUserSent.displayName,
+      };
+
+      const mockDataTokenReceived = faker.random.hexaDecimal();
 
       const mockUser = jest.fn().mockReturnValue({
         create: async () =>
           new Promise((resolve, _reject) => {
-            resolve({ data: mockDataUser, token: mockDataToken, error: null });
+            resolve({ data: mockDataUserReceived, token: mockDataTokenReceived, error: null });
           }),
       });
 
-      const mockReq = { body: mockDataUser };
+      const mockReq = { body: mockDataUserSent };
 
       const mockJson = jest.fn();
 
@@ -41,13 +48,16 @@ describe('User Controller', () => {
 
       expect(mockJson).toHaveBeenCalledTimes(1);
 
-      expect(mockJson).toHaveBeenCalledWith({ user: mockDataUser, token: mockDataToken });
+      expect(mockJson).toHaveBeenCalledWith({
+        user: mockDataUserReceived,
+        token: mockDataTokenReceived,
+      });
     });
 
     it('on failure - user exists', async () => {
       const mockUserModel = jest.fn();
 
-      const mockDataUser = {
+      const mockDataUserSent = {
         id: faker.random.number(),
         email: faker.internet.email(),
         displayName: faker.name.findName(),
@@ -60,7 +70,7 @@ describe('User Controller', () => {
           }),
       });
 
-      const mockReq = { body: mockDataUser };
+      const mockReq = { body: mockDataUserSent };
 
       const mockRes = jest.fn();
 
@@ -94,7 +104,7 @@ describe('User Controller', () => {
 
       const mockId = faker.random.number();
 
-      const mockDataUser = {
+      const mockDataUserReceived = {
         id: mockId,
         email: faker.internet.email(),
         displayName: faker.name.findName(),
@@ -104,7 +114,7 @@ describe('User Controller', () => {
       const mockUser = jest.fn().mockReturnValue({
         find: async () =>
           new Promise((resolve, _reject) => {
-            resolve({ data: mockDataUser, error: null });
+            resolve({ data: mockDataUserReceived, error: null });
           }),
       });
 
@@ -128,7 +138,7 @@ describe('User Controller', () => {
 
       expect(mockJson).toHaveBeenCalledTimes(1);
 
-      expect(mockJson).toHaveBeenCalledWith({ user: mockDataUser });
+      expect(mockJson).toHaveBeenCalledWith({ user: mockDataUserReceived });
     });
 
     it('on failure - user not found', async () => {
@@ -182,12 +192,12 @@ describe('User Controller', () => {
         image: faker.internet.url(),
       });
 
-      const mockDataUser = new Array(10).fill(undefined).map(createUser);
+      const mockDataUserReceived = new Array(10).fill(undefined).map(createUser);
 
       const mockUser = jest.fn().mockReturnValue({
         list: async () =>
           new Promise((resolve, _reject) => {
-            resolve(mockDataUser);
+            resolve(mockDataUserReceived);
           }),
       });
 
@@ -209,7 +219,7 @@ describe('User Controller', () => {
 
       expect(mockJson).toHaveBeenCalledTimes(1);
 
-      expect(mockJson).toHaveBeenCalledWith({ users: mockDataUser });
+      expect(mockJson).toHaveBeenCalledWith({ users: mockDataUserReceived });
     });
   });
 
@@ -217,28 +227,28 @@ describe('User Controller', () => {
     it('on success', async () => {
       const mockUserModel = jest.fn();
 
-      const mockDataUserLogin = {
+      const mockDataUserSent = {
         email: faker.internet.email(),
         password: faker.internet.password(),
       };
 
-      const mockDataUser = {
+      const mockDataUserReceived = {
         id: faker.random.number(),
-        email: mockDataUserLogin.email,
+        email: mockDataUserSent.email,
         displayName: faker.name.findName(),
         image: faker.internet.url(),
       };
 
-      const mockDataToken = faker.random.hexaDecimal();
+      const mockDataTokenReceived = faker.random.hexaDecimal();
 
       const mockUser = jest.fn().mockReturnValue({
         login: async () =>
           new Promise((resolve, _reject) => {
-            resolve({ data: mockDataUser, token: mockDataToken, error: null });
+            resolve({ data: mockDataUserReceived, token: mockDataTokenReceived, error: null });
           }),
       });
 
-      const mockReq = { body: mockDataUserLogin };
+      const mockReq = { body: mockDataUserSent };
 
       const mockJson = jest.fn();
 
@@ -258,13 +268,16 @@ describe('User Controller', () => {
 
       expect(mockJson).toHaveBeenCalledTimes(1);
 
-      expect(mockJson).toHaveBeenCalledWith({ user: mockDataUser, token: mockDataToken });
+      expect(mockJson).toHaveBeenCalledWith({
+        user: mockDataUserReceived,
+        token: mockDataTokenReceived,
+      });
     });
 
     it('on failure - user not found', async () => {
       const mockUserModel = jest.fn();
 
-      const mockDataUserLogin = {
+      const mockDataUserSent = {
         email: faker.internet.email(),
         password: faker.internet.password(),
       };
@@ -276,7 +289,7 @@ describe('User Controller', () => {
           }),
       });
 
-      const mockReq = { body: mockDataUserLogin };
+      const mockReq = { body: mockDataUserSent };
 
       const mockRes = jest.fn();
 
@@ -306,7 +319,7 @@ describe('User Controller', () => {
     it('on failure - wrong password', async () => {
       const mockUserModel = jest.fn();
 
-      const mockDataUserLogin = {
+      const mockDataUserSent = {
         email: faker.internet.email(),
         password: faker.internet.password(),
       };
@@ -318,7 +331,7 @@ describe('User Controller', () => {
           }),
       });
 
-      const mockReq = { body: mockDataUserLogin };
+      const mockReq = { body: mockDataUserSent };
 
       const mockRes = jest.fn();
 
@@ -384,26 +397,26 @@ describe('User Controller', () => {
 
       const mockId = faker.random.number();
 
-      const mockDataUpdate = {
+      const mockDataUserSent = {
         displayName: faker.name.findName(),
         image: faker.internet.url(),
       };
 
-      const mockDataUser = {
+      const mockDataUserReceived = {
         id: mockId,
         email: faker.internet.email(),
-        displayName: mockDataUpdate.displayName,
-        image: mockDataUpdate.image,
+        displayName: mockDataUserSent.displayName,
+        image: mockDataUserSent.image,
       };
 
       const mockUser = jest.fn().mockReturnValue({
         update: async () =>
           new Promise((resolve, _reject) => {
-            resolve({ data: mockDataUser, error: null });
+            resolve({ data: mockDataUserReceived, error: null });
           }),
       });
 
-      const mockReq = { params: { id: mockId }, body: mockDataUpdate };
+      const mockReq = { params: { id: mockId }, body: mockDataUserSent };
 
       const mockJson = jest.fn();
 
@@ -427,7 +440,7 @@ describe('User Controller', () => {
 
       expect(mockJson).toHaveBeenCalledTimes(1);
 
-      expect(mockJson).toHaveBeenCalledWith({ user: mockDataUser });
+      expect(mockJson).toHaveBeenCalledWith({ user: mockDataUserReceived });
     });
 
     it('on failure - wrong password', async () => {
@@ -435,7 +448,7 @@ describe('User Controller', () => {
 
       const mockId = faker.random.number();
 
-      const mockDataUpdate = {
+      const mockDataUserSent = {
         displayName: faker.name.findName(),
         image: faker.internet.url(),
       };
@@ -447,7 +460,7 @@ describe('User Controller', () => {
           }),
       });
 
-      const mockReq = { params: { id: mockId }, body: mockDataUpdate };
+      const mockReq = { params: { id: mockId }, body: mockDataUserSent };
 
       const mockRes = jest.fn();
 
