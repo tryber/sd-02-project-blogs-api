@@ -20,6 +20,12 @@ async function list({ Model }) {
   return blogPostModel.list();
 }
 
+async function remove({ id, Model }) {
+  const blogPostModel = new Model({ id });
+
+  return blogPostModel.remove();
+}
+
 async function search({ name, Model }) {
   const blogPostModel = new Model();
 
@@ -28,12 +34,6 @@ async function search({ name, Model }) {
   if (blogPost.length === 0) return { data: null, error: 'notFound' };
 
   return { data: blogPost, error: null };
-}
-
-async function remove({ id, Model }) {
-  const blogPostModel = new Model({ id });
-
-  return blogPostModel.remove();
 }
 
 async function update({ data, id, Model }) {

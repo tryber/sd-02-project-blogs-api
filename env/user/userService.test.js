@@ -351,19 +351,6 @@ describe('User Service', () => {
         displayName: faker.name.findName(),
       };
 
-      const mockUserWithoutPassord = {
-        id: faker.random.number(),
-        email: faker.internet.email(),
-        displayName: mockDataUserSent.displayName,
-      };
-
-      const mockDataUserReceived = {
-        dataValues: {
-          ...mockUserWithoutPassord,
-          password: mockDataUserSent.password,
-        },
-      };
-
       const mockUpdate = jest.fn().mockResolvedValue();
 
       const mockModel = jest.fn().mockReturnValue({
