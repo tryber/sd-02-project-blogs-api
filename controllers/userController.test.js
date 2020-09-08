@@ -119,40 +119,6 @@ describe('register', () => {
     findOneSpy.mockRestore();
     signSpy.mockRestore();
   });
-
-  test('Se der erro no servidor, retorna mensagem de erro', async () => {
-    const mockReq = {
-      body: {
-        displayName: 'Thiago Silva',
-        email: 'thiagosilva@gmail.com',
-        password: '123456',
-        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
-      },
-    };
-
-    const mockJson = jest.fn();
-    const mockRes = {
-      status: jest
-        .fn()
-        .mockReturnValueOnce({ json: mockJson }),
-    };
-
-    const findOrCreateSpy = jest
-      .spyOn(User, 'findOrCreate')
-      .mockRejectedValueOnce();
-
-    const mockData = {
-      message: 'Algo deu errado',
-    };
-
-    await userController.register(mockReq, mockRes);
-
-    expect(findOrCreateSpy).toBeCalledTimes(1);
-    expect(mockRes.status).toBeCalledWith(500);
-    expect(mockJson).toBeCalledWith(mockData);
-
-    findOrCreateSpy.mockRestore();
-  });
 });
 
 describe('getAll', () => {
