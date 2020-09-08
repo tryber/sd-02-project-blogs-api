@@ -16,8 +16,11 @@ module.exports = async (req, res, next) => {
     return res.status(401).json({ message: 'Token inválido ou expirado' });
   }
 
-  const user = await User.findByPk(id);
-  if (!user) return res.status(401).json('Usuário do token não encontrado');
+  const user = await User.findByPk(id, {
+    attributes: ['id', 'displayName', 'email', 'image'],
+  });
+
+  if (!user) return res.status(401).json({ message: 'Usuário do token não encontrado' });
 
   req.user = user;
 
