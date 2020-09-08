@@ -22,7 +22,6 @@ class BlogPostRepository {
   }
 
   async findBy(name) {
-    console.log(name);
     return this.BlogPosts.findAll({
       where: {
         [Op.or]: [{ title: { [Op.like]: `%${name}%` } }, { content: { [Op.like]: `%${name}%` } }],
