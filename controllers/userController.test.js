@@ -162,3 +162,62 @@ describe('getAll', () => {
     findAllSpy.mockRestore();
   });
 });
+
+describe('getById', () => {
+  test('Se usuário não existe, retorna erro com status 404', async () => {
+    const mockReq = {
+      params: { id: 4500 },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const findByPkSpy = jest
+      .spyOn(User, 'findByPk')
+      .mockReturnValueOnce(null);
+
+    await userController.getById(mockReq, mockRes);
+
+    expect(findByPkSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(404);
+    expect(mockJson).toBeCalledWith({ message: 'Usuário não encontrado' });
+
+    findByPkSpy.mockRestore();
+  });
+
+  test('Se usuário não existe, retorna erro com status 404', async () => {
+    const mockReq = {
+      params: { id: 1 },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const mockUser = {
+      id: 1,
+      displayName: 'Brett Wiltshire',
+      email: 'brett@email.com',
+      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+    };
+
+    const findByPkSpy = jest
+      .spyOn(User, 'findByPk')
+      .mockReturnValueOnce(mockUser);
+
+    await userController.getById(mockReq, mockRes);
+
+    expect(findByPkSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJson).toBeCalledWith(mockUser);
+
+    findByPkSpy.mockRestore();
+  });
+});

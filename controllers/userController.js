@@ -37,7 +37,20 @@ const getAll = async (_req, res) => {
   return res.status(200).json(usersWithouPassword);
 };
 
+const getById = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findByPk(id, {
+    attributes: ['id', 'displayName', 'email', 'image'],
+  });
+
+  if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+  return res.status(200).json(user);
+};
+
 module.exports = {
   register,
   getAll,
+  getById,
 };
