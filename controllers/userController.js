@@ -27,14 +27,14 @@ const register = async (req, res) => {
 
 const getAll = async (_req, res) => {
   const users = await User.findAll();
-  const usersWithouPassword = users.map(({ id, displayName, email, image }) => ({
+  const usersWithoutPassword = users.map(({ id, displayName, email, image }) => ({
     id,
     displayName,
     email,
     image,
   }));
 
-  return res.status(200).json(usersWithouPassword);
+  return res.status(200).json(usersWithoutPassword);
 };
 
 const getById = async (req, res) => {
@@ -59,9 +59,30 @@ const deleteMe = async (req, res) => {
   return res.status(200).json({ message: 'Usuário deletado com sucesso' });
 };
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  const { isValid } = validateUser(
+    ['email', 'password'],
+    [email, password],
+  );
+  if (!isValid) return res.status(400).json({ message: 'Campos inválidos' });
+
+  const user = await User.findOne({
+    where: { email, password },
+  });
+  if (!user) return res.status(400).json({ message: 'Campos inválidos' });
+
+  const { dataValues: { password: _, ...userWithoutPassword } } = user;
+
+  const token = generateToken(userWithoutPassword);
+  return res.status(200).json({ token });
+};
+
 module.exports = {
   register,
   getAll,
   getById,
   deleteMe,
+  login,
 };
