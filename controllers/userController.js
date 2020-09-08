@@ -49,8 +49,19 @@ const getById = async (req, res) => {
   return res.status(200).json(user);
 };
 
+const deleteMe = async (req, res) => {
+  const { id } = req.user;
+
+  await User.destroy({
+    where: { id },
+  });
+
+  return res.status(200).json({ message: 'Usuário deletado com sucesso' });
+};
+
 module.exports = {
   register,
   getAll,
   getById,
+  deleteMe,
 };
