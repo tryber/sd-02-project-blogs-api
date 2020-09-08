@@ -248,3 +248,102 @@ describe('deleteMe', () => {
     destroySpy.mockRestore();
   });
 });
+
+describe('login', () => {
+  test('Se o campo password não tiver 6 caracteres, retorna mensagem de erro', async () => {
+    const mockReq = {
+      body: {
+        email: 'thiagosilva@gmail.com',
+        password: '1234567',
+      },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    await userController.login(mockReq, mockRes);
+
+    expect(mockRes.status).toBeCalledWith(400);
+    expect(mockJson).toBeCalledWith({ message: 'Campos inválidos' });
+  });
+
+  test('Se não existir um usuário com email e password informados, retorna mensagem de erro', async () => {
+    const mockReq = {
+      body: {
+        email: 'thiagosilva@gmail.com',
+        password: '123456',
+      },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const findOneSpy = jest
+      .spyOn(User, 'findOne')
+      .mockReturnValueOnce(null);
+
+    await userController.login(mockReq, mockRes);
+
+    expect(findOneSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(400);
+    expect(mockJson).toBeCalledWith({ message: 'Campos inválidos' });
+
+    findOneSpy.mockRestore();
+  });
+
+  test('Se o usuário é encontrado, retorna um token', async () => {
+    const mockReq = {
+      body: {
+        email: 'thiagosilva@gmail.com',
+        password: '123456',
+      },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const findOneSpy = jest
+      .spyOn(User, 'findOne')
+      .mockReturnValueOnce({
+        dataValues: {
+          id: 16,
+          displayName: 'Thiago Silva',
+          email: 'thiagosilva@gmail.com',
+          password: '123456',
+          image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+        },
+      });
+
+    const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImRpc3BsYXlOYW1lIjoiVGhpYWdvIFNpbHZhIiwiZW1haWwiOiJ0aGlhZ29zaWx2YUBnbWFpbC5jb20iLCJpbWFnZSI6Imh0dHA6Ly80LmJwLmJsb2dzcG90LmNvbS9fWUE1MGFkUS03dlEvUzFnZlJfNnVmcEkvQUFBQUFBQUFBQWsvMUVySkdnUldaRGcvUzQ1L2JyZXR0LnBuZyIsImlhdCI6MTU5OTQ3Mjg3NSwiZXhwIjoxNTk5NDc1ODc1fQ.-OCJAeGARIaApQlQwYFOa8v59wGo3vYQ6jTjukKfmus';
+
+    const signSpy = jest
+      .spyOn(jwt, 'sign')
+      .mockReturnValueOnce(mockToken);
+
+    const mockData = {
+      token: mockToken,
+    };
+
+    await userController.login(mockReq, mockRes);
+
+    expect(findOneSpy).toBeCalledTimes(1);
+    expect(signSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJson).toBeCalledWith(mockData);
+
+    findOneSpy.mockRestore();
+    signSpy.mockRestore();
+  });
+});
