@@ -6,6 +6,7 @@ module.exports = {
     '!**/coverage/**',
     '!**/app/index.js**',
     '!**/env/index.js**',
+    '!**/middlewares/index.js**',
     '!**/resource/database/**',
     '!**/resource/index.js**',
     '!**/resource/repositories/index.js**',
