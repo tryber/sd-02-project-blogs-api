@@ -21,7 +21,7 @@
   "scripts": {
     "start": "node index.js",
     "debug": "nodemon index.js",
-    "test": "jest --watchAll=true",
+    "test": "jest --watchAll=true --verbose",
     "test-coverage": "jest --coverage",
     "lint": "eslint ."
   },

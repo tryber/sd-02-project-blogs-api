@@ -1,8 +1,6 @@
 const Boom = require('@hapi/boom');
 
-const {
-  jsonWebToken: { verifyToken },
-} = require('../utils');
+const { jsonWebToken } = require('../utils');
 
 const { userModel: Model } = require('../resource');
 
@@ -12,7 +10,7 @@ async function authMiddleware(req, _res, next) {
 
     if (!token) throw Boom.unauthorized('Token not found');
 
-    const decoded = verifyToken(token);
+    const decoded = jsonWebToken.verifyToken(token);
 
     const userModel = new Model({ email: decoded.data.email });
 
