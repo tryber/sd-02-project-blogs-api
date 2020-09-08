@@ -1,10 +1,7 @@
-const {
-  bcrypt: { checkString, createHash },
-  jsonWebToken: { signToken },
-} = require('../../utils');
+const { bcrypt, jsonWebToken } = require('../../utils');
 
 async function create({ data, Model }) {
-  const hash = await createHash(data.password);
+  const hash = await bcrypt.createHash(data.password);
 
   const userModel = new Model({ ...data, password: hash });
 
@@ -16,7 +13,7 @@ async function create({ data, Model }) {
     dataValues: { password, ...userWithoutPassword },
   } = await userModel.create();
 
-  const token = signToken(userWithoutPassword);
+  const token = jsonWebToken.signToken(userWithoutPassword);
 
   return { data: userWithoutPassword, token, error: null };
 }
@@ -54,14 +51,14 @@ async function login({ email, password, Model }) {
     dataValues: { password: userPassword, ...userWithoutPassword },
   } = user[0];
 
-  const isCorrectPassword = await checkString({
+  const isCorrectPassword = await bcrypt.checkString({
     string: password,
     hash: userPassword,
   });
 
   if (!isCorrectPassword) return { data: null, token: null, error: 'wrongPassword' };
 
-  const token = signToken(userWithoutPassword);
+  const token = jsonWebToken.signToken(userWithoutPassword);
 
   return { data: userWithoutPassword, token, error: null };
 }
