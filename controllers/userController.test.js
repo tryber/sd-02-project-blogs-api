@@ -221,3 +221,30 @@ describe('getById', () => {
     findByPkSpy.mockRestore();
   });
 });
+
+describe('deleteMe', () => {
+  test('Se o usuário é deletado, retorna mensagem de sucesso', async () => {
+    const mockReq = {
+      user: { id: 5 },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const destroySpy = jest
+      .spyOn(User, 'destroy')
+      .mockResolvedValue();
+
+    await userController.deleteMe(mockReq, mockRes);
+
+    expect(destroySpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJson).toBeCalledWith({ message: 'Usuário deletado com sucesso' });
+
+    destroySpy.mockRestore();
+  });
+});
