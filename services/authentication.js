@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
 
 const JWT_CONFIG = {
-  expiresIn: '50m',
+  expiresIn: '30d',
   algorithm: 'HS256',
 };
 

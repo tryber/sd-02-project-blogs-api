@@ -2,7 +2,7 @@ const { User } = require('../models');
 const { validateUser } = require('../services/validation');
 const { generateToken } = require('../services/authentication');
 
-const register = async (req, res, _next) => {
+const register = async (req, res) => {
   const { displayName, email, password, image } = req.body;
 
   const { isValid, message } = validateUser(
@@ -29,6 +29,19 @@ const register = async (req, res, _next) => {
   }
 };
 
+const getAll = async (_req, res) => {
+  const users = await User.findAll();
+  const usersWithouPassword = users.map(({ id, displayName, email, image }) => ({
+    id,
+    displayName,
+    email,
+    image,
+  }));
+
+  return res.status(200).json(usersWithouPassword);
+};
+
 module.exports = {
   register,
+  getAll,
 };

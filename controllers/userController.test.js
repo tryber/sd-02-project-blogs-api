@@ -2,13 +2,6 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const userController = require('./userController');
 
-const mockJson = jest.fn();
-const mockRes = {
-  status: jest
-    .fn()
-    .mockReturnValue({ json: mockJson }),
-};
-
 describe('register', () => {
   test('Se o campo password não tiver 6 caracteres, retorna mensagem de erro', async () => {
     const mockReq = {
@@ -18,6 +11,13 @@ describe('register', () => {
         password: '1234567',
         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
     };
 
     const mockData = {
@@ -38,6 +38,13 @@ describe('register', () => {
         password: '123456',
         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
     };
 
     const findOrCreateSpy = jest
@@ -68,6 +75,13 @@ describe('register', () => {
         password: '123456',
         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
       },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
     };
 
     const findOrCreateSpy = jest
@@ -116,6 +130,13 @@ describe('register', () => {
       },
     };
 
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
     const findOrCreateSpy = jest
       .spyOn(User, 'findOrCreate')
       .mockRejectedValueOnce();
@@ -131,5 +152,47 @@ describe('register', () => {
     expect(mockJson).toBeCalledWith(mockData);
 
     findOrCreateSpy.mockRestore();
+  });
+});
+
+describe('getAll', () => {
+  test('Retorna todos os usuários sem o campo password', async () => {
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const mockData = [
+      {
+        id: 1,
+        displayName: 'Brett Wiltshire',
+        email: 'brett@email.com',
+        password: '123456',
+        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+      },
+    ];
+
+    const mockUsers = [
+      {
+        id: 1,
+        displayName: 'Brett Wiltshire',
+        email: 'brett@email.com',
+        image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+      },
+    ];
+
+    const findAllSpy = jest
+      .spyOn(User, 'findAll')
+      .mockReturnValueOnce(mockData);
+
+    await userController.getAll(null, mockRes);
+
+    expect(findAllSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJson).toBeCalledWith(mockUsers);
+
+    findAllSpy.mockRestore();
   });
 });
