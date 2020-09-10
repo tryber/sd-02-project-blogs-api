@@ -6,22 +6,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      published: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updated: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      title: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      content: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
+      published: { allowNull: false, type: Sequelize.DATE },
+      updated: { allowNull: false, type: Sequelize.DATE },
+      title: { allowNull: false, type: Sequelize.STRING },
+      content: { allowNull: false, type: Sequelize.STRING },
       userId: {
         references: {
           model: 'Users',
