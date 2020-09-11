@@ -4,8 +4,6 @@ const faker = require('faker');
 
 const app = require('../../main');
 
-const { Users } = require('../../resource/database/models/index');
-
 afterEach(() => {
   jest.clearAllMocks();
 });

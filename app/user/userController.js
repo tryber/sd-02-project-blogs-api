@@ -1,5 +1,7 @@
 const Boom = require('@hapi/boom');
 
+const service = require('../serviceController');
+
 const handleError = {
   exists: () => {
     throw Boom.badRequest('Usuário já existe');
@@ -28,15 +30,13 @@ function create({ User, userModel }) {
 }
 
 function find({ User, userModel }) {
-  return async (req, res) => {
-    const user = new User({ userModel, id: req.params.id });
-
-    const { data, error } = await user.find();
-
-    if (error) return handleError[error]();
-
-    res.status(200).json({ user: data });
-  };
+  return service.find({
+    Domain: User,
+    model: userModel,
+    domainKey: 'user',
+    modelkey: 'userModel',
+    handleError,
+  });
 }
 
 function list({ User, userModel }) {
@@ -62,25 +62,17 @@ function login({ User, userModel }) {
 }
 
 function remove({ User, userModel }) {
-  return async (req, res) => {
-    const user = new User({ userModel, id: req.params.id });
-
-    await user.remove();
-
-    res.status(204).end();
-  };
+  return service.remove({ Domain: User, model: userModel, modelkey: 'userModel' });
 }
 
 function update({ User, userModel }) {
-  return async (req, res) => {
-    const user = new User({ userModel, ...req.body, id: req.params.id });
-
-    const { data, error } = await user.update();
-
-    if (error) return handleError[error]();
-
-    res.status(200).json({ user: data });
-  };
+  return service.update({
+    Domain: User,
+    model: userModel,
+    domainKey: 'user',
+    modelkey: 'userModel',
+    handleError,
+  });
 }
 
 module.exports = {

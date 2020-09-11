@@ -13,7 +13,6 @@ const {
 const router = express.Router();
 
 function userRouter({ middlewares, ...dependencies }) {
-  console.log(middlewares.auth);
   router
     .route('/')
     .get(middlewares.auth, rescue(userController.list(dependencies)))

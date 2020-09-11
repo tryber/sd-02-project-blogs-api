@@ -1,5 +1,7 @@
 const Boom = require('@hapi/boom');
 
+const service = require('../serviceController');
+
 const handleError = {
   notFound: () => {
     throw Boom.badRequest('Post não encontrado');
@@ -21,15 +23,13 @@ function create({ BlogPost, blogPostModel }) {
 }
 
 function find({ BlogPost, blogPostModel }) {
-  return async (req, res) => {
-    const blogPost = new BlogPost({ blogPostModel, id: req.params.id });
-
-    const { data, error } = await blogPost.find();
-
-    if (error) return handleError[error]();
-
-    res.status(200).json({ blogPost: data });
-  };
+  return service.find({
+    Domain: BlogPost,
+    model: blogPostModel,
+    domainKey: 'blogPost',
+    modelkey: 'blogPostModel',
+    handleError,
+  });
 }
 
 function list({ BlogPost, blogPostModel }) {
@@ -43,13 +43,7 @@ function list({ BlogPost, blogPostModel }) {
 }
 
 function remove({ BlogPost, blogPostModel }) {
-  return async (req, res) => {
-    const blogPost = new BlogPost({ blogPostModel, id: req.params.id });
-
-    await blogPost.remove();
-
-    res.status(204).end();
-  };
+  return service.remove({ Domain: BlogPost, model: blogPostModel, modelkey: 'blogPostModel' });
 }
 
 function search({ BlogPost, blogPostModel }) {
@@ -65,15 +59,13 @@ function search({ BlogPost, blogPostModel }) {
 }
 
 function update({ BlogPost, blogPostModel }) {
-  return async (req, res) => {
-    const blogPost = new BlogPost({ blogPostModel, ...req.body, id: req.params.id });
-
-    const { data, error } = await blogPost.update();
-
-    if (error) return handleError[error]();
-
-    res.status(200).json({ blogPost: data });
-  };
+  return service.update({
+    Domain: BlogPost,
+    model: blogPostModel,
+    domainKey: 'blogPost',
+    modelkey: 'blogPostModel',
+    handleError,
+  });
 }
 
 module.exports = {
