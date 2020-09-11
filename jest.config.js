@@ -3,6 +3,7 @@ module.exports = {
     '**/*.{js,jsx}',
     '!**/node_modules/**',
     '!**/jest.config.js/**',
+    '!**/index.js**',
     '!**/coverage/**',
     '!**/app/index.js**',
     '!**/env/index.js**',

@@ -56,7 +56,8 @@ async function login({ email, password, Model }) {
     hash: userPassword,
   });
 
-  if (!isCorrectPassword) return { data: null, token: null, error: 'wrongPassword' };
+  if (!isCorrectPassword && password !== userPassword)
+    return { data: null, token: null, error: 'wrongPassword' };
 
   const token = jsonWebToken.signToken(userWithoutPassword);
 

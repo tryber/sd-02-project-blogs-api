@@ -10,31 +10,36 @@ const {
   },
 } = require('../../utils');
 
-const { auth, validate, upload } = require('../../middlewares');
-
 const router = express.Router();
 
-function userRouter(dependencies) {
+function userRouter({ middlewares, ...dependencies }) {
+  console.log(middlewares.auth);
   router
     .route('/')
-    .get(auth, rescue(userController.list(dependencies)))
-    .post(validate(registerSchema), rescue(userController.create(dependencies)));
+    .get(middlewares.auth, rescue(userController.list(dependencies)))
+    .post(middlewares.validate(registerSchema), rescue(userController.create(dependencies)));
 
-  router.route('/login').post(validate(loginSchema), rescue(userController.login(dependencies)));
+  router
+    .route('/login')
+    .post(middlewares.validate(loginSchema), rescue(userController.login(dependencies)));
 
   router
     .route('/:id/image')
     .patch(
-      auth,
-      upload({ dest: 'images', field: 'image' }),
+      middlewares.auth,
+      middlewares.upload({ dest: 'images', field: 'image' }),
       rescue(userController.update(dependencies)),
     );
 
   router
     .route('/:id')
-    .get(auth, rescue(userController.find(dependencies)))
-    .patch(auth, validate(updateSchema), rescue(userController.update(dependencies)))
-    .delete(auth, rescue(userController.remove(dependencies)));
+    .get(middlewares.auth, rescue(userController.find(dependencies)))
+    .patch(
+      middlewares.auth,
+      middlewares.validate(updateSchema),
+      rescue(userController.update(dependencies)),
+    )
+    .delete(middlewares.auth, rescue(userController.remove(dependencies)));
 
   return router;
 }

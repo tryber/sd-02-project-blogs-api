@@ -1,35 +1,5 @@
-require('dotenv').config();
+const app = require('./main');
 
-const bodyParser = require('body-parser');
-
-const express = require('express');
-
-const path = require('path');
-
-const { error } = require('./middlewares');
-
-const { blogPostRouter, userRouter } = require('./app');
-
-const { BlogPost, User } = require('./env');
-
-const { blogPostModel, userModel } = require('./resource');
-
-const app = express();
-
-app.use(express.json());
-
-app.use('/images', express.static(path.join(__dirname, 'images')));
-
-app.use(bodyParser.urlencoded({ extended: false }));
-
-app.use(bodyParser.json());
-
-app.use('/post', blogPostRouter({ BlogPost, blogPostModel }));
-
-app.use('/user', userRouter({ User, userModel }));
-
-app.use(error);
-
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
