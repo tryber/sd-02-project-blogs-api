@@ -241,6 +241,64 @@ describe('getById', () => {
   });
 });
 
+describe('search', () => {
+  test('Retorna um array de posts que contém o termo de pesquisa em title ou content', async () => {
+    const mockReq = {
+      query: {
+        q: 'rato',
+      },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const mockData = [
+      {
+        id: 4,
+        title: 'Olaaaaaa',
+        content: 'O rato roeu a roupa do rei de Roma',
+        published: '2020-09-12T18:55:52.000Z',
+        updated: '2020-09-12T18:55:52.000Z',
+        user: {
+          id: 29,
+          displayName: 'Brejhgjhghtre',
+          email: 'm@m.ffffffm',
+          image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+        },
+      },
+      {
+        id: 6,
+        title: 'O rato roeu a roupa do rei de Roma',
+        content: 'sdf',
+        published: '2020-09-12T18:56:16.000Z',
+        updated: '2020-09-12T18:56:16.000Z',
+        user: {
+          id: 29,
+          displayName: 'Brejhgjhghtre',
+          email: 'm@m.ffffffm',
+          image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+        },
+      },
+    ];
+
+    const findAllSpy = jest
+      .spyOn(BlogPost, 'findAll')
+      .mockReturnValueOnce(mockData);
+
+    await postController.search(mockReq, mockRes);
+
+    expect(findAllSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJson).toBeCalledWith(mockData);
+
+    findAllSpy.mockRestore();
+  });
+});
+
 // describe('deleteMe', () => {
 //   test('Se o usuário é deletado, retorna mensagem de sucesso', async () => {
 //     const mockReq = {
