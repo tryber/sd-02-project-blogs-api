@@ -57,47 +57,44 @@ describe('create', () => {
   });
 });
 
-// describe('getAll', () => {
-//   test('Retorna todos os usuários sem o campo password', async () => {
-//     const mockJson = jest.fn();
-//     const mockRes = {
-//       status: jest
-//         .fn()
-//         .mockReturnValueOnce({ json: mockJson }),
-//     };
+describe('getAll', () => {
+  test('Retorna um array de posts', async () => {
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
 
-//     const mockData = [
-//       {
-//         id: 1,
-//         displayName: 'Brett Wiltshire',
-//         email: 'brett@email.com',
-//         password: '123456',
-//         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
-//       },
-//     ];
+    const mockData = [
+      {
+        id: 7706273476706534553,
+        published: '2011-08-01T19:58:00.000Z',
+        updated: '2011-08-01T19:58:51.947Z',
+        title: 'Latest updates, August 1st',
+        content: 'The whole text for the blog post goes here in this key',
+        user: {
+          id: 401465483996,
+          displayName: 'Brett Wiltshire',
+          email: 'brett@email.com',
+          image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+        },
+      },
+    ];
 
-//     const mockUsers = [
-//       {
-//         id: 1,
-//         displayName: 'Brett Wiltshire',
-//         email: 'brett@email.com',
-//         image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
-//       },
-//     ];
+    const findAllSpy = jest
+      .spyOn(BlogPost, 'findAll')
+      .mockReturnValueOnce(mockData);
 
-//     const findAllSpy = jest
-//       .spyOn(User, 'findAll')
-//       .mockReturnValueOnce(mockData);
+    await postController.getAll(null, mockRes);
 
-//     await userController.getAll(null, mockRes);
+    expect(findAllSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJson).toBeCalledWith(mockData);
 
-//     expect(findAllSpy).toBeCalledTimes(1);
-//     expect(mockRes.status).toBeCalledWith(200);
-//     expect(mockJson).toBeCalledWith(mockUsers);
-
-//     findAllSpy.mockRestore();
-//   });
-// });
+    findAllSpy.mockRestore();
+  });
+});
 
 // describe('getById', () => {
 //   test('Se usuário não existe, retorna erro com status 404', async () => {
