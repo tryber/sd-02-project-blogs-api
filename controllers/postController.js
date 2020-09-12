@@ -53,8 +53,24 @@ const update = async (req, res) => {
   return res.status(200).json({ message: 'Post atualizado com sucesso' });
 };
 
+const getById = async (req, res) => {
+  const { id } = req.params;
+
+  const blogPost = await BlogPost.findByPk(id, {
+    attributes: { exclude: ['user_id'] },
+    include: {
+      model: User,
+      as: 'user',
+      attributes: { exclude: ['password'] },
+    },
+  });
+
+  return res.status(200).json(blogPost);
+};
+
 module.exports = {
   create,
   getAll,
   update,
+  getById,
 };
