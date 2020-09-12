@@ -10,6 +10,7 @@ app.use(bodyParser.json());
 
 app.use('/user', routers.user);
 app.use('/login', routers.login);
+app.use('/post', routers.post);
 
 app.use(errorMiddleware);
 
