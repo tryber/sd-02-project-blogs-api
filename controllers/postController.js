@@ -30,7 +30,31 @@ const getAll = async (_req, res) => {
   return res.status(200).json(blogPosts);
 };
 
+const update = async (req, res) => {
+  const { title, content } = req.body;
+  const { id: blogPostId } = req.params;
+  const { id: userId } = req.user;
+
+  if (!title || !content) {
+    return res.status(400).json({ message: 'Campos inválidos' });
+  }
+
+  const { user_id: authorId } = await BlogPost.findByPk(blogPostId);
+
+  if (userId !== authorId) {
+    return res.status(403).json({ message: 'Operação não autorizada para este usuário' });
+  }
+
+  await BlogPost.update(
+    { title, content },
+    { where: { id: blogPostId } },
+  );
+
+  return res.status(200).json({ message: 'Post atualizado com sucesso' });
+};
+
 module.exports = {
   create,
   getAll,
+  update,
 };

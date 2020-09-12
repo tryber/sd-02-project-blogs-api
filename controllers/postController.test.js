@@ -96,6 +96,108 @@ describe('getAll', () => {
   });
 });
 
+describe('update', () => {
+  test('Se não houver o campo title, retorna erro com status 400', async () => {
+    const mockReq = {
+      body: {
+        content: 'Este é um conteúdo.',
+      },
+      user: {
+        id: 45,
+      },
+      params: {
+        id: 5,
+      },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    await postController.update(mockReq, mockRes);
+
+    expect(mockRes.status).toBeCalledWith(400);
+    expect(mockJson).toBeCalledWith({ message: 'Campos inválidos' });
+  });
+
+  test('Se id do usuário e id do autor não coincidirem, retorna erro com status 403', async () => {
+    const mockReq = {
+      body: {
+        title: 'Existe beleza na programação?',
+        content: 'Programação é lindo, ponto.',
+      },
+      user: {
+        id: 54,
+      },
+      params: {
+        id: 5,
+      },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const findByPkSpy = jest
+      .spyOn(BlogPost, 'findByPk')
+      .mockReturnValueOnce({ user_id: 48 });
+
+    await postController.update(mockReq, mockRes);
+
+    expect(findByPkSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(403);
+    expect(mockJson).toBeCalledWith({ message: 'Operação não autorizada para este usuário' });
+
+    findByPkSpy.mockRestore();
+  });
+
+  test('Caso contrário, retorna mensagem de sucesso', async () => {
+    const mockReq = {
+      body: {
+        title: 'Existe beleza na programação?',
+        content: 'Programação é lindo, ponto.',
+      },
+      user: {
+        id: 54,
+      },
+      params: {
+        id: 5,
+      },
+    };
+
+    const mockJson = jest.fn();
+    const mockRes = {
+      status: jest
+        .fn()
+        .mockReturnValueOnce({ json: mockJson }),
+    };
+
+    const findByPkSpy = jest
+      .spyOn(BlogPost, 'findByPk')
+      .mockReturnValueOnce({ user_id: 54 });
+
+    const updateSpy = jest
+      .spyOn(BlogPost, 'update')
+      .mockReturnValueOnce();
+
+    await postController.update(mockReq, mockRes);
+
+    expect(findByPkSpy).toBeCalledTimes(1);
+    expect(updateSpy).toBeCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJson).toBeCalledWith({ message: 'Post atualizado com sucesso' });
+
+    findByPkSpy.mockRestore();
+    updateSpy.mockRestore();
+  });
+});
+
 // describe('getById', () => {
 //   test('Se usuário não existe, retorna erro com status 404', async () => {
 //     const mockReq = {
