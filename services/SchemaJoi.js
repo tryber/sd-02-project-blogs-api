@@ -3,7 +3,7 @@ const Joi = require('joi');
 const UserSchema = Joi.object({
   displayName: Joi
     .string()
-    .min(3)
+    .min(8)
     .required(),
   email: Joi
     .string()

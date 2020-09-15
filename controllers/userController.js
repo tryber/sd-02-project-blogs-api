@@ -1,9 +1,10 @@
 const express = require('express');
 const Models = require('../models');
+const middlewares = require('../middlewares/Auth');
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/', middlewares.InsertUser, async (req, res) => {
   const results = await Models.Users.findAll();
 
   res.status(200).json({
