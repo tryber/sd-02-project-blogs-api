@@ -13,7 +13,7 @@ afterEach(() => {
 
 describe('User Controller', () => {
   describe('Criação de novo usuário', () => {
-    it('Quando fornecidos dados corretos, cria um usuário no banco e retorna o status 200 e o token', async () => {
+    it('Quando fornecidos dados corretos, cria um usuário no banco e retorna o status 201 e o token', async () => {
       const mockReq = {
         body: {
           displayName: 'João das Neves',
@@ -329,11 +329,13 @@ describe('User Controller', () => {
   describe('Login usuário', () => {
     it('Quando um usuário insere os dados corretamente, é logado e retorna um status 200 e o token', async () => {
       const result = {
-        id: 1,
-        displayName: 'Guilherme Crespo',
-        password: '123456',
-        email: 'gui@gui.com',
-        image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+        dataValues: {
+          id: 1,
+          displayName: 'Guilherme Crespo',
+          password: '123456',
+          email: 'gui@gui.com',
+          image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+        },
       };
 
       const mockReq = {
@@ -393,6 +395,8 @@ describe('User Controller', () => {
     });
 
     it('Quando o usuário não existe ou a senha está incorreta, a aplicação retorna o status 400 e uma mensagem de erro', async () => {
+      jest.spyOn(console, 'error').mockReturnValueOnce();
+
       const result = {
         id: 1,
         displayName: 'Guilherme Crespo',

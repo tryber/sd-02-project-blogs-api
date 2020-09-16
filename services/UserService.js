@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 require('dotenv').config();
 
-function tokenGenerator(id, userData) {
+function tokenGenerator(userData) {
+  const { id } = userData;
   const jwtConfig = {
     expiresIn: '50m',
     algorithm: 'HS256',
@@ -23,9 +24,9 @@ async function create({ displayName, email, password, image }) {
 
   const user = await User.create({ displayName, email, password, image });
 
-  const { password: _, id, ...userInfo } = user.dataValues;
+  const { password: _, ...userInfo } = user.dataValues;
 
-  const token = tokenGenerator(id, userInfo);
+  const token = tokenGenerator(userInfo);
 
   return { token };
 }
@@ -58,13 +59,13 @@ async function login({ email, password }) {
     },
   });
 
-  if (!user[0] || user[0].password !== password) {
+  if (!user[0] || user[0].dataValues.password !== password) {
     return { error: true, code: 400, message: 'Senha ou usuário incorretos, tente novamente' };
   }
 
-  const { password: _, id, ...userData } = user[0];
+  const { password: _, ...userData } = user[0].dataValues;
 
-  const token = tokenGenerator(id, userData);
+  const token = tokenGenerator(userData);
 
   return { token };
 }

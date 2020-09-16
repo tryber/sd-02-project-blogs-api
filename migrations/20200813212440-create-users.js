@@ -23,6 +23,5 @@ module.exports = {
       allowNull: false,
     },
   }),
-
   down: async (queryInterface, _Sequelize) => queryInterface.dropTable('Users'),
 };

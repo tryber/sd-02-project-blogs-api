@@ -10,13 +10,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const userRouter = express.Router();
 
+app.post('/login', controllers.user.login);
+
 app.use('/user', userRouter);
 
 userRouter
   .post('/', middlewares.user.checkCreateFields, controllers.user.createNewUser)
   .get('/', middlewares.user.authUser, controllers.user.getAllUsers)
   .get('/:id', middlewares.user.authUser, controllers.user.getUser)
-  .delete('/me', middlewares.user.authUser, controllers.user.deleteUser)
-  .post('/login', controllers.user.login);
+  .delete('/me', middlewares.user.authUser, controllers.user.deleteUser);
 
 app.listen(3000, () => console.log('ouvindo porta 3000!'));
