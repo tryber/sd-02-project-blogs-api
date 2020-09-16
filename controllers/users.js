@@ -2,9 +2,7 @@ const express = require('express');
 const rescue = require('express-rescue');
 const { users } = require('../services');
 const { notFound, badData, exists, unauthorized } = require('../middlewares/error');
-const { auth } = require('../middlewares/auth');
-
-const router = express.Router();
+// const { auth } = require('../middlewares/auth');
 
 const checkIntegrity = (displayName, email, password) => {
   return typeof displayName === 'string' && displayName.length !== 0 && typeof email === 'string' && email.length !== 0 && typeof password === 'string' && password.length !== 0;
