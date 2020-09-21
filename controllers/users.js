@@ -5,27 +5,30 @@ const { notFound, badData, exists, unauthorized } = require('../middlewares/erro
 // const { auth } = require('../middlewares/auth');
 
 const checkIntegrity = (displayName, email, password) => {
-  return typeof displayName === 'string' && displayName.length !== 0 && typeof email === 'string' && email.length !== 0 && typeof password === 'string' && password.length !== 0;
+  const mailRegex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
+  return typeof displayName === 'string' && displayName.length !== 0 && typeof email === 'string' && mailRegex.test(email) && typeof password === 'string' && password.length !== 0;
 };
 
-const createUser = rescue(async (req, res, _next) => {
-  console.log(req.body);
-  const { displayName, email, password, image } = req.body;
-  if (!checkIntegrity(displayName, email, password)) { throw badData; }
-  const newUser = await users.createUser({ displayName, email, password });
-  if (newUser === 409) { throw exists; }
-  return res.status(201).json(newUser);
+const welcome = rescue(async (req, res) => {
+  res.send('Welcome to BlogsAPI');
 });
 
-const loginUser = rescue(async (req, res) => {
-  const { email, password } = req.body;
-  const serviceAnswer = await users.loginUser({ email, password });
-  if (serviceAnswer === 404) { throw notFound; }
-  if (serviceAnswer === 401) { throw unauthorized; }
-  res.status(200).json({ token: serviceAnswer });
-});
+const createUser = async (req, res, _next) => {
+  const { displayName, email, password, image = 'xablau.jpg' } = req.body;
+  try {
+    if (!checkIntegrity(displayName, email, password)) { throw badData; }
+    const newUser = await users.createUser({ displayName, email, password, image });
+    if (newUser === 409) { throw exists; }
+    const serviceAnswer = await users.loginUser({ email, password });
+    return res.status(201).json({ token: serviceAnswer });
+  } catch (err) {
+    console.log('error from controller:', err);
+  }
+};
 
 module.exports = {
   createUser,
-  loginUser,
+  welcome,
+  // loginUser,
+  // loginUserController,
 };

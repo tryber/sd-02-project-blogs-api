@@ -3,8 +3,8 @@ const { users } = require('../controllers');
 
 const router = Router();
 
-router.get('/', (req, res) => res.send('Welcome'));
+router.get('/', users.welcome);
 
-router.post('/posts', users.createUser);
+router.post('/', users.createUser);
 
 module.exports = router;

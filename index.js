@@ -8,7 +8,7 @@ const {
 
 app.use(express.json());
 
-app.use('/api', users);
+app.use('/user', users);
 
 module.exports = app;
 
