@@ -9,4 +9,18 @@ const schema = Joi.object({
   image: Joi.string().required(),
 });
 
-module.exports = schema;
+const loginSchema = Joi.object({
+  email: Joi.string().pattern(MAIL_REGEX).required(),
+  password: Joi.string().min(6).max(6).required(),
+});
+
+const blogPostSchema = Joi.object({
+  title: Joi.string().required(),
+  content: Joi.string().required(),
+});
+
+module.exports = {
+  schema,
+  loginSchema,
+  blogPostSchema,
+};

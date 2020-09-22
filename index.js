@@ -1,12 +1,18 @@
 const express = require('express');
-const controllers = require('./controllers');
+const userRoutes = require('./routes/userRoutes');
+const blogPostsRoutes = require('./routes/blogPostsRoutes');
+const loginRoutes = require('./routes/loginRoutes');
 const { errorController } = require('./controllers/errorController');
 
 const app = express();
 
 app.use(express.json());
 
-app.use('/user', controllers.user);
+app.use('/user', userRoutes);
+
+app.use('/post', blogPostsRoutes);
+
+app.use('/login', loginRoutes);
 
 app.use(errorController);
 
