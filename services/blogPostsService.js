@@ -96,6 +96,15 @@ const getPostBySearchTerm = async (searchTerm) => {
   }
 };
 
+const deleteById = async (id) => {
+  try {
+    const deletedPost = await BlogPosts.destroy({ where: { id } });
+    return deletedPost;
+  } catch (err) {
+    throw bdError;
+  }
+};
+
 module.exports = {
   createBlogPost,
   getAllPosts,
@@ -103,4 +112,5 @@ module.exports = {
   updateById,
   getPostsById,
   getPostBySearchTerm,
+  deleteById,
 };

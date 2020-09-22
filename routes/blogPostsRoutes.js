@@ -24,4 +24,8 @@ router
   .route('/:id')
   .get(blogPost.getPostById);
 
+router
+  .route('/:id')
+  .delete(tokenValidation, blogPost.deletePostById);
+
 module.exports = router;

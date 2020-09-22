@@ -21,10 +21,10 @@ const getAllPosts = rescue(async (_req, res) => {
   return res.status(200).json(allPosts);
 });
 
-const getPostBySearchTerm = rescue(async (req, res, next) => {
+const getPostBySearchTerm = rescue(async (req, res) => {
   const { q } = req.query;
-  const teste = await blogPostsService.getPostBySearchTerm(q);
-  return res.status(200).json(teste);
+  const postByText = await blogPostsService.getPostBySearchTerm(q);
+  return res.status(200).json(postByText);
 });
 
 const updateById = rescue(async (req, res, next) => {
@@ -53,10 +53,26 @@ const getPostById = rescue(async (req, res, next) => {
   return res.status(200).json(post);
 });
 
+const deletePostById = rescue(async (req, res, next) => {
+  const { id } = req.params;
+  const { email } = req.user;
+
+  const userError = await blogPostsService.validateUser(email);
+
+  if (userError.error) return next(userError);
+
+  const deletedPost = await blogPostsService.deleteById(id);
+
+  if (!deletedPost) return next({ error: 'Post não existe', code: 'not_found' });
+
+  res.status(200).end();
+});
+
 module.exports = {
   createBlogPost,
   getAllPosts,
   updateById,
   getPostById,
   getPostBySearchTerm,
+  deletePostById,
 };
