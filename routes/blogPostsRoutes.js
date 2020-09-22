@@ -12,4 +12,16 @@ router
   .route('/')
   .get(blogPost.getAllPosts);
 
+router
+  .route('/search')
+  .get(blogPost.getPostBySearchTerm);
+
+router
+  .route('/:id')
+  .patch(tokenValidation, blogPost.updateById);
+
+router
+  .route('/:id')
+  .get(blogPost.getPostById);
+
 module.exports = router;
