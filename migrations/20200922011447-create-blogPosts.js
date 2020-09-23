@@ -7,31 +7,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      title: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      content: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
+      title: { allowNull: false, type: Sequelize.STRING },
+      content: { allowNull: false, type: Sequelize.STRING },
       userId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Users',
-          key: 'id',
-        },
+        references: { model: 'Users', key: 'id' },
         onUpdate: 'cascade',
         onDelete: 'cascade',
       },
-      published: {
-        allowNull: true,
-        type: Sequelize.DATE,
-      },
-      updated: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
+      published: { allowNull: true, type: Sequelize.DATE },
+      updated: { allowNull: false, type: Sequelize.DATE },
     });
     return BlogPostsTable;
   },

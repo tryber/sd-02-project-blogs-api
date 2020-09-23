@@ -7,7 +7,7 @@ const createUser = rescue(async (req, res, next) => {
 
   const { error, value } = await joiSchema.schema.validate({ displayName, email, password, image });
 
-  if (error) return next({ error: error.details[0].message, code: 'invalid_data' });
+  if (error) return next({ error: 'Campos inválidos', code: 'bad_request' });
 
   const userResponse = await userService.findOneAndCreated(email, value);
 

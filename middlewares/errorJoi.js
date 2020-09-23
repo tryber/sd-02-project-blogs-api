@@ -6,7 +6,7 @@ const schema = Joi.object({
   displayName: Joi.string().min(8).required(),
   email: Joi.string().pattern(MAIL_REGEX).required(),
   password: Joi.string().min(6).max(6).required(),
-  image: Joi.string().required(),
+  image: Joi.string().allow(null),
 });
 
 const loginSchema = Joi.object({

@@ -17,7 +17,8 @@
   "scripts": {
     "start": "node index.js",
     "debug": "nodemon index.js",
-    "test": "jest",
+    "test": "jest --watchAll",
+    "test-coverage": "jest --coverage",
     "lint": "eslint ."
   },
   "devDependencies": {
