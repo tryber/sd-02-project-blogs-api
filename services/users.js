@@ -25,11 +25,14 @@ const createUser = async ({ displayName, email, password, image }) => {
     await User.create({ displayName, email, password, image });
     return { email, password };
   } catch (err) {
-    console.log('err:', err);
+    console.log('error from service:', err);
   }
 };
+
+const list = async () => User.findAll();
 
 module.exports = {
   createUser,
   loginUser,
+  list,
 };
