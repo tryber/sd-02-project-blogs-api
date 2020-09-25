@@ -22,8 +22,6 @@ async function createNewPost(req, res) {
   try {
     const post = await PostService.create({ title, content, userId });
 
-    if (post.error) return res.status(post.code).json({ message: post.message });
-
     res.status(201).json(post);
   } catch (e) {
     console.error(e.message);
