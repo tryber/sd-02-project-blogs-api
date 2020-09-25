@@ -11,7 +11,7 @@ module.exports = {
           image: 'http://imagem.com',
         },
       ],
-      {},
+      { timestamps: false },
     );
   },
 
