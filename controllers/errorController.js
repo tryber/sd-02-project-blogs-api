@@ -8,10 +8,9 @@ const errors = {
   internal_error: 500,
 };
 
-const errorController = (err, _req, res, _next) => {
-  console.log(Object.keys(err));
-  return res.status(errors[err.code]).json({ message: err.error });
-};
+const errorController = (err, _req, res, _next) => (
+  res.status(errors[err.code]).json({ message: err.error })
+);
 
 module.exports = {
   errorController,

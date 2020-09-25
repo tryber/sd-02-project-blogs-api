@@ -16,21 +16,24 @@ const createUser = rescue(async (req, res, next) => {
   return res.status(200).json({ token: userResponse.token });
 });
 
-const getAllUsers = rescue(async (_req, res) => {
+const getAllUsers = rescue(async (_req, res, next) => {
   const allUsers = await userService.getAllUsers();
+  if (allUsers.error) return next(allUsers);
   return res.status(200).json(allUsers);
 });
 
-const deleteUser = rescue(async (req, res) => {
+const deleteUser = rescue(async (req, res, next) => {
   const { email } = req.user;
-  await userService.deleteUser(email);
+  const serviceError = await userService.deleteUser(email);
+
+  if (serviceError.error) return next(serviceError);
+
   return res.status(200).end();
 });
 
 const getUserById = rescue(async (req, res, next) => {
   const { id } = req.params;
   const user = await userService.getUserById(id);
-
   if (user.error) return next(user);
 
   return res.status(200).json(user);
