@@ -18,7 +18,7 @@ router
 
 router
   .route('/:id')
-  .patch(tokenValidation, blogPost.updateById);
+  .put(tokenValidation, blogPost.updateById);
 
 router
   .route('/:id')
