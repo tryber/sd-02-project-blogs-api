@@ -73,14 +73,10 @@ const getPostBySearchTerm = async (searchTerm) => {
       where: {
         [Op.or]: [
           {
-            title: {
-              [Op.substring]: searchTerm,
-            },
+            title: { [Op.substring]: searchTerm },
           },
           {
-            content: {
-              [Op.substring]: searchTerm,
-            },
+            content: { [Op.substring]: searchTerm },
           },
         ],
       },
