@@ -31,8 +31,28 @@ const createUser = async ({ displayName, email, password, image }) => {
 
 const list = async () => User.findAll();
 
+const listOne = async (id) => {
+  try {
+    const findUser = await User.findOne({ where: { id } });
+    if (!findUser) { return 404; }
+    return findUser;
+  } catch (err) {
+    console.log('error from service:', err);
+  }
+};
+
+const deleteUser = async (id) => {
+  try {
+    await User.destroy({ where: { id } });
+  } catch (err) {
+    console.log('error from service:', err);
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
   list,
+  listOne,
+  deleteUser,
 };

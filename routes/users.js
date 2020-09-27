@@ -8,4 +8,10 @@ router.post('/', users.createUser);
 
 router.get('/', auth, users.list);
 
+router.get('/:id', auth, users.listOne);
+
+router.delete('/me', auth, users.deleteUser);
+
+router.post('/login', users.loginUser);
+
 module.exports = router;

@@ -1,7 +1,5 @@
-const express = require('express');
-const rescue = require('express-rescue');
 const { users } = require('../services');
-const { notFound, badData, exists, unauthorized } = require('../middlewares/error');
+const { notFound, badData, exists, badRequest } = require('../middlewares/error');
 
 const checkIntegrity = (displayName, email, password) => {
   const mailRegex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
@@ -30,9 +28,43 @@ const list = async (_req, res) => {
   }
 };
 
+const listOne = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listUser = await users.listOne(id);
+    if (listUser === 404) { throw notFound; }
+    return res.status(200).json({ listUser });
+  } catch (err) {
+    console.log('error from controller.listOne:', err);
+  }
+};
+
+const deleteUser = async (req, res) => {
+  const { id } = req.user;
+  try {
+    await users.deleteUser(id);
+    return res.status(200).json({ message: 'Usuário removido' });
+  } catch (err) {
+    console.log('error from controller.deleteUser:', err);
+  }
+};
+
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const serviceAnswer = await users.loginUser({ email, password });
+    if (serviceAnswer === 404) { throw notFound; }
+    if (serviceAnswer === 400) { throw badRequest; }
+    return res.status(201).json({ token: serviceAnswer });
+  } catch (err) {
+    console.log('error from controller.loginUser:', err);
+  }
+};
+
 module.exports = {
   createUser,
   list,
-  // loginUser,
-  // loginUserController,
+  listOne,
+  deleteUser,
+  loginUser,
 };

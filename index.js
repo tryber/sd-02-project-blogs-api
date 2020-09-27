@@ -4,11 +4,13 @@ const app = express();
 
 const {
   users,
+  posts,
 } = require('./routes');
 
 app.use(express.json());
 
 app.use('/user', users);
+app.use('/post', posts);
 
 module.exports = app;
 
