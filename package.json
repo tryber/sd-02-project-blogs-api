@@ -3,19 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mysql2": "^2.2.5",
-    "sequelize": "^6.3.5"
+    "express-rescue": "^1.1.30",
+    "joi": "^17.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.1.0",
+    "nodemon": "^2.0.4",
+    "sequelize": "^6.3.4"
   },
   "scripts": {
     "start": "node index.js",
-    "test": "jest",
+    "test": "jest --watchAll",
+    "test-coverage": "jest --coverage",
+    "debug": "nodemon index.js",
     "lint": "eslint ."
   },
   "devDependencies": {
-    "eslint": "^7.10.0",
+    "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-import": "^2.21.2",
     "jest": "^26.0.1",
     "sequelize-cli": "^6.2.0",
     "supertest": "^4.0.2"
