@@ -1,4 +1,4 @@
-const { createUser } = require('../controllers/users');
+const { createUser } = require('./users');
 
 describe('users route', () => {
   test('CreateUser controller', async () => {
@@ -12,7 +12,7 @@ describe('users route', () => {
     };
     const resMock = {
       status: jest.fn().mockReturnValueOnce({
-        token: 'xablau' // mock da geração do token?
+        token: 'xablau', // mock da geração do token?
       }),
     };
     await createUser(reqMock, resMock, jest.fn());
