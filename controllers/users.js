@@ -1,5 +1,4 @@
 const { users } = require('../services');
-const { notFound, badData, exists, badRequest } = require('../middlewares/error');
 
 const checkIntegrity = (displayName, email, password) => {
   const mailRegex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
@@ -9,9 +8,13 @@ const checkIntegrity = (displayName, email, password) => {
 const createUser = async (req, res, _next) => {
   const { displayName, email, password, image = 'xablau.jpg' } = req.body;
   try {
-    if (!checkIntegrity(displayName, email, password)) { throw badData; }
+    if (!checkIntegrity(displayName, email, password)) {
+      return res.status(400).json({ message: 'Bad request' });
+    }
     const newUser = await users.createUser({ displayName, email, password, image });
-    if (newUser === 409) { throw exists; }
+    if (newUser === 409) {
+      return res.status(409).json({ message: 'User already exists' });
+    }
     const serviceAnswer = await users.loginUser({ email, password });
     return res.status(201).json({ token: serviceAnswer });
   } catch (err) {
@@ -32,7 +35,9 @@ const listOne = async (req, res) => {
   const { id } = req.params;
   try {
     const listUser = await users.listOne(id);
-    if (listUser === 404) { throw notFound; }
+    if (listUser === 404) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     return res.status(200).json({ listUser });
   } catch (err) {
     console.log('error from controller.listOne:', err);
@@ -43,7 +48,7 @@ const deleteUser = async (req, res) => {
   const { id } = req.user;
   try {
     await users.deleteUser(id);
-    return res.status(200).json({ message: 'Usuário removido' });
+    return res.status(200).json({ message: 'User deleted' });
   } catch (err) {
     console.log('error from controller.deleteUser:', err);
   }
@@ -53,8 +58,12 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const serviceAnswer = await users.loginUser({ email, password });
-    if (serviceAnswer === 404) { throw notFound; }
-    if (serviceAnswer === 400) { throw badRequest; }
+    if (serviceAnswer === 404) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (serviceAnswer === 400) {
+      return res.status(400).json({ message: 'Bad request' });
+    }
     return res.status(201).json({ token: serviceAnswer });
   } catch (err) {
     console.log('error from controller.loginUser:', err);
