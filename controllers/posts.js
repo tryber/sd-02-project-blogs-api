@@ -1,5 +1,7 @@
 const { posts } = require('../services');
 
+const notFound = (res) => res.status(404).json({ message: 'Post not found' });
+
 const createPost = async (req, res, _next) => {
   const { dataValues: { id } } = req.user;
   const { title, content } = req.body;
@@ -45,9 +47,7 @@ const listPost = async (req, res) => {
   const { id } = req.params;
   try {
     const singlePost = await posts.listPost({ id });
-    if (singlePost === 404) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
+    if (singlePost === 404) { return notFound(res); }
     return res.status(200).json(singlePost);
   } catch (err) {
     console.log('error from controller.listPost:', err);
@@ -58,9 +58,7 @@ const searchPost = async (req, res) => {
   const { q } = req.query;
   try {
     const postSearch = await posts.searchPost({ q });
-    if (postSearch === 404) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
+    if (postSearch === 404) { return notFound(res); }
     return res.status(200).json(postSearch);
   } catch (err) {
     console.log('error from controller.searchPost:', err);
