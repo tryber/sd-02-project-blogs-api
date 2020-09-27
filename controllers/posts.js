@@ -47,9 +47,9 @@ const listPost = async (req, res) => {
   const { id } = req.params;
   try {
     const singlePost = await posts.listPost({ id });
-    return singlePost
-      ? res.status(200).json(singlePost)
-      : notFound(res);
+    return singlePost === 404
+      ? notFound(res)
+      : res.status(200).json(singlePost);
   } catch (err) {
     console.log('error from controller.listPost:', err);
   }
