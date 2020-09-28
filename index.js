@@ -23,6 +23,7 @@ const postRouter = express.Router();
 app.use('/post', postRouter);
 
 postRouter
-  .post('/', middlewares.user.authUser, controllers.post.createNewPost);
+  .post('/', middlewares.user.authUser, controllers.post.createNewPost)
+  .get('/', controllers.post.getAllPosts);
 
 app.listen(3000, () => console.log('ouvindo porta 3000!'));

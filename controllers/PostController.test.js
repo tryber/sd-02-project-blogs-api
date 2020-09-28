@@ -1,6 +1,6 @@
 const { Post } = require('../models');
 const {
-  createNewPost,
+  createNewPost, getAllPosts,
 } = require('./PostController');
 
 afterEach(() => {
@@ -105,6 +105,89 @@ describe('PostController', () => {
         .mockRejectedValue(new Error());
 
       await createNewPost(mockReq, mockRes);
+
+      expect(mockUserModel).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(500);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');
+    });
+  });
+  describe('Exibir todos os posts', () => {
+    it('Quando é feita uma requisição GET para o endpoint /post retorna um array com todos os posts sem o user_id da tabela Posts', async () => {
+      const mockFindAll = jest
+        .spyOn(Post, 'findAll')
+        .mockResolvedValue([
+          {
+            id: 1,
+            title: 'Latest updates, August 1st',
+            content: 'The whole text for the blog post goes here in this key',
+            published: '2020-09-22T16:30:25.000Z',
+            updated: '2020-09-22T16:30:25.000Z',
+            user: {
+              id: 1,
+              displayName: 'Guilherme Crespo',
+              email: 'gui@gui.com',
+              password: '123456',
+              image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+            },
+          },
+          {
+            id: 3,
+            title: 'Latest updates, August 2st',
+            content: 'The whole text for the blog post goes here in this key lalala',
+            published: '2020-09-25T16:44:28.000Z',
+            updated: '2020-09-25T16:44:28.000Z',
+            user: {
+              id: 1,
+              displayName: 'Guilherme Crespo',
+              email: 'gui@gui.com',
+              password: '123456',
+              image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+            },
+          },
+          {
+            id: 4,
+            title: 'Latest updates, August ast',
+            content: 'The whole text for the blog post goes here in this key alanal',
+            published: '2020-09-28T00:24:06.000Z',
+            updated: '2020-09-28T00:24:06.000Z',
+            user: {
+              id: 5,
+              displayName: 'Alan Parsons',
+              email: 'alan@alan.com',
+              password: 'alanal',
+              image: 'https://www.gannett-cdn.com/-mm-/3690a3782bc4a2b9b35fc50bf175c54642c2ca9d/c=0-9-2968-3966/local/-/media/2016/03/22/Phoenix/Phoenix/635942084911874569-GettyImages-464294501.jpg?width=534&height=712&fit=crop',
+            },
+          },
+        ]);
+
+      const mockJSON = jest.fn();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await getAllPosts(null, mockRes);
+
+      expect(mockFindAll).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJSON.mock.calls[0][0]).toBeInstanceOf(Array);
+      mockJSON.mock.calls[0][0].forEach((post) => expect(post).not.toHaveProperty('user_id'));
+    });
+    it('Quando há um erro na conexão com o banco de dados, retorna o status 500 e uma mensagem', async () => {
+      jest.spyOn(console, 'error').mockReturnValueOnce();
+
+      const mockJSON = jest.fn();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      const mockUserModel = jest
+        .spyOn(Post, 'findAll')
+        .mockRejectedValue(new Error());
+
+      await getAllPosts(null, mockRes);
 
       expect(mockUserModel).toHaveBeenCalledTimes(1);
       expect(mockRes.status).toBeCalledWith(500);

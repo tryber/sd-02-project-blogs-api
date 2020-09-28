@@ -30,6 +30,16 @@ async function createNewPost(req, res) {
   }
 }
 
+async function getAllPosts(_req, res) {
+  return PostService.getAllPosts()
+    .then((posts) => res.status(200).json(posts))
+    .catch((e) => {
+      console.error(e.message);
+      res.status(500).json({ message: 'erro na conexão com base de dados' });
+    });
+}
+
 module.exports = {
   createNewPost,
+  getAllPosts,
 };
