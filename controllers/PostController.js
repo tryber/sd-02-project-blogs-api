@@ -70,19 +70,20 @@ async function getSinglePost(req, res) {
     .then((result) => res.status(200).json(result))
     .catch((e) => {
       console.error(e.message);
-
       res.status(500).json({ message: 'erro na conexão com base de dados' });
     });
 }
 
 async function searchPosts(req, res) {
   const { q: searchTerm } = req.query;
-  return PostService.searchPosts({ searchTerm })
-    .then((result) => res.status(200).json(result))
-    .catch((e) => {
-      console.error(e.message);
-      res.status(500).json({ message: 'erro na conexão com base de dados' });
-    });
+
+  try {
+    const result = await PostService.searchPosts({ searchTerm });
+    res.status(200).json(result);
+  } catch (e) {
+    console.error(e.message);
+    res.status(500).json({ message: 'erro na conexão com base de dados' });
+  }
 }
 
 module.exports = {
