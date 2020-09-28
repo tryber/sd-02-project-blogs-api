@@ -1,6 +1,10 @@
 const { Post } = require('../models');
 const {
-  createNewPost, getAllPosts, updatePost, searchPosts,
+  createNewPost,
+  getAllPosts,
+  updatePost,
+  searchPosts,
+  getSinglePost,
 } = require('./PostController');
 
 afterEach(() => {
@@ -353,6 +357,73 @@ describe('PostController', () => {
         .mockRejectedValue(new Error());
 
       await updatePost(mockReq, mockRes);
+
+      expect(mockUserModel).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(500);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');
+    });
+  });
+  describe('Exibir um post', () => {
+    it('Quando é feita uma requisição GET para o endpoint /post/:id retorna um objeto com os detalhes do post com id correspondente', async () => {
+      const result = {
+        id: 1,
+        title: 'Latest updates, October ast',
+        content: 'The whole text for the blog post goes here in this key alanal',
+        published: '2020-09-22T16:30:25.000Z',
+        updated: '2020-09-28T01:18:53.000Z',
+        user: {
+          id: 1,
+          displayName: 'Guilherme Crespo',
+          email: 'gui@gui.com',
+          image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+        },
+      };
+
+      const mockFindUser = jest
+        .spyOn(Post, 'findOne')
+        .mockResolvedValue(result);
+
+      const mockReq = {
+        params: {
+          id: 1,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await getSinglePost(mockReq, mockRes);
+
+      expect(mockFindUser).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJSON.mock.calls[0][0]).toStrictEqual(result);
+      expect(mockJSON.mock.calls[0][0].user).not.toHaveProperty('password');
+    });
+
+    it('Quando há um erro na conexão com o banco de dados, retorna o status 500 e uma mensagem', async () => {
+      jest.spyOn(console, 'error').mockReturnValueOnce();
+
+      const mockReq = {
+        params: {
+          id: 1,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      const mockUserModel = jest
+        .spyOn(Post, 'findOne')
+        .mockRejectedValue(new Error());
+
+      await getSinglePost(mockReq, mockRes);
 
       expect(mockUserModel).toHaveBeenCalledTimes(1);
       expect(mockRes.status).toBeCalledWith(500);

@@ -63,6 +63,18 @@ async function updatePost(req, res) {
   }
 }
 
+async function getSinglePost(req, res) {
+  const { id } = req.params;
+
+  return PostService.getSinglePost({ id })
+    .then((result) => res.status(200).json(result))
+    .catch((e) => {
+      console.error(e.message);
+
+      res.status(500).json({ message: 'erro na conexão com base de dados' });
+    });
+}
+
 async function searchPosts(req, res) {
   const { q: searchTerm } = req.query;
   return PostService.searchPosts({ searchTerm })
@@ -78,4 +90,5 @@ module.exports = {
   getAllPosts,
   updatePost,
   searchPosts,
+  getSinglePost,
 };

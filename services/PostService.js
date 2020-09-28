@@ -11,7 +11,7 @@ async function create({ title, content, userId }) {
 async function getAllPosts() {
   const posts = await Post.findAll({
     attributes: { exclude: ['user_id'] },
-    include: { model: User, as: 'user' },
+    include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
   });
 
   return posts;
@@ -31,6 +31,14 @@ async function updatePost({ title, content, postId, userId }) {
   );
 }
 
+async function getSinglePost({ id }) {
+  return Post.findOne({
+    where: { id },
+    attributes: { exclude: ['user_id'] },
+    include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
+  });
+}
+
 async function searchPosts({ searchTerm }) {
   const posts = await Post.findAll({
     where: {
@@ -40,7 +48,7 @@ async function searchPosts({ searchTerm }) {
       ],
     },
     attributes: { exclude: ['user_id'] },
-    include: { model: User, as: 'user' },
+    include: [{ model: User, as: 'user', attributes: { exclude: ['password'] } }],
   });
 
   return posts;
@@ -51,4 +59,5 @@ module.exports = {
   getAllPosts,
   updatePost,
   searchPosts,
+  getSinglePost,
 };

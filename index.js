@@ -26,6 +26,7 @@ postRouter
   .post('/', middlewares.user.authUser, controllers.post.createNewPost)
   .get('/', controllers.post.getAllPosts)
   .put('/:id', middlewares.user.authUser, controllers.post.updatePost)
-  .get('/search', controllers.post.searchPosts);
+  .get('/search', controllers.post.searchPosts)
+  .get('/:id', controllers.post.getSinglePost);
 
 app.listen(3000, () => console.log('ouvindo porta 3000!'));
