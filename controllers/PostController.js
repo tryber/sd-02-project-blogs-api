@@ -39,7 +39,43 @@ async function getAllPosts(_req, res) {
     });
 }
 
+async function updatePost(req, res) {
+  const { title, content } = req.body;
+  const { id: postId } = req.params;
+  const { id: userId } = req.user;
+
+  const validFields = fieldsCheck({ title, content });
+
+  if (!validFields) {
+    return res
+      .status(400)
+      .json({ message: 'sua requisição deve conter um title e um content e devem ser strings' });
+  }
+
+  try {
+    const response = await PostService.updatePost({ title, content, postId, userId });
+    if (response.error) return res.status(response.code).json({ message: response.message });
+    res.status(200).json({ message: 'Post atualizado com sucesso' });
+  } catch (e) {
+    console.error(e.message);
+
+    res.status(500).json({ message: 'erro na conexão com base de dados' });
+  }
+}
+
+async function searchPosts(req, res) {
+  const { q: searchTerm } = req.query;
+  return PostService.searchPosts({ searchTerm })
+    .then((result) => res.status(200).json(result))
+    .catch((e) => {
+      console.error(e.message);
+      res.status(500).json({ message: 'erro na conexão com base de dados' });
+    });
+}
+
 module.exports = {
   createNewPost,
   getAllPosts,
+  updatePost,
+  searchPosts,
 };

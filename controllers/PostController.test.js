@@ -1,6 +1,6 @@
 const { Post } = require('../models');
 const {
-  createNewPost, getAllPosts,
+  createNewPost, getAllPosts, updatePost, searchPosts,
 } = require('./PostController');
 
 afterEach(() => {
@@ -53,6 +53,7 @@ describe('PostController', () => {
         },
       });
     });
+
     it('Quando falta o title ou o content, retorna o status 400 e uma mensagem de erro', async () => {
       const mockReq = {
         body: {
@@ -81,6 +82,7 @@ describe('PostController', () => {
       expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
       expect(mockJSON.mock.calls[0][0].message).toBe('sua requisição deve conter um title e um content e devem ser strings');
     });
+
     it('Quando há um erro na conexão com o banco de dados, retorna o status 500 e uma mensagem', async () => {
       jest.spyOn(console, 'error').mockReturnValueOnce();
 
@@ -174,6 +176,7 @@ describe('PostController', () => {
       expect(mockJSON.mock.calls[0][0]).toBeInstanceOf(Array);
       mockJSON.mock.calls[0][0].forEach((post) => expect(post).not.toHaveProperty('user_id'));
     });
+
     it('Quando há um erro na conexão com o banco de dados, retorna o status 500 e uma mensagem', async () => {
       jest.spyOn(console, 'error').mockReturnValueOnce();
 
@@ -188,6 +191,292 @@ describe('PostController', () => {
         .mockRejectedValue(new Error());
 
       await getAllPosts(null, mockRes);
+
+      expect(mockUserModel).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(500);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');
+    });
+  });
+  describe('Atualizar post', () => {
+    it('Quando fornecidos os dados corretos, atualiza o title/content em um post do autor ou autora da requisição e retorna 200', async () => {
+      const mockReq = {
+        body: {
+          title: 'Latest updates, October 1st',
+          content: 'The whole text for the blog post goes here in this key ihhh',
+        },
+        user: {
+          id: 5,
+        },
+        params: {
+          id: 4,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockFindOne = jest
+        .spyOn(Post, 'findOne')
+        .mockResolvedValue({
+          ...mockReq.body,
+          id: mockReq.params.id,
+          user_id: mockReq.user.id,
+          updated: '2020-09-22 16:30:25',
+          published: '2020-09-22 16:30:25',
+        });
+
+      const mockPostModel = jest
+        .spyOn(Post, 'update')
+        .mockResolvedValue([1]);
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await updatePost(mockReq, mockRes);
+
+      expect(mockFindOne).toHaveBeenCalledTimes(1);
+      expect(mockPostModel).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+    });
+
+    it('Quando uma pessoa diferente de quem criou fizer a requisição, deve retornar um código status 403', async () => {
+      const mockReq = {
+        body: {
+          title: 'Latest updates, October 1st',
+          content: 'The whole text for the blog post goes here in this key ihhh',
+        },
+        user: {
+          id: 5,
+        },
+        params: {
+          id: 4,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockFindOne = jest
+        .spyOn(Post, 'findOne')
+        .mockResolvedValue({
+          ...mockReq.body,
+          id: mockReq.params.id,
+          user_id: 1,
+          updated: '2020-09-22 16:30:25',
+          published: '2020-09-22 16:30:25',
+        });
+
+      const mockPostModel = jest
+        .spyOn(Post, 'update')
+        .mockResolvedValue();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await updatePost(mockReq, mockRes);
+
+      expect(mockFindOne).toHaveBeenCalledTimes(1);
+      expect(mockPostModel).not.toHaveBeenCalled();
+      expect(mockRes.status).toBeCalledWith(403);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('Você só pode alterar seus próprios posts');
+    });
+
+    it('Quando falta o title ou o content, retorna o status 400 e uma mensagem de erro', async () => {
+      const mockReq = {
+        body: {
+          title: 'Latest updates, October 1st',
+          content: '',
+        },
+        user: {
+          id: 5,
+        },
+        params: {
+          id: 4,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockFindOne = jest
+        .spyOn(Post, 'findOne')
+        .mockResolvedValue({
+          ...mockReq.body,
+          id: mockReq.params.id,
+          user_id: mockReq.user.id,
+          updated: '2020-09-22 16:30:25',
+          published: '2020-09-22 16:30:25',
+        });
+
+      const mockPostModel = jest
+        .spyOn(Post, 'update')
+        .mockResolvedValue();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await updatePost(mockReq, mockRes);
+
+      expect(mockFindOne).not.toHaveBeenCalled();
+      expect(mockPostModel).not.toHaveBeenCalled();
+      expect(mockRes.status).toBeCalledWith(400);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('sua requisição deve conter um title e um content e devem ser strings');
+    });
+
+    it('Quando há um erro na conexão com o banco de dados, retorna o status 500 e uma mensagem', async () => {
+      jest.spyOn(console, 'error').mockReturnValueOnce();
+
+      const mockReq = {
+        body: {
+          title: 'Latest updates, October 1st',
+          content: 'The whole text for the blog post goes here in this key ihhh',
+        },
+        user: {
+          id: 5,
+        },
+        params: {
+          id: 4,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      const mockUserModel = jest
+        .spyOn(Post, 'update')
+        .mockRejectedValue(new Error());
+
+      await updatePost(mockReq, mockRes);
+
+      expect(mockUserModel).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(500);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');
+    });
+  });
+  describe('Procurar por posts', () => {
+    it('Quando digitado um termo de busca, deve retornar um array com todos os posts que contiverem aquele termo no title ou no content', async () => {
+      const mockReq = {
+        query: {
+          q: 'ast',
+        },
+      };
+
+      const mockResult = [
+        {
+          id: 1,
+          title: 'Latest updates, October 1st',
+          content: 'The whole text for the blog post goes here in this key alanal ast',
+          published: '2020-09-22T16:30:25.000Z',
+          updated: '2020-09-28T01:18:53.000Z',
+          user: {
+            id: 1,
+            displayName: 'Guilherme Crespo',
+            email: 'gui@gui.com',
+            password: '123456',
+            image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+          },
+        },
+        {
+          id: 4,
+          title: 'Latest updates, September 3st',
+          content: 'The whole text for the blog post goes here in this key alanal',
+          published: '2020-09-28T00:24:06.000Z',
+          updated: '2020-09-28T01:19:59.000Z',
+          user: {
+            id: 5,
+            displayName: 'Alan Parsons',
+            email: 'alan@alan.com',
+            password: 'alanal',
+            image: 'https://www.gannett-cdn.com/-mm-/3690a3782bc4a2b9b35fc50bf175c54642c2ca9d/c=0-9-2968-3966/local/-/media/2016/03/22/Phoenix/Phoenix/635942084911874569-GettyImages-464294501.jpg?width=534&height=712&fit=crop',
+          },
+        },
+        {
+          id: 5,
+          title: 'Latest updates, August ast',
+          content: 'The whole text for the blog post goes here in this key alanal',
+          published: '2020-09-28T01:00:27.000Z',
+          updated: '2020-09-28T01:00:27.000Z',
+          user: {
+            id: 5,
+            displayName: 'Alan Parsons',
+            email: 'alan@alan.com',
+            password: 'alanal',
+            image: 'https://www.gannett-cdn.com/-mm-/3690a3782bc4a2b9b35fc50bf175c54642c2ca9d/c=0-9-2968-3966/local/-/media/2016/03/22/Phoenix/Phoenix/635942084911874569-GettyImages-464294501.jpg?width=534&height=712&fit=crop',
+          },
+        },
+      ];
+
+      const mockJSON = jest.fn();
+
+      const mockFindAll = jest
+        .spyOn(Post, 'findAll')
+        .mockResolvedValue(mockResult);
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await searchPosts(mockReq, mockRes);
+
+      expect(mockFindAll).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJSON).toBeCalledWith(mockResult);
+      expect(mockJSON.mock.calls[0][0]).toBeInstanceOf(Array);
+      mockJSON.mock.calls[0][0].forEach((post) => expect(post).not.toHaveProperty('user_id'));
+    });
+
+    it('Quando digitado um termo de busca e nada for encontrado, retorna um array vazio', async () => {
+      const mockReq = {
+        query: {
+          q: 'lalalal',
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockFindAll = jest
+        .spyOn(Post, 'findAll')
+        .mockResolvedValue([]);
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await searchPosts(mockReq, mockRes);
+
+      expect(mockFindAll).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+      expect(mockJSON.mock.calls[0][0]).toBeInstanceOf(Array);
+      expect(mockJSON.mock.calls[0][0].length).toBe(0);
+    });
+
+    it('Quando há um erro na conexão com o banco de dados, retorna o status 500 e uma mensagem', async () => {
+      jest.spyOn(console, 'error').mockReturnValueOnce();
+
+      const mockReq = {
+        query: {
+          q: 'ast',
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      const mockUserModel = jest
+        .spyOn(Post, 'findAll')
+        .mockRejectedValue(new Error());
+
+      await searchPosts(mockReq, mockRes);
 
       expect(mockUserModel).toHaveBeenCalledTimes(1);
       expect(mockRes.status).toBeCalledWith(500);
