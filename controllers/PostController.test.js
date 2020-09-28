@@ -5,6 +5,7 @@ const {
   updatePost,
   searchPosts,
   getSinglePost,
+  deletePost,
 } = require('./PostController');
 
 afterEach(() => {
@@ -244,7 +245,7 @@ describe('PostController', () => {
       expect(mockRes.status).toBeCalledWith(200);
     });
 
-    it('Quando uma pessoa diferente de quem criou fizer a requisição, deve retornar um código status 403', async () => {
+    it('Quando uma pessoa diferente de quem criou o post fizer a requisição, deve retornar um código status 403', async () => {
       const mockReq = {
         body: {
           title: 'Latest updates, October 1st',
@@ -550,6 +551,179 @@ describe('PostController', () => {
       await searchPosts(mockReq, mockRes);
 
       expect(mockUserModel).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(500);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');
+    });
+  });
+  describe('Deletar um post', () => {
+    it('Quando fornecidos os dados corretos, deleta post do autor ou autora da requisição e retorna 200', async () => {
+      const mockReq = {
+        user: {
+          id: 5,
+        },
+        params: {
+          id: 4,
+        },
+      };
+
+      const mockFindOne = jest
+        .spyOn(Post, 'findOne')
+        .mockResolvedValue({
+          id: 4,
+          user_id: 5,
+          title: 'Latest updates, October 1st',
+          content: 'The whole text for the blog post goes here in this key alanal ast',
+          published: '2020-09-22T16:30:25.000Z',
+          updated: '2020-09-28T01:18:53.000Z',
+          user: {
+            id: 5,
+            displayName: 'Guilherme Crespo',
+            email: 'gui@gui.com',
+            password: '123456',
+            image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+          },
+        });
+
+      const mockDestroy = jest
+        .spyOn(Post, 'destroy')
+        .mockResolvedValue(true);
+
+      const mockRes = {
+        status: jest.fn().mockImplementation(() => ({ end: jest.fn() })),
+      };
+
+      await deletePost(mockReq, mockRes);
+
+      expect(mockFindOne).toHaveBeenCalledTimes(1);
+      expect(mockDestroy).toHaveBeenCalledTimes(1);
+      expect(mockRes.status).toBeCalledWith(200);
+    });
+
+    it('Quando uma pessoa diferente de quem criou o post fizer a requisição, deve retornar um código status 403', async () => {
+      const mockReq = {
+        user: {
+          id: 5,
+        },
+        params: {
+          id: 4,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockFindOne = jest
+        .spyOn(Post, 'findOne')
+        .mockResolvedValue({
+          id: 4,
+          user_id: 4,
+          title: 'Latest updates, October 1st',
+          content: 'The whole text for the blog post goes here in this key alanal ast',
+          published: '2020-09-22T16:30:25.000Z',
+          updated: '2020-09-28T01:18:53.000Z',
+          user: {
+            id: 4,
+            displayName: 'Guilherme Crespo',
+            email: 'gui@gui.com',
+            password: '123456',
+            image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+          },
+        });
+
+      const mockPostModel = jest
+        .spyOn(Post, 'destroy')
+        .mockResolvedValue();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await deletePost(mockReq, mockRes);
+
+      expect(mockFindOne).toHaveBeenCalledTimes(1);
+      expect(mockPostModel).not.toHaveBeenCalled();
+      expect(mockRes.status).toBeCalledWith(403);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('Você só pode deletar seus próprios posts');
+    });
+
+    it('Quando o post não é encontrado, deve retornar um código status 404', async () => {
+      const mockReq = {
+        user: {
+          id: 5,
+        },
+        params: {
+          id: 4,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockFindOne = jest
+        .spyOn(Post, 'findOne')
+        .mockResolvedValue();
+
+      const mockPostModel = jest
+        .spyOn(Post, 'destroy')
+        .mockResolvedValue();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      await deletePost(mockReq, mockRes);
+
+      expect(mockFindOne).toHaveBeenCalledTimes(1);
+      expect(mockPostModel).not.toHaveBeenCalled();
+      expect(mockRes.status).toBeCalledWith(404);
+      expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+      expect(mockJSON.mock.calls[0][0].message).toBe('Nenhum post encontrado');
+    });
+
+    it('Quando há um erro na conexão com o banco de dados, retorna o status 500 e uma mensagem', async () => {
+      jest.spyOn(console, 'error').mockReturnValueOnce();
+
+      const mockReq = {
+        user: {
+          id: 5,
+        },
+        params: {
+          id: 4,
+        },
+      };
+
+      const mockJSON = jest.fn();
+
+      const mockRes = {
+        status: jest.fn().mockReturnValue({ json: mockJSON }),
+      };
+
+      const mockFindOne = jest
+        .spyOn(Post, 'findOne')
+        .mockResolvedValue({
+          id: 4,
+          user_id: 5,
+          title: 'Latest updates, October 1st',
+          content: 'The whole text for the blog post goes here in this key alanal ast',
+          published: '2020-09-22T16:30:25.000Z',
+          updated: '2020-09-28T01:18:53.000Z',
+          user: {
+            id: 5,
+            displayName: 'Guilherme Crespo',
+            email: 'gui@gui.com',
+            password: '123456',
+            image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+          },
+        });
+
+      const mockDestroy = jest
+        .spyOn(Post, 'destroy')
+        .mockRejectedValue(new Error());
+
+      await deletePost(mockReq, mockRes);
+
+      expect(mockFindOne).toHaveBeenCalledTimes(1);
+      expect(mockDestroy).toHaveBeenCalledTimes(1);
       expect(mockRes.status).toBeCalledWith(500);
       expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
       expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');

@@ -54,10 +54,25 @@ async function searchPosts({ searchTerm }) {
   return posts;
 }
 
+async function deletePost({ userId, postId }) {
+  const post = await Post.findOne({ where: { id: postId } });
+
+  if (!post) return { error: true, code: 404, message: 'Nenhum post encontrado' };
+
+  const { user_id: userIdFromPost } = post;
+
+  if (userId !== userIdFromPost) {
+    return { error: true, code: 403, message: 'Você só pode deletar seus próprios posts' };
+  }
+
+  return Post.destroy({ where: { id: postId } });
+}
+
 module.exports = {
   create,
   getAllPosts,
   updatePost,
   searchPosts,
   getSinglePost,
+  deletePost,
 };

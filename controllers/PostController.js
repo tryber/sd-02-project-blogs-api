@@ -86,10 +86,26 @@ async function searchPosts(req, res) {
   }
 }
 
+async function deletePost(req, res) {
+  const { id: userId } = req.user;
+  const { id: postId } = req.params;
+
+  return PostService.deletePost({ userId, postId })
+    .then((response) => {
+      if (response.error) return res.status(response.code).json({ message: response.message });
+      return res.status(200).end();
+    })
+    .catch((e) => {
+      console.error(e);
+      return res.status(500).json({ message: 'erro na conexão com base de dados' });
+    });
+}
+
 module.exports = {
   createNewPost,
   getAllPosts,
   updatePost,
   searchPosts,
   getSinglePost,
+  deletePost,
 };
