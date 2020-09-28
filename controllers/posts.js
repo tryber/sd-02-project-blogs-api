@@ -7,7 +7,7 @@ const createPost = async (req, res, _next) => {
   const { title, content } = req.body;
   try {
     if (!title || !content) {
-      return res.status(400).json({ code: 400, message: 'Bad Request' });
+      return res.status(400).json({ code: 400, message: 'Bad request' });
     }
     const newPost = await posts.createPost({ title, content, userId: id });
     return res.status(200).json(newPost);
@@ -33,7 +33,7 @@ const updatePost = async (req, res) => {
   const { title, content } = req.body;
   try {
     if (!title || !content) {
-      return res.status(400).json({ code: 400, message: 'Bad Request' });
+      return res.status(400).json({ code: 400, message: 'Bad request' });
     }
     const updatedPost = await posts.updatePost({ id, title, content, userId });
     if (updatedPost === 403) {

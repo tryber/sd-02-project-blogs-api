@@ -21,15 +21,15 @@ const listPosts = async () => {
 
 const updatePost = async ({ id, title, content, userId }) => {
   const { dataValues: { userId: authorPostId } } = await Post.findByPk(id);
-
   if (userId !== authorPostId) {
     return 403;
   }
 
-  await Post.update(
+  const updatedPost = await Post.update(
     { title, content },
     { where: { id } },
   );
+  return updatedPost;
 };
 
 const listPost = async ({ id }) => {
