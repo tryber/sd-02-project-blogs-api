@@ -3,18 +3,40 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.1.0",
+    "nodemon": "^2.0.4",
+    "sequelize": "^6.3.4"
   },
   "scripts": {
     "start": "node index.js",
+    "start:watch": "nodemon index.js",
     "test": "jest",
+    "test-coverage": "jest --coverage --watchAll=false",
     "lint": "eslint ."
   },
   "devDependencies": {
-    "jest": "^26.0.1",
-    "supertest": "^4.0.2",
+    "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.21.2",
-    "eslint": "^7.6.0"
-  }
+    "jest": "^26.0.1",
+    "sequelize-cli": "^6.2.0",
+    "supertest": "^4.0.2"
+  },
+  "description": "Você já usa o GitHub diariamente para desenvolver os exercícios, certo? Agora, para desenvolver o projeto, você deverá seguir as instruções abaixo. Tenha atenção a cada passo e, se tiver qualquer dúvida, nos envie por Slack! #vqv 🚀",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tryber/sd-02-project-blogs-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tryber/sd-02-project-blogs-api/issues"
+  },
+  "homepage": "https://github.com/tryber/sd-02-project-blogs-api#readme"
 }
