@@ -20,7 +20,6 @@ const loginUser = async ({ email, password }) => {
 
 const createUser = async ({ displayName, email, password, image }) => {
   const userCheck = await User.findOne({ where: { email } });
-  console.log('userCheck:', userCheck)
   if (userCheck) { return 409; }
   await User.create({ displayName, email, password, image });
   return { email, password };
