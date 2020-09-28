@@ -7,7 +7,7 @@ module.exports = async (req, res, next) => {
   const token = req.headers.authorization || null;
 
   if (!token) {
-    return res.status(400).json({ error: 'Token não encontrado ou informado' });
+    return res.status(400).json({ error: 'No token informed' });
   }
 
   try {
@@ -15,12 +15,12 @@ module.exports = async (req, res, next) => {
     const user = await User.findOne({ where: { id: decoded.data.dataValues.id } });
 
     if (!user) {
-      return res.status(401).json({ message: 'Erro ao procurar usuario do token.' });
+      return res.status(401).json({ message: 'User token not found.' });
     }
     req.user = user;
 
     next();
   } catch (err) {
-    return res.status(401).json({ message: 'Erro: Seu token é inválido' });
+    return res.status(401).json({ message: 'Invalid token' });
   }
 };

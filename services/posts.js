@@ -2,12 +2,8 @@ const { Op } = require('sequelize');
 const { Post, User } = require('../models');
 
 const createPost = async ({ title, content, userId }) => {
-  try {
-    await Post.create({ title, content, userId });
-    return { title, content };
-  } catch (err) {
-    console.log('error from service:', err);
-  }
+  await Post.create({ title, content, userId });
+  return { title, content };
 };
 
 const listPosts = async () => {
@@ -53,36 +49,28 @@ const listPost = async ({ id }) => {
 };
 
 const searchPost = async ({ q }) => {
-  try {
-    const searchResults = await Post.findAll({
-      where: {
-        [Op.or]: [
-          { title: { [Op.like]: `%${q}%` } },
-          { content: { [Op.like]: `%${q}%` } },
-        ],
-      },
-      attributes: { exclude: ['userId'] },
-      include: {
-        model: User,
-        as: 'user',
-        attributes: { exclude: ['password'] },
-      },
-    });
-    if (!searchResults) { return 404; }
-    return searchResults;
-  } catch (err) {
-    console.log('error from service:', err);
-  }
+  const searchResults = await Post.findAll({
+    where: {
+      [Op.or]: [
+        { title: { [Op.like]: `%${q}%` } },
+        { content: { [Op.like]: `%${q}%` } },
+      ],
+    },
+    attributes: { exclude: ['userId'] },
+    include: {
+      model: User,
+      as: 'user',
+      attributes: { exclude: ['password'] },
+    },
+  });
+  if (!searchResults) { return 404; }
+  return searchResults;
 };
 
 const deletePost = async ({ id, userId }) => {
   const { dataValues: { userId: authorPostId } } = await Post.findByPk(id);
-  try {
-    if (userId !== authorPostId) { return 403; }
-    await Post.destroy({ where: { id } });
-  } catch (err) {
-    console.log('error from service:', err);
-  }
+  if (userId !== authorPostId) { return 403; }
+  await Post.destroy({ where: { id } });
 };
 
 module.exports = {
