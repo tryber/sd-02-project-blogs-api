@@ -1,8 +1,8 @@
 const { UserSchema, PostSchema } = require('./SchemaJoi');
-const { newToken } = require('./Jwt');
+const { userLogin } = require('./userServices');
 
 module.exports = {
   UserSchema,
   PostSchema,
-  newToken,
+  userLogin,
 };

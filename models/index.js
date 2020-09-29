@@ -6,6 +6,7 @@ const Sequelize = require('sequelize');
 
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config.js')[env];
+// se for hardcodado, roda. Criar .env para receber ambiente de testez
 
 const basename = path.basename(__filename);
 const db = {};
