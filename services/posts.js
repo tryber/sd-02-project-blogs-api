@@ -68,7 +68,7 @@ const searchPost = async ({ q }) => {
 };
 
 const deletePost = async ({ id, userId }) => {
-  const { dataValues: { userId: authorPostId } } = await Post.findByPk(id);
+  const { dataValues: { user: { id: authorPostId } } } = await Post.findByPk(id);
   if (userId !== authorPostId) { return 403; }
   await Post.destroy({ where: { id } });
 };

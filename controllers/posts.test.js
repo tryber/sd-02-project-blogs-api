@@ -1,4 +1,4 @@
-const { Post, User } = require('../models');
+const { Post } = require('../models');
 const postsController = require('./posts');
 
 // agradeço a guicgs por me ajudar nos testes de erro 500.
@@ -211,7 +211,7 @@ describe.skip('listPost', () => {
       },
     };
 
-    const mockFindUser = jest
+    const mockFindPost = jest
       .spyOn(Post, 'findOne')
       .mockResolvedValue(result);
 
@@ -229,7 +229,7 @@ describe.skip('listPost', () => {
 
     await postsController.listPost(mockReq, mockRes);
 
-    expect(mockFindUser).toHaveBeenCalledTimes(1);
+    expect(mockFindPost).toHaveBeenCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
     expect(mockJSON.mock.calls[0][0]).toStrictEqual(result);
     expect(mockJSON.mock.calls[0][0].user).not.toHaveProperty('password');
@@ -295,90 +295,6 @@ describe.skip('updatePost', () => {
     expect(mockJson).toBeCalledWith(mockData);
   });
   test('Different user', async () => {
-    const mockReq = {
-      body: {
-        title: 'Latest updates, September 28th',
-        content: 'The whole text for the blog post goes here in this key',
-      },
-      user: {
-        id: 5,
-      },
-      params: {
-        id: 4,
-      },
-    };
-
-    const mockJSON = jest.fn();
-
-    const mockFindOne = jest
-      .spyOn(Post, 'findByPk')
-      .mockResolvedValue({
-        ...mockReq.body,
-        id: mockReq.params.id,
-        userId: mockReq.user.id,
-        updated: '2020-09-22 16:30:25',
-        published: '2020-09-22 16:30:25',
-      });
-
-    // search results:
-    // {
-    //   dataValues: {
-    //     id: 1,
-    //     title: 'post for jest3',
-    //     content: 'single post as an example3',
-    //     published: 2011-08-01T19:58:00.000Z,
-    //     updated: 2020-09-28T21:07:41.000Z,
-    //     userId: 1
-    //   },
-    //   _previousDataValues: {
-    //     id: 1,
-    //     title: 'post for jest3',
-    //     content: 'single post as an example3',
-    //     published: 2011-08-01T19:58:00.000Z,
-    //     updated: 2020-09-28T21:07:41.000Z,
-    //     userId: 1
-    //   },
-    //   _changed: Set(0) {},
-    //   _options: {
-    //     isNewRecord: false,
-    //     _schema: null,
-    //     _schemaDelimiter: '',
-    //     raw: true,
-    //     attributes: [ 'id', 'title', 'content', 'published', 'updated', 'userId' ]
-    //   },
-    //   isNewRecord: false
-    // }
-
-
-    //   {
-    //     "id": 7,
-    //     "title": "post for jest",
-    //     "content": "single post as an example",
-    //     "published": "2020-09-28T21:05:47.000Z",
-    //     "updated": "2020-09-28T21:05:47.000Z",
-    //     "user": {
-    //         "id": 3,
-    //         "displayName": "admin",
-    //         "email": "admin@gmail.com",
-    //         "image": "xablau.jpg"
-    //     }
-    // }
-
-    const mockPostModel = jest
-      .spyOn(Post, 'update')
-      .mockResolvedValue();
-
-    const mockRes = {
-      status: jest.fn().mockReturnValue({ json: mockJSON }),
-    };
-
-    await postsController.updatePost(mockReq, mockRes);
-
-    expect(mockFindOne).toHaveBeenCalledTimes(1);
-    expect(mockPostModel).not.toHaveBeenCalled();
-    expect(mockRes.status).toBeCalledWith(403);
-    expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
-    expect(mockJSON.mock.calls[0][0].message).toBe('User unauthorized to update post');
   });
   test('Error 500', async () => {
     jest.spyOn(console, 'error').mockReturnValueOnce();
@@ -532,50 +448,103 @@ describe.skip('searchPost', () => {
 });
 
 describe.skip('deletePost', () => {
-  test.only('deleting post', async () => {
+  test('unauthorized user', async () => {
     const mockReq = {
-      user: {
-        id: 5,
-      },
       params: {
-        id: 4,
+        id: 1,
+      },
+      user: {
+        id: 3,
       },
     };
 
-    const mockFindOne = jest
-      .spyOn(Post, 'findByPk')
-      .mockResolvedValue({
-        id: 4,
+    const result = {
+      dataValues: {
+        id: 1,
         title: 'Latest updates, October 1st',
-        content: 'The whole text for the blog post goes here in this key alanal ast',
+        content: 'The whole text for the blog post goes here in this key',
         published: '2020-09-22T16:30:25.000Z',
         updated: '2020-09-28T01:18:53.000Z',
         user: {
-          id: 5,
-          displayName: 'Guilherme Crespo',
-          email: 'gui@gui.com',
-          password: '123456',
-          image: 'https://thetechhacker.com/wp-content/uploads/2017/01/What-is-GUI-Graphical-user-Interface.jpg',
+          id: 2,
+          displayName: 'Lula da Silva',
+          email: 'lulalivre@pt.com',
+          image: 'img.png',
         },
-      });
+      },
+    };
 
-    const mockDestroy = jest
+    const mockJSON = jest.fn();
+
+    const mockRes = {
+      status: jest.fn().mockReturnValue({ json: mockJSON }),
+    };
+
+    const mockFindPost = jest
+      .spyOn(Post, 'findByPk')
+      .mockResolvedValue(result);
+
+    await postsController.deletePost(mockReq, mockRes);
+    expect(mockFindPost).toHaveBeenCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(403);
+    expect(mockJSON).toBeCalledWith(
+      {
+        code: 403,
+        message: 'User unauthorized to delete post'
+      },
+    );
+  });
+  test('deleting post', async () => {
+    const mockReq = {
+      params: {
+        id: 1,
+      },
+      user: {
+        id: 2,
+      },
+    };
+
+    const result = {
+      dataValues: {
+        id: 1,
+        title: 'Latest updates, October 1st',
+        content: 'The whole text for the blog post goes here in this key',
+        published: '2020-09-22T16:30:25.000Z',
+        updated: '2020-09-28T01:18:53.000Z',
+        user: {
+          id: 2,
+          displayName: 'Lula da Silva',
+          email: 'lulalivre@pt.com',
+          image: 'img.png',
+        },
+      },
+    };
+
+    const mockJSON = jest.fn();
+
+    const mockRes = {
+      status: jest.fn().mockReturnValue({ json: mockJSON }),
+    };
+
+    const mockFindPost = jest
+      .spyOn(Post, 'findByPk')
+      .mockResolvedValue(result);
+
+    const mockDestroyPost = jest
       .spyOn(Post, 'destroy')
       .mockResolvedValue(true);
 
-    const mockRes = {
-      status: jest.fn().mockImplementation(() => ({ end: jest.fn() })),
-    };
-
     await postsController.deletePost(mockReq, mockRes);
-
-    expect(mockFindOne).toHaveBeenCalledTimes(1);
-    expect(mockDestroy).toHaveBeenCalledTimes(1);
+    expect(mockFindPost).toHaveBeenCalledTimes(1);
+    expect(mockDestroyPost).toHaveBeenCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJSON).toBeCalledWith(
+      { message: 'Post Deleted!' },
+    );
   });
 });
 
-// describe.skip.skip('users route', () => {
+// describe.skip('users route', () => {
 //   test('usersController.CreateUser controller', async () => {
 //     const reqMock = {
 //       body: {
