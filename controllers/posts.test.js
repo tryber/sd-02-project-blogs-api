@@ -7,7 +7,7 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-describe.skip('createPost', () => {
+describe('createPost', () => {
   test('post without title', async () => {
     const mockReq = {
       user: {
@@ -111,7 +111,7 @@ describe.skip('createPost', () => {
   });
 });
 
-describe.skip('listPosts', () => {
+describe('listPosts', () => {
   test('listing all posts', async () => {
     // mock copiado para facilitar os testes
     const mockFindAll = jest
@@ -195,7 +195,7 @@ describe.skip('listPosts', () => {
   });
 });
 
-describe.skip('listPost', () => {
+describe('listPost', () => {
   test('listing single post', async () => {
     const result = {
       id: 1,
@@ -234,6 +234,30 @@ describe.skip('listPost', () => {
     expect(mockJSON.mock.calls[0][0]).toStrictEqual(result);
     expect(mockJSON.mock.calls[0][0].user).not.toHaveProperty('password');
   });
+  test('404 error', async () => {
+    const mockReq = {
+      params: {
+        id: 1,
+      },
+    };
+
+    const mockJSON = jest.fn();
+
+    const mockFindAll = jest
+      .spyOn(Post, 'findByPk')
+      .mockResolvedValue();
+
+    const mockRes = {
+      status: jest.fn().mockReturnValue({ json: mockJSON }),
+    };
+
+    await postsController.listPost(mockReq, mockRes);
+
+    expect(mockFindAll).toHaveBeenCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(404);
+    expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+    expect(mockJSON.mock.calls[0][0].message).toBe('Post not found');
+  });
   test('Error 500', async () => {
     jest.spyOn(console, 'error').mockReturnValueOnce();
 
@@ -262,16 +286,14 @@ describe.skip('listPost', () => {
   });
 });
 
-describe.skip('updatePost', () => {
+describe('updatePost', () => {
   test('post missing data', async () => {
     const mockReq = {
       params: {
         id: 1,
       },
       user: {
-        dataValues: {
-          id: 1,
-        },
+        id: 1,
       },
       body: {
         title: '',
@@ -295,13 +317,16 @@ describe.skip('updatePost', () => {
     expect(mockJson).toBeCalledWith(mockData);
   });
   test('Different user', async () => {
-  });
-  test('Error 500', async () => {
-    jest.spyOn(console, 'error').mockReturnValueOnce();
-
     const mockReq = {
+      params: {
+        id: 1,
+      },
       user: {
         id: 1,
+      },
+      body: {
+        title: 'some title',
+        content: 'some content',
       },
     };
 
@@ -311,20 +336,121 @@ describe.skip('updatePost', () => {
       status: jest.fn().mockReturnValue({ json: mockJSON }),
     };
 
-    const mockDestroy = jest
-      .spyOn(Post, 'update')
+    const result = {
+      dataValues: {
+        id: 1,
+        title: 'Latest updates, October 1st',
+        content: 'The whole text for the blog post goes here in this key',
+        published: '2020-09-22T16:30:25.000Z',
+        updated: '2020-09-28T01:18:53.000Z',
+        user: {
+          id: 2,
+          displayName: 'Lula da Silva',
+          email: 'lulalivre@pt.com',
+          image: 'img.png',
+        },
+      },
+    };
+
+    const mockFindPost = jest
+      .spyOn(Post, 'findByPk')
+      .mockResolvedValue(result);
+
+    await postsController.updatePost(mockReq, mockRes);
+    expect(mockFindPost).toHaveBeenCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(403);
+    expect(mockJSON).toBeCalledWith(
+      {
+        message: 'User unauthorized to update post',
+      },
+    );
+  });
+  test('update post correctly', async () => {
+    const mockReq = {
+      params: {
+        id: 1,
+      },
+      user: {
+        id: 1,
+      },
+      body: {
+        title: 'some title',
+        content: 'some content',
+      },
+    };
+
+    const mockJSON = jest.fn();
+
+    const mockRes = {
+      status: jest.fn().mockReturnValue({ json: mockJSON }),
+    };
+
+    const result = {
+      dataValues: {
+        id: 1,
+        title: 'Latest updates, October 1st',
+        content: 'The whole text for the blog post goes here in this key',
+        published: '2020-09-22T16:30:25.000Z',
+        updated: '2020-09-28T01:18:53.000Z',
+        user: {
+          id: 1,
+          displayName: 'Lula da Silva',
+          email: 'lulalivre@pt.com',
+          image: 'img.png',
+        },
+      },
+    };
+
+    const mockFindPost = jest
+      .spyOn(Post, 'findByPk')
+      .mockResolvedValue(result);
+
+    await postsController.updatePost(mockReq, mockRes);
+    expect(mockFindPost).toHaveBeenCalledTimes(1);
+    expect(mockRes.status).toBeCalledWith(200);
+    expect(mockJSON).toBeCalledWith(
+      {
+        code: 200,
+        message: 'Post Updated!',
+      },
+    );
+  });
+  test('Error 500', async () => {
+    jest.spyOn(console, 'error').mockReturnValueOnce();
+
+    const mockReq = {
+      params: {
+        id: 1,
+      },
+      user: {
+        id: 1,
+      },
+      body: {
+        title: 'some title',
+        content: 'some content',
+      },
+    };
+
+    const mockJSON = jest.fn();
+
+    const mockRes = {
+      status: jest.fn().mockReturnValue({ json: mockJSON }),
+    };
+
+    const mockUpdateModel = jest
+      .spyOn(Post, 'findByPk')
       .mockRejectedValue(new Error());
 
     await postsController.updatePost(mockReq, mockRes);
 
-    expect(mockDestroy).toHaveBeenCalledTimes(1);
+    expect(mockUpdateModel).toHaveBeenCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(500);
     expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
     expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');
   });
 });
 
-describe.skip('searchPost', () => {
+describe('searchPost', () => {
   test('Searching for post by query params', async () => {
     const mockReq = {
       query: {
@@ -434,20 +560,20 @@ describe.skip('searchPost', () => {
       status: jest.fn().mockReturnValue({ json: mockJSON }),
     };
 
-    const mockDestroy = jest
+    const mockSearch = jest
       .spyOn(Post, 'findAll')
       .mockRejectedValue(new Error());
 
     await postsController.searchPost(mockReq, mockRes);
 
-    expect(mockDestroy).toHaveBeenCalledTimes(1);
+    expect(mockSearch).toHaveBeenCalledTimes(1);
     expect(mockRes.status).toBeCalledWith(500);
     expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
     expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');
   });
 });
 
-describe.skip('deletePost', () => {
+describe('deletePost', () => {
   test('unauthorized user', async () => {
     const mockReq = {
       params: {
@@ -490,7 +616,7 @@ describe.skip('deletePost', () => {
     expect(mockJSON).toBeCalledWith(
       {
         code: 403,
-        message: 'User unauthorized to delete post'
+        message: 'User unauthorized to delete post',
       },
     );
   });
@@ -542,23 +668,28 @@ describe.skip('deletePost', () => {
       { message: 'Post Deleted!' },
     );
   });
-});
+  test('error 500', async () => {
+    jest.spyOn(console, 'error').mockReturnValueOnce();
 
-// describe.skip('users route', () => {
-//   test('usersController.CreateUser controller', async () => {
-//     const reqMock = {
-//       body: {
-//         displayName: 'user 1',
-//         email: 'k6@mailist.com',
-//         password: 'tulin',
-//         image: 'xablau.jpg',
-//       },
-//     };
-//     const resMock = {
-//       status: jest.fn().mockReturnValueOnce({
-//         token: 'xablau', // mock da geração do token?
-//       }),
-//     };
-//     await usersController.createUser(reqMock, resMock, jest.fn());
-//   });
-// });
+    const mockReq = {
+      params: {
+        id: 1,
+      },
+      user: {
+        id: 2,
+      },
+    };
+
+    const mockJSON = jest.fn();
+
+    const mockRes = {
+      status: jest.fn().mockReturnValue({ json: mockJSON }),
+    };
+
+    await postsController.deletePost(mockReq, mockRes);
+
+    expect(mockRes.status).toBeCalledWith(500);
+    expect(mockJSON.mock.calls[0][0]).toHaveProperty('message');
+    expect(mockJSON.mock.calls[0][0].message).toBe('erro na conexão com base de dados');
+  });
+});

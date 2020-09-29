@@ -7,7 +7,7 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-describe.skip('createUser', () => {
+describe('createUser', () => {
   test('integrity test - password length', async () => {
     const mockReq = {
       body: {
@@ -130,7 +130,7 @@ describe.skip('createUser', () => {
   });
 });
 
-describe.skip('loginUser', () => {
+describe('loginUser', () => {
   test('check credentials', async () => {
     jest.spyOn(console, 'error').mockReturnValueOnce();
     const result = {
@@ -259,7 +259,7 @@ describe.skip('loginUser', () => {
   });
 });
 
-describe.skip('list', () => {
+describe('list', () => {
   test('listing all users', async () => {
     const mockFindAll = jest
       .spyOn(User, 'findAll')
@@ -313,7 +313,7 @@ describe.skip('list', () => {
   });
 });
 
-describe.skip('listOne', () => {
+describe('listOne', () => {
   test('user not found', async () => {
     const mockFindUser = jest
       .spyOn(User, 'findOne')
@@ -396,7 +396,7 @@ describe.skip('listOne', () => {
   });
 });
 
-describe.skip('deleteUser', () => {
+describe('deleteUser', () => {
   test('delete one user', async () => {
     const mockReq = {
       user: {

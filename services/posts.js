@@ -20,7 +20,7 @@ const listPosts = async () => {
 };
 
 const updatePost = async ({ id, title, content, userId }) => {
-  const { dataValues: { userId: authorPostId } } = await Post.findByPk(id);
+  const { dataValues: { user: { id: authorPostId } } } = await Post.findByPk(id);
   if (userId !== authorPostId) {
     return 403;
   }
