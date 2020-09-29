@@ -17,6 +17,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "test": "jest",
+    "coverage": "npm test -- --coverage",
     "lint": "eslint ."
   },
   "devDependencies": {

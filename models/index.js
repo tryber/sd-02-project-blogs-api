@@ -4,9 +4,16 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 
-const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config.js')[env];
-// se for hardcodado, roda. Criar .env para receber ambiente de testez
+// const env = process.env.NODE_ENV || 'development';
+// const config = require('../config/config.js')[env];
+
+const config = {
+  username: 'root',
+  password: 'backendisdangerous',
+  database: 'trybe-api-blogs',
+  host: 'localhost',
+  dialect: 'mysql',
+};
 
 const basename = path.basename(__filename);
 const db = {};

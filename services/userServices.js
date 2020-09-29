@@ -1,13 +1,11 @@
 const Models = require('../models');
+const { searchUser } = require('./searchUser');
 const { newToken } = require('./Jwt');
-
-const searchUser = async (email) =>
-  Models.Users.findOne({ where: { email } });
 
 const userLogin = async (req, res) => {
   const isExistsUser = await searchUser(req.body.email);
-
   if (isExistsUser) {
+    console.log(isExistsUser);
     return res.status(409).json({
       message: 'Usuário já existe',
     });
