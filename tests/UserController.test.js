@@ -3,6 +3,8 @@ const services = require('../services');
 const { Users } = require('../models');
 
 describe('Test user Route', () => {
+  afterEach(() => jest.clearAllMocks());
+
   const mockReq = {
     body: {
       displayName: 'Marcos Mion',
@@ -23,7 +25,7 @@ describe('Test user Route', () => {
   test('Failed create request', async () => {
     const mockJSON = jest.fn();
 
-    const mockFailedTest = jest
+    jest
       .spyOn(Users, 'findOne')
       .mockReturnValueOnce(mockReq.body);
 
@@ -35,22 +37,20 @@ describe('Test user Route', () => {
     expect(mockJSON).toBeCalledWith({ message: 'Usuário já existe' });
     expect(responseValue.status).toBeCalledWith(409);
     expect(responseValue.status).toBeCalledTimes(1);
-
-    mockFailedTest.mockRestore();
   });
 
   test('Succesfully insert user', async () => {
     const mockJSON = jest.fn();
 
-    const findOneMock = jest
+    jest
       .spyOn(Users, 'findOne')
       .mockReturnValueOnce(null);
 
-    const mockJWT = jest
+    jest
       .spyOn(JWT, 'sign')
       .mockReturnValueOnce('Reginam');
 
-    const createMock = jest
+    jest
       .spyOn(Users, 'create')
       .mockReturnValueOnce();
 
@@ -62,9 +62,5 @@ describe('Test user Route', () => {
     expect(mockJSON).toBeCalledTimes(1);
     expect(responseValue.status).toBeCalledWith(201);
     expect(responseValue.status).toBeCalledTimes(1);
-
-    findOneMock.mockRestore();
-    mockJWT.mockRestore();
-    createMock.mockRestore();
   });
 });
