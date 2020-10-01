@@ -8,4 +8,11 @@ module.exports = {
     host: 'localhost',
     dialect: 'mysql',
   },
+  test: {
+    username: 'root',
+    password: 'backendisdangerous',
+    database: 'trybe-api-blogs',
+    host: '127.0.0.1',
+    dialect: 'mysql',
+  },
 };
