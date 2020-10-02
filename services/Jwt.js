@@ -11,6 +11,13 @@ const newToken = (data) =>
     },
   );
 
+const verifyToken = (token) =>
+  JWT.verify(token, process.env.SECRET, (err, data) => {
+    if (err) return err;
+    return data;
+  });
+
 module.exports = {
   newToken,
+  verifyToken,
 };

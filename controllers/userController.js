@@ -7,6 +7,9 @@ const router = express.Router();
 router
   .post('/', middlewares.InsertUser, services.userLogin);
 
+router
+  .get('/', middlewares.ValidUser, services.getAllUsers);
+
 module.exports = {
   router,
 };

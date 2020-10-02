@@ -17,6 +17,15 @@ const userLogin = async (req, res) => {
   });
 };
 
+const getAllUsers = async (_req, res) => {
+  const allUsers = await Models.Users.findAll();
+  return res.status(200).json({
+    status: 'Success',
+    users: allUsers,
+  });
+};
+
 module.exports = {
   userLogin,
+  getAllUsers,
 };
