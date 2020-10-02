@@ -1,4 +1,4 @@
-const { UserSchema, PostSchema } = require('../services');
+const { UserSchema } = require('../services');
 
 const InsertUser = (req, res, next) => {
   const { password, ...others } = req.body;
