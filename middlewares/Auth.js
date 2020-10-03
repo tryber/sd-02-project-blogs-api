@@ -23,7 +23,7 @@ const ValidUser = async (req, res, next) => {
   if (encryptedData.message) {
     return res.status(401).json({
       error: encryptedData.message,
-      code: 401,
+      code: 'unauthorized',
     });
   }
 
@@ -32,7 +32,7 @@ const ValidUser = async (req, res, next) => {
   if (!isUserExists) {
     return res.status(401).json({
       error: 'User not found. Do you have account in this beatiful api?',
-      code: 404,
+      code: 'not_found',
     });
   }
 

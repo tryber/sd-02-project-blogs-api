@@ -1,5 +1,5 @@
 const { UserSchema, PostSchema } = require('./SchemaJoi');
-const { userLogin, getAllUsers, getUser } = require('./userServices');
+const { userLogin, getAllUsers, getUser, deleteUser } = require('./userServices');
 
 module.exports = {
   UserSchema,
@@ -7,4 +7,5 @@ module.exports = {
   userLogin,
   getAllUsers,
   getUser,
+  deleteUser,
 };

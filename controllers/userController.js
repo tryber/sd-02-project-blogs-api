@@ -13,6 +13,9 @@ router
 router
   .get('/:id', middlewares.ValidUser, services.getUser);
 
+router
+  .delete('/me', middlewares.ValidUser, services.deleteUser);
+
 module.exports = {
   router,
 };

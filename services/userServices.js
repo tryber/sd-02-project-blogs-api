@@ -1,4 +1,5 @@
 const Models = require('../models');
+const { verifyToken } = require('./Jwt');
 const { newToken } = require('./Jwt');
 
 const userLogin = async (req, res) => {
@@ -42,8 +43,21 @@ const getUser = async (req, res) => {
   });
 };
 
+const deleteUser = async (req, res) => {
+  const decryptedUser = verifyToken(req.headers.authorization);
+  const dbUser = await Models.Users.findOne({ where: { email: decryptedUser.email } });
+
+  await dbUser.destroy();
+
+  return res.status(200).json({
+    status: 'Success',
+    message: `User ${decryptedUser.displayName} was deleted.`,
+  });
+};
+
 module.exports = {
-  userLogin,
   getAllUsers,
+  deleteUser,
+  userLogin,
   getUser,
 };
