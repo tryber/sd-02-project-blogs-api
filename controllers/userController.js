@@ -10,6 +10,9 @@ router
 router
   .get('/', middlewares.ValidUser, services.getAllUsers);
 
+router
+  .get('/:id', middlewares.ValidUser, services.getUser);
+
 module.exports = {
   router,
 };

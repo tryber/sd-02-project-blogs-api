@@ -2,7 +2,7 @@ const JWT = require('jsonwebtoken');
 const services = require('../services');
 const { Users } = require('../models');
 
-describe('Test user Route', () => {
+describe('Test Post User Route', () => {
   afterEach(() => jest.clearAllMocks());
 
   const mockReq = {

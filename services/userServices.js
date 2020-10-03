@@ -19,13 +19,31 @@ const userLogin = async (req, res) => {
 
 const getAllUsers = async (_req, res) => {
   const allUsers = await Models.Users.findAll();
+
   return res.status(200).json({
     status: 'Success',
     users: allUsers,
   });
 };
 
+const getUser = async (req, res) => {
+  const userById = await Models.Users.findByPk(req.params.id);
+
+  if (userById) {
+    return res.status(200).json({
+      status: 'Success',
+      user: userById,
+    });
+  }
+
+  return res.status(404).json({
+    message: 'User not exists',
+    code: 'not_found',
+  });
+};
+
 module.exports = {
   userLogin,
   getAllUsers,
+  getUser,
 };
