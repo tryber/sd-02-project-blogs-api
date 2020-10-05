@@ -1,6 +1,5 @@
 const Models = require('../models');
-const { verifyToken } = require('./Jwt');
-const { newToken } = require('./Jwt');
+const { verifyToken, newToken } = require('./Jwt');
 
 const createUser = async (req, res) => {
   const isExistsUser = await Models.Users.findOne({ where: { email: req.body.email } });
