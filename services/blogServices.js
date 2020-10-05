@@ -3,7 +3,7 @@ const Models = require('../models');
 
 const createBlogPosts = async (req, res) => {
   const { email } = verifyToken(req.headers.authorization);
-  const { id } = Models.Users.findOne({ where: { email } });
+  const { id } = await Models.Users.findOne({ where: { email } });
 
   const postStructure = {
     userId: id,
@@ -21,6 +21,20 @@ const createBlogPosts = async (req, res) => {
   });
 };
 
+const getAllPosts = async (req, res) => {
+  const allPosts = await Models.BlogPosts.findAll({
+    attributes: ['id', 'published', 'updated', 'title', 'content'],
+    include: 'User',
+  });
+  console.log(allPosts);
+  return res.status(200)
+    .json({
+      status: 'Success',
+      posts: allPosts,
+    });
+};
+
 module.exports = {
   createBlogPosts,
+  getAllPosts,
 };

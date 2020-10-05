@@ -10,4 +10,7 @@ router
     middlewares.PostValid,
     services.createBlogPosts);
 
+router
+  .get('/', services.getAllPosts);
+
 module.exports = { router };
