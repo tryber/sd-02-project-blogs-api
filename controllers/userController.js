@@ -5,7 +5,7 @@ const middlewares = require('../middlewares/Auth');
 const router = express.Router();
 
 router
-  .post('/', middlewares.InsertUser, services.userLogin);
+  .post('/', middlewares.InsertUser, services.createUser);
 
 router
   .get('/', middlewares.ValidUser, services.getAllUsers);

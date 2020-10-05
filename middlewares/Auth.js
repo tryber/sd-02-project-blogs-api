@@ -1,6 +1,7 @@
 require('dotenv').config();
+
 const Models = require('../models');
-const { UserSchema } = require('../services');
+const { UserSchema, LoginSchema } = require('../services');
 const { verifyToken } = require('../services/Jwt');
 
 const InsertUser = (req, res, next) => {
@@ -8,10 +9,24 @@ const InsertUser = (req, res, next) => {
   const { error } = UserSchema.validate({ ...others, password: `${password}` });
   if (error) {
     return res
-      .status(422)
+      .status(400)
       .json({
         error: error.details[0].message,
-        code: 'bad_data',
+        message: 'Campos Inválidos',
+      });
+  }
+  return next();
+};
+
+const LoginValidate = (req, res, next) => {
+  const { email, password } = req.body;
+  const { error } = LoginSchema.validate({ email, password: `${password}` });
+  if (error) {
+    return res
+      .status(400)
+      .json({
+        error: error.details[0].message,
+        message: 'Campos Inválidos',
       });
   }
   return next();
@@ -40,6 +55,7 @@ const ValidUser = async (req, res, next) => {
 };
 
 module.exports = {
+  LoginValidate,
   InsertUser,
   ValidUser,
 };

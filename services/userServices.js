@@ -2,7 +2,7 @@ const Models = require('../models');
 const { verifyToken } = require('./Jwt');
 const { newToken } = require('./Jwt');
 
-const userLogin = async (req, res) => {
+const createUser = async (req, res) => {
   const isExistsUser = await Models.Users.findOne({ where: { email: req.body.email } });
 
   if (!isExistsUser) {
@@ -55,9 +55,27 @@ const deleteUser = async (req, res) => {
   });
 };
 
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  const dbUser = await Models.Users.findOne({ where: { email } });
+
+  if (!dbUser || dbUser.password !== password) {
+    return res.status(403).json({
+      message: 'Email not found or incorrect password',
+      code: 'Forbidden',
+    });
+  }
+
+  return res.status(200).json({
+    token: newToken(req.body),
+  });
+};
+
 module.exports = {
   getAllUsers,
   deleteUser,
-  userLogin,
+  createUser,
+  loginUser,
   getUser,
 };

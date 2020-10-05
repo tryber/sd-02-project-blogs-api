@@ -18,6 +18,17 @@ const UserSchema = Joi.object({
     .min(10),
 });
 
+const LoginSchema = Joi.object({
+  email: Joi
+    .string()
+    .email()
+    .required(),
+  password: Joi
+    .string()
+    .length(6)
+    .required(),
+});
+
 const PostSchema = Joi.object({
   title: Joi
     .string()
@@ -32,4 +43,5 @@ const PostSchema = Joi.object({
 module.exports = {
   UserSchema,
   PostSchema,
+  LoginSchema,
 };
