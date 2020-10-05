@@ -133,10 +133,30 @@ const searchPost = async (req, res) => {
   });
 };
 
+const deletePost = async (req, res) => {
+  const post = await getOnePost(req.params.id);
+  const userData = verifyToken(req.headers.authorization);
+  console.log(userData.email);
+  console.log(post.User.email);
+  if (userData.email !== post.User.email) {
+    return res.status(403).json({
+      message: 'Esse post é do amiguinho. N pode apagar.',
+      code: 'Forbidden',
+    });
+  }
+
+  await post.destroy();
+
+  return res.status(200).json({
+    message: 'Apagado',
+  });
+};
+
 module.exports = {
   createBlogPosts,
   getAllPosts,
   searchPost,
+  deletePost,
   editPost,
   getPost,
 };

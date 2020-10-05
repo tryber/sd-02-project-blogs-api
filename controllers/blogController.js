@@ -5,9 +5,6 @@ const services = require('../services');
 const router = express.Router();
 
 router
-  .get('/search', services.searchPost);
-
-router
   .post('/',
     middlewares.ValidUser,
     middlewares.PostValid,
@@ -17,12 +14,20 @@ router
   .get('/', services.getAllPosts);
 
 router
+  .get('/:id', services.getPost);
+
+router
   .put('/:id',
     middlewares.ValidUser,
     middlewares.PostValid,
     services.editPost);
 
 router
-  .get('/:id', services.getPost);
+  .get('/search', services.searchPost);
+
+router
+  .delete('/:id',
+    middlewares.ValidUser,
+    services.deletePost);
 
 module.exports = { router };

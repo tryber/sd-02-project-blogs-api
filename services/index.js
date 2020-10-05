@@ -4,6 +4,7 @@ const {
   createBlogPosts,
   getAllPosts,
   searchPost,
+  deletePost,
   editPost,
   getPost,
 } = require('./blogServices');
@@ -26,6 +27,7 @@ module.exports = {
   createUser,
   deleteUser,
   searchPost,
+  deletePost,
   loginUser,
   editPost,
   getPost,
