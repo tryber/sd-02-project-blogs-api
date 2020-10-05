@@ -20,7 +20,10 @@ const getAllDbPosts = async () =>
           title,
           content,
           User: {
-            id: userId, displayName, email, image,
+            id: userId,
+            displayName,
+            email,
+            image,
           },
         };
       }));
@@ -44,7 +47,10 @@ const getOnePost = async (param) =>
         title,
         content,
         User: {
-          id: userId, displayName, email, image,
+          id: userId,
+          displayName,
+          email,
+          image,
         },
       };
     });
