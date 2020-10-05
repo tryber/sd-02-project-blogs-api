@@ -34,7 +34,44 @@ const getAllPosts = async (req, res) => {
     });
 };
 
+const editPost = async (req, res) => {
+  const post = await Models.BlogPosts.findOne({ where: { id: req.params.id } });
+
+  if (!post) {
+    return res.status(404).json({
+      message: 'Post não encontrado. Mandou o ID certo?',
+      code: 'not_found',
+    });
+  }
+
+  const { email } = verifyToken(req.headers.authorization);
+
+  const userData = await Models.Users.findOne({ where: { email } });
+
+  if (userData.id !== post.userId) {
+    return res.status(403).json({
+      message: 'Esse post não é seu. Não é bonito mexer nas coisas dos outros.',
+      code: 'Forbidden',
+    });
+  }
+
+  const { title, description } = req.body;
+
+  await Models.BlogPosts.update(
+    { title, description },
+    { where: { id: req.params.id } },
+  );
+
+  const updatedPost = await Models.BlogPosts.findOne({ where: { id: req.params.id } });
+
+  return res.status(200).json({
+    message: 'Success',
+    post: updatedPost,
+  });
+};
+
 module.exports = {
   createBlogPosts,
   getAllPosts,
+  editPost,
 };

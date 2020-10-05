@@ -13,4 +13,10 @@ router
 router
   .get('/', services.getAllPosts);
 
+router
+  .put('/:id',
+    middlewares.ValidUser,
+    middlewares.PostValid,
+    services.editPost);
+
 module.exports = { router };
