@@ -3,6 +3,7 @@ require('dotenv').config();
 const Models = require('../models');
 const { UserSchema, LoginSchema } = require('../services');
 const { verifyToken } = require('../services/Jwt');
+const { PostSchema } = require('../services/SchemaJoi');
 
 const InsertUser = (req, res, next) => {
   const { password, ...others } = req.body;
@@ -54,8 +55,22 @@ const ValidUser = async (req, res, next) => {
   return next();
 };
 
+const PostValid = async (req, res, next) => {
+  const { title, content } = req.body;
+  const { error } = PostSchema.validate({ title, content });
+  if (error) {
+    return res
+      .status(400)
+      .json({
+        error: error.details[0].message,
+      });
+  }
+  return next();
+};
+
 module.exports = {
   LoginValidate,
   InsertUser,
   ValidUser,
+  PostValid,
 };
