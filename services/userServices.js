@@ -50,7 +50,7 @@ const deleteUser = async (req, res) => {
 
   return res.status(200).json({
     status: 'Success',
-    message: `User ${decryptedUser.displayName} was deleted.`,
+    message: 'User was deleted.',
   });
 };
 

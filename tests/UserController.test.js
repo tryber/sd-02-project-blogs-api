@@ -152,3 +152,93 @@ describe('Get users by id value', () => {
     expect(noUserRes.status).toBeCalledTimes(1);
   });
 });
+
+describe('Delete user', () => {
+  test('delete user by id', async () => {
+    const toDeleteObj = {
+      email: 'lalala@lelele.com',
+      destroy: () => jest.fn(),
+    };
+
+    jest
+      .spyOn(JWT, 'verify')
+      .mockReturnValueOnce('fakeToken');
+
+    jest
+      .spyOn(Users, 'findOne')
+      .mockReturnValueOnce(toDeleteObj);
+
+    const mockJSON = jest.fn();
+
+    const resMock = mockRes(mockJSON);
+
+    const fakeAuth = {
+      headers: { authorization: 'fakeToken' },
+      params: { id: 1 },
+    };
+
+    await services.deleteUser(fakeAuth, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      status: 'Success',
+      message: 'User was deleted.',
+    });
+    expect(resMock.status).toBeCalledWith(200);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+});
+
+describe('login user valid', () => {
+  test('user not exists', async () => {
+    const reqMock = { body: { email: 'chalezinho@dancurte.com', password: '123456' } };
+
+    jest
+      .spyOn(Users, 'findOne')
+      .mockReturnValueOnce(null);
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.loginUser(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Email not found or incorrect password',
+      code: 'Forbidden',
+    });
+    expect(resMock.status).toBeCalledWith(403);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+
+  test('user exists', async () => {
+    const userBody = {
+      email: 'dan@chalezinho.com',
+      password: 'chalenaveia',
+    };
+
+    const reqMock = {
+      body: userBody,
+    };
+
+    jest
+      .spyOn(Users, 'findOne')
+      .mockReturnValueOnce(userBody);
+
+    jest
+      .spyOn(JWT, 'sign')
+      .mockReturnValueOnce('Reginam');
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.loginUser(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      token: 'Reginam',
+    });
+    expect(resMock.status).toBeCalledWith(200);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+});
