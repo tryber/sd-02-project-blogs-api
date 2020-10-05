@@ -19,4 +19,7 @@ router
     middlewares.PostValid,
     services.editPost);
 
+router
+  .get('/:id', services.getPost);
+
 module.exports = { router };
