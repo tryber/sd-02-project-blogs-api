@@ -5,6 +5,9 @@ const services = require('../services');
 const router = express.Router();
 
 router
+  .get('/search', services.searchPost);
+
+router
   .post('/',
     middlewares.ValidUser,
     middlewares.PostValid,

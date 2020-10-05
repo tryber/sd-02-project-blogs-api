@@ -1,59 +1,31 @@
+const { Op } = require('sequelize');
 const { verifyToken } = require('./Jwt');
 const Models = require('../models');
 
 const getAllDbPosts = async () =>
   Models.BlogPosts.findAll({
     attributes: ['id', 'published', 'updated', 'title', 'content'],
-    include: 'User',
-  })
-    .then((data) =>
-      data.map((results) => {
-        const {
-          User: { id: userId, displayName, email, image },
-          id: postId, published, updated, title, content,
-        } = results;
-
-        return {
-          id: postId,
-          published,
-          updated,
-          title,
-          content,
-          User: {
-            id: userId,
-            displayName,
-            email,
-            image,
-          },
-        };
-      }));
+    include: [
+      {
+        model: Models.Users,
+        as: 'User',
+        attributes: ['id', 'displayName', 'email', 'image'],
+      },
+    ],
+  });
 
 const getOnePost = async (param) =>
   Models.BlogPosts.findOne({
     attributes: ['id', 'published', 'updated', 'title', 'content'],
-    include: 'User',
+    include: [
+      {
+        model: Models.Users,
+        as: 'User',
+        attributes: ['id', 'displayName', 'email', 'image'],
+      },
+    ],
     where: { id: param },
-  })
-    .then((results) => {
-      const {
-        User: { id: userId, displayName, email, image },
-        id: postId, published, updated, title, content,
-      } = results;
-
-      return {
-        id: postId,
-        published,
-        updated,
-        title,
-        content,
-        User: {
-          id: userId,
-          displayName,
-          email,
-          image,
-        },
-      };
-    });
+  });
 
 const createBlogPosts = async (req, res) => {
   const { email } = verifyToken(req.headers.authorization);
@@ -124,7 +96,7 @@ const editPost = async (req, res) => {
 const getPost = async (req, res) => {
   const post = await getOnePost(req.params.id);
 
-  if (!post) {
+  if (post.message) {
     return res.status(404).json({
       message: 'Post não encontrado. Mandou o ID certo?',
       code: 'not_found',
@@ -137,9 +109,34 @@ const getPost = async (req, res) => {
   });
 };
 
+const searchPost = async (req, res) => {
+  const searchWord = `%${req.query.q}%`;
+
+  const getPostsLike = await Models.BlogPosts.findAll({
+    attributes: ['id', 'published', 'updated', 'title', 'content'],
+    include: 'User',
+    where: {
+      [Op.or]: [
+        {
+          title: { [Op.like]: searchWord },
+        },
+        {
+          content: { [Op.like]: searchWord },
+        },
+      ],
+    },
+  });
+
+  return res.status(200).json({
+    status: 'Success',
+    search: getPostsLike,
+  });
+};
+
 module.exports = {
   createBlogPosts,
   getAllPosts,
+  searchPost,
   editPost,
   getPost,
 };
