@@ -29,10 +29,10 @@ const getOnePost = async (param) =>
 
 const createBlogPosts = async (req, res) => {
   const { email } = verifyToken(req.headers.authorization);
-  const { id } = await Models.Users.findOne({ where: { email } });
-
+  const userData = await Models.Users.findOne({ where: { email } });
+  console.log(userData);
   const postStructure = {
-    userId: id,
+    userId: userData.id,
     title: req.body.title,
     content: req.body.content,
     published: new Date(),
@@ -40,6 +40,8 @@ const createBlogPosts = async (req, res) => {
   };
 
   await Models.BlogPosts.create(postStructure);
+
+  console.log(postStructure);
 
   return res.status(201).json({
     message: 'Created',
