@@ -292,3 +292,44 @@ describe('Only one post route', () => {
     expect(resMock.status).toBeCalledTimes(1);
   });
 });
+
+describe('Search post by word in title or content', () => {
+  const postStructure = {
+    id: 2,
+    published: '2020-10-05T19:08:47.000Z',
+    updated: '2020-10-05T19:08:47.000Z',
+    title: 'Latest updates, August 35th',
+    content: 'Esse post é um oferecimento das Casas Bahiaaaaaaa',
+    User: {
+      id: 1,
+      displayName: 'Marcos Mion',
+      email: 'marcos@mion.com',
+      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+    },
+  };
+
+  test('All requests are success', async () => {
+    jest
+      .spyOn(BlogPosts, 'findAll')
+      .mockReturnValueOnce([{ ...postStructure }]);
+
+    const reqMock = {
+      query: {
+        q: 'a',
+      },
+    };
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.searchPost(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      status: 'Success',
+      search: [postStructure],
+    });
+    expect(resMock.status).toBeCalledWith(200);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+});

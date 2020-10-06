@@ -114,7 +114,11 @@ const searchPost = async (req, res) => {
 
   const getPostsLike = await Models.BlogPosts.findAll({
     attributes: ['id', 'published', 'updated', 'title', 'content'],
-    include: 'User',
+    include: {
+      model: Models.Users,
+      as: 'User',
+      attributes: ['id', 'displayName', 'email', 'image'],
+    },
     where: {
       [Op.or]: [
         {

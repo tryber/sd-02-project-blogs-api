@@ -14,6 +14,9 @@ router
   .get('/', services.getAllPosts);
 
 router
+  .get('/search', services.searchPost);
+
+router
   .get('/:id', services.getPost);
 
 router
@@ -22,8 +25,6 @@ router
     middlewares.PostValid,
     services.editPost);
 
-router
-  .get('/search', services.searchPost);
 
 router
   .delete('/:id',
