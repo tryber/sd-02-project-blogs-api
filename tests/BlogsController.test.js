@@ -333,3 +333,97 @@ describe('Search post by word in title or content', () => {
     expect(resMock.status).toBeCalledTimes(1);
   });
 });
+
+describe('Delete post route', () => {
+  const reqMock = {
+    headers: {
+      authorization: 'CCSMLNDSMD',
+    },
+    params: {
+      id: 1,
+    },
+  };
+
+  const post = {
+    id: 1,
+    published: new Date('2011-08-01T19:58:00.000Z'),
+    updated: new Date('2011-08-01T19:58:51.947Z'),
+    title: 'Latest updates, August 1st',
+    content: 'The whole text for the blog post goes here in this key',
+    User: {
+      id: 1,
+      displayName: 'Marcos Mion',
+      email: 'marcos@mion.com',
+      image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png'
+    },
+  };
+
+  test('post not exists', async () => {
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(null);
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.deletePost(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Post não encontrado',
+      code: 'not_found',
+    });
+    expect(resMock.status).toBeCalledWith(404);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+
+  test('user was not permission to delete post of another user', async () => {
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(post);
+
+    jest
+      .spyOn(JWT, 'verify')
+      .mockReturnValueOnce({ email: 'data@data.com' });
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.deletePost(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Esse post é do amiguinho. N pode apagar.',
+      code: 'Forbidden',
+    });
+    expect(resMock.status).toBeCalledWith(403);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+
+  test('Successfully request', async () => {
+    const destroyData = {
+      ...post,
+      destroy: () => jest.fn(),
+    };
+
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(destroyData);
+
+    jest
+      .spyOn(JWT, 'verify')
+      .mockReturnValueOnce({ email: 'marcos@mion.com' });
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.deletePost(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Apagado',
+    });
+    expect(resMock.status).toBeCalledWith(200);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+});

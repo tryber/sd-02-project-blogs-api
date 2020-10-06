@@ -1,5 +1,7 @@
 const { UserSchema, PostSchema, LoginSchema } = require('./SchemaJoi');
 
+const { verifyToken } = require('./Jwt');
+
 const {
   createBlogPosts,
   getAllPosts,
@@ -22,6 +24,7 @@ module.exports = {
   getAllUsers,
   getAllPosts,
   LoginSchema,
+  verifyToken,
   PostSchema,
   UserSchema,
   createUser,

@@ -25,7 +25,6 @@ router
     middlewares.PostValid,
     services.editPost);
 
-
 router
   .delete('/:id',
     middlewares.ValidUser,

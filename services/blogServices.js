@@ -139,6 +139,14 @@ const searchPost = async (req, res) => {
 
 const deletePost = async (req, res) => {
   const post = await getOnePost(req.params.id);
+
+  if (!post) {
+    return res.status(404).json({
+      message: 'Post não encontrado',
+      code: 'not_found',
+    });
+  }
+
   const userData = verifyToken(req.headers.authorization);
   if (userData.email !== post.User.email) {
     return res.status(403).json({

@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const services = require('../services');
 const { Users } = require('../models');
+const { verifyToken } = require('../services/Jwt');
 
 const mockRes = (mockParam) => ({
   status: jest
@@ -240,5 +241,25 @@ describe('login user valid', () => {
     });
     expect(resMock.status).toBeCalledWith(200);
     expect(resMock.status).toBeCalledTimes(1);
+  });
+});
+
+describe('test JWT', () => {
+  test('JWT error', () => {
+    const token = jest.fn();
+
+    const data = verifyToken(token);
+
+    expect(data.name).toBe('JsonWebTokenError');
+    expect(data.message).toBe('jwt must be a string');
+  });
+
+  test('jwt pass', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc0BtaW9uLmNvbSIsInBhc3N3b3JkIjoiMTIzNDU2IiwiaWF0IjoxNjAxOTY1NTU5LCJleHAiOjE2MDE5ODM1NTl9.HTAcb2fXThJTo60zDep2oxP3-OTio68w13AFWUF9sTw';
+
+    const data = verifyToken(token);
+
+    expect(data.email).toBe('marcos@mion.com');
+    expect(data.password).toBe('123456');
   });
 });
