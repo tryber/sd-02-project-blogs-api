@@ -67,9 +67,9 @@ const editPost = async (req, res) => {
     });
   }
 
-  const { email } = verifyToken(req.headers.authorization);
+  const userToken = verifyToken(req.headers.authorization);
 
-  const userData = await Models.Users.findOne({ where: { email } });
+  const userData = await Models.Users.findOne({ where: { email: userToken.email } });
 
   if (userData.id !== post.userId) {
     return res.status(403).json({
@@ -78,10 +78,10 @@ const editPost = async (req, res) => {
     });
   }
 
-  const { title, description } = req.body;
+  const { title, content } = req.body;
 
   await Models.BlogPosts.update(
-    { title, description },
+    { title, content },
     { where: { id: req.params.id } },
   );
 
@@ -96,7 +96,7 @@ const editPost = async (req, res) => {
 const getPost = async (req, res) => {
   const post = await getOnePost(req.params.id);
 
-  if (post.message) {
+  if (!post) {
     return res.status(404).json({
       message: 'Post não encontrado. Mandou o ID certo?',
       code: 'not_found',

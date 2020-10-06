@@ -86,3 +86,209 @@ describe('All posts route', () => {
     expect(resMock.status).toBeCalledTimes(1);
   });
 });
+
+describe('Edit post', () => {
+  const post = {
+    id: 1,
+    published: new Date('2011-08-01T19:58:00.000Z'),
+    updated: new Date('2011-08-01T19:58:51.947Z'),
+    title: 'Latest updates, August 1st',
+    content: 'The whole text for the blog post goes here in this key',
+    userId: 1,
+  };
+
+  const updatedPost = {
+    id: 1,
+    published: new Date('2011-08-01T19:58:00.000Z'),
+    updated: new Date('2011-08-01T19:58:51.947Z'),
+    title: 'Some awesome Title',
+    content: 'Some awesome content',
+    userId: 1,
+  };
+
+  const userIdOne = {
+    id: 1,
+    displayName: 'Marcos Mion',
+    email: 'marcos@mion.com',
+    password: '123456',
+    image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+  };
+
+  const userIdTwo = {
+    id: 2,
+    displayName: 'José Mion',
+    email: 'data@data.com',
+    password: '123456',
+    image: 'http://4.bp.blogspot.com/_YA50adQ-7vQ/S1gfR_6ufpI/AAAAAAAAAAk/1ErJGgRWZDg/S45/brett.png',
+  };
+
+  test('post not exists', async () => {
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(null);
+
+    const reqMock = {
+      params: {
+        id: 1,
+      },
+    };
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.editPost(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Post não encontrado. Mandou o ID certo?',
+      code: 'not_found',
+    });
+    expect(resMock.status).toBeCalledWith(404);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+
+  test('post found, but userId is different', async () => {
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(post);
+
+    jest
+      .spyOn(JWT, 'verify')
+      .mockReturnValueOnce({ email: 'data@data.com' });
+
+    jest
+      .spyOn(Users, 'findOne')
+      .mockReturnValueOnce(userIdTwo);
+
+    const mockReq = {
+      params: {
+        id: 1,
+      },
+      headers: {
+        authorization: 'hamburguer',
+      },
+    };
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.editPost(mockReq, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Esse post não é seu. Não é bonito mexer nas coisas dos outros.',
+      code: 'Forbidden',
+    });
+    expect(resMock.status).toBeCalledWith(403);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+
+  test('post found, userId equal, ready to edit', async () => {
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(post);
+
+    jest
+      .spyOn(JWT, 'verify')
+      .mockReturnValueOnce({ email: 'marcos@mion.com' });
+
+    jest
+      .spyOn(Users, 'findOne')
+      .mockReturnValueOnce(userIdOne);
+
+    jest
+      .spyOn(BlogPosts, 'update')
+      .mockReturnValueOnce(() => jest.fn());
+
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(updatedPost);
+
+    const mockReq = {
+      params: {
+        id: 1,
+      },
+      headers: {
+        authorization: 'hamburguer',
+      },
+      body: {
+        title: 'Some awesome Title',
+        content: 'Some awesome content',
+      },
+    };
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.editPost(mockReq, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Success',
+      post: updatedPost,
+    });
+    expect(resMock.status).toBeCalledWith(200);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+});
+
+describe('Only one post route', () => {
+  test('post not exists', async () => {
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(null);
+
+    const reqMock = {
+      params: {
+        id: 3366,
+      },
+    };
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.getPost(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Post não encontrado. Mandou o ID certo?',
+      code: 'not_found',
+    });
+    expect(resMock.status).toBeCalledWith(404);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+
+  test('Post exists', async () => {
+    const post = {
+      id: 1,
+      published: new Date('2011-08-01T19:58:00.000Z'),
+      updated: new Date('2011-08-01T19:58:51.947Z'),
+      title: 'Latest updates, August 1st',
+      content: 'The whole text for the blog post goes here in this key',
+      userId: 1,
+    };
+
+    jest
+      .spyOn(BlogPosts, 'findOne')
+      .mockReturnValueOnce(post);
+
+    const reqMock = {
+      params: {
+        id: 1,
+      },
+    };
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.getPost(reqMock, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({
+      message: 'Success',
+      post,
+    });
+    expect(resMock.status).toBeCalledWith(200);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+});
