@@ -69,3 +69,20 @@ describe('Create post route', () => {
     globalDateMock.mockRestore();
   });
 });
+
+describe('All posts route', () => {
+  test('get All posts', async () => {
+    jest.spyOn(BlogPosts, 'findAll')
+      .mockReturnValueOnce([]);
+
+    const mockJSON = jest.fn();
+    const resMock = mockRes(mockJSON);
+
+    await services.getAllPosts({}, resMock);
+
+    expect(mockJSON).toBeCalledTimes(1);
+    expect(mockJSON).toBeCalledWith({ status: 'Success', posts: [] });
+    expect(resMock.status).toBeCalledWith(200);
+    expect(resMock.status).toBeCalledTimes(1);
+  });
+});
