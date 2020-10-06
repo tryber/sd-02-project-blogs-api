@@ -4,6 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
+password.js
+.env
 
 # testing
 /coverage
